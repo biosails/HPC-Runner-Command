@@ -83,7 +83,7 @@ infile of commands separated by newline. The usual bash convention of escaping a
 
 Specify a job name, and jobs will be 001_jobname, 002_jobname, 003_jobname
 
-Separating this out from Base - submit_jobs and execute_jobs have different ways of dealing with this
+Separating this out from Base - submit_jobs and execute_job have different ways of dealing with this
 
 =cut
 
@@ -667,6 +667,7 @@ sub run {
     $self->first_pass(1);
     $self->iterate_schedule;
 
+    $self->reset_batch_counter;
     $self->first_pass(0);
     $self->iterate_schedule;
 
@@ -928,7 +929,6 @@ Write out template, submission job, and infile for parallel runner
 sub process_batch {
     my $self = shift;
 
-    print "We are processing the batch! " . $self->current_job . "\n";
     return if $self->no_submit_to_slurm;
 
     my ( $cmdfile, $slurmfile, $slurmsubmit, $fh, $command );
@@ -999,7 +999,7 @@ sub process_batch_command {
         $command .= $self->custom_command . " \\\n";
     }
     else {
-        $command .= "hpcrunner.pl execute_jobs \\\n";
+        $command .= "hpcrunner.pl execute_job \\\n";
     }
     $command
         .= "\t--procs "
@@ -1014,10 +1014,11 @@ sub process_batch_command {
         . "\t--process_table "
         . $self->process_table;
 
-    my $metastr = $self->job_stats->create_meta_str( $self->batch_counter,
+    my $metastr = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
         $self->current_job );
     $command .= $metastr if $metastr;
 
+    #$command .= "\n";
     #my $pluginstr = $self->create_plugin_str;
     #$command .= $pluginstr if $pluginstr;
 

@@ -19,7 +19,7 @@ sub construct {
             "submit_jobs",       "--infile",
             $t,                  "--outdir",
             "$Bin/test003/logs", "--plugins",
-            "Slurm",
+            "Dummy",
         ]
     );
 
@@ -32,6 +32,7 @@ sub construct {
 sub test_001 : Tags(prep) {
     my $test = shift;
 
+    remove_tree("$Bin/test003");
     make_path("$Bin/test003/script");
     make_path("$Bin/test003/scratch");
 
@@ -69,6 +70,7 @@ sub test_003 : Tags(construct) {
     my $test = construct();
 
     $test->hpc_load_plugins();
+
 
     $test->first_pass(1);
     $test->parse_file_slurm();
@@ -123,4 +125,22 @@ sub test_003 : Tags(construct) {
     ok(1);
 }
 
+sub test_004 : Tags(job_stats) {
+    my $self = shift;
+
+    my $test = construct();
+
+    $test->hpc_load_plugins();
+
+    $test->first_pass(1);
+    $test->parse_file_slurm();
+    $test->schedule_jobs();
+    $test->iterate_schedule();
+
+    $test->reset_batch_counter;
+    $test->first_pass(0);
+    $test->iterate_schedule();
+
+    ok(1);
+}
 1;

@@ -22,9 +22,7 @@ sub test_000 : Tags(require) {
 sub test_001 : Tags(prep) {
     my $test = shift;
 
-    #remove_tree("$Bin/test002");
-    #remove_tree("$Bin/test002");
-
+    remove_tree("$Bin/test002");
     make_path("$Bin/test002/script");
     make_path("$Bin/test002/scratch");
 
@@ -66,7 +64,7 @@ sub construct {
             "submit_jobs",       "--infile",
             $t,                  "--outdir",
             "$Bin/test002/logs", "--plugins",
-            "Slurm",
+            "Dummy",
         ]
     );
 
@@ -100,9 +98,14 @@ sub test_005 : Tags(submit_jobs) {
 
     $test05->hpc_load_plugins();
 
-    $test05->first_pass(0);
-    $test05->parse_file_slurm;
+    $test05->first_pass(1);
+    $test05->parse_file_slurm();
     $test05->schedule_jobs();
+    $test05->iterate_schedule();
+
+    $test05->reset_batch_counter;
+    $test05->first_pass(0);
+    $test05->iterate_schedule();
 
     my $logdir = $test05->logdir;
     diag( 'logdir is ', $logdir );
@@ -118,7 +121,7 @@ sub test_005 : Tags(submit_jobs) {
 #SBATCH --cpus-per-task=12
 
 cd $cwd
-hpcrunner.pl execute_jobs \\
+hpcrunner.pl execute_job \\
 EOF
     $expect .= "\t--procs 4 \\\n";
     $expect .= "\t--infile $cwd/t/test002/logs/001_job01.in \\\n";
@@ -207,32 +210,34 @@ sub test_012 : Tags(job_stats) {
     my $test = construct();
 
     $test->hpc_load_plugins();
+
     $test->first_pass(1);
-    $test->parse_file_slurm;
+    $test->parse_file_slurm();
     $test->schedule_jobs();
     $test->iterate_schedule();
 
     my $job_stats = {
+        'tally_commands' => 1,
         'batches' => {
             '001_job01' => {
                 'jobname'  => 'job01',
                 'batch'    => '001',
-                'commands' => 1
+                'commands' => 1,
             },
             '002_job01' => {
                 'jobname'  => 'job01',
                 'batch'    => '002',
-                'commands' => 1
+                'commands' => 1,
             },
             '004_job02' => {
                 'batch'    => '004',
                 'jobname'  => 'job02',
-                'commands' => 1
+                'commands' => 1,
             },
             '003_job02' => {
                 'commands' => 1,
                 'batch'    => '003',
-                'jobname'  => 'job02'
+                'jobname'  => 'job02',
             }
         },
         'total_batches' => 4,
@@ -242,6 +247,7 @@ sub test_012 : Tags(job_stats) {
         },
         'total_processes' => 4,
     };
+
 
     is_deeply( $job_stats, $test->job_stats, 'Job stats pass' );
     is_deeply( [ 'job01', 'job02' ], $test->schedule, 'Schedule passes' );
@@ -262,10 +268,12 @@ sub test_014 : Tags(job_stats) {
     my $self = shift;
 
     my $test = construct();
-
     $test->hpc_load_plugins();
-    $test->first_pass(0);
-    $test->parse_file_slurm;
+
+    $test->first_pass(1);
+    $test->parse_file_slurm();
+    $test->schedule_jobs();
+    $test->iterate_schedule();
 
     my $expect = {
         'job01' => {
@@ -300,6 +308,8 @@ echo "goodbye from job 3"
 
     is_deeply( $expect, $test->jobs, 'Test jobs passes' );
 
+    $test->reset_batch_counter;
+    $test->first_pass(0);
     $test->schedule_jobs();
     $test->iterate_schedule();
 
@@ -326,6 +336,10 @@ sub print_diff {
 
     open( $fh, ">expect.diff" ) or die print "Couldn't open $!\n";
     print $fh $expect;
+    close($fh);
+
+    open( $fh, ">diff.diff" ) or die print "Couldn't open $!\n";
+    print $fh $diff;
     close($fh);
 
     ok(1);

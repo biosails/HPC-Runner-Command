@@ -198,7 +198,7 @@ sub init_log {
     return $log;
 }
 
-#TODO Move this to App/execute_jobs/Log ... something to mark that this logs the
+#TODO Move this to App/execute_job/Log ... something to mark that this logs the
 #individual processes that are executed
 
 =head3 _log_commands

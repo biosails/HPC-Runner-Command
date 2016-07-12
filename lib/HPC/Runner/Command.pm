@@ -57,6 +57,7 @@ __END__
 HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
 
 =head1 SYNOPSIS
+
 To create a new project
 
     hpcrunner.pl new
@@ -67,7 +68,7 @@ To submit jobs to a cluster
 
 To run jobs on an interactive queue or workstation
 
-    hpcrunner.pl execute_jobs
+    hpcrunner.pl execute_job
 
 =head1 DESCRIPTION
 

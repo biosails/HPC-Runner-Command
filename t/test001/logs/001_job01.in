@@ -1,0 +1,3 @@
+#NOTE job_tags=Sample1
+echo "hello world from job 1" && sleep 5
+
