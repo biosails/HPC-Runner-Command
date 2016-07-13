@@ -1,9 +1,0 @@
-#NOTE job_tags=Sample1
-echo "hello world from job 1" && sleep 5
-
-#NOTE job_tags=Sample2
-echo "hello again from job 2" && sleep 5
-
-#NOTE job_tags=Sample3
-echo "goodbye from job 3"
-

@@ -115,7 +115,6 @@ sub create_meta_str {
 
     ## This is wrong
     my $ptally_commands = $self->tally_commands;
-
     my $tally_count = $self->tally_commands + ($batch->{commands} - 1);
     $batch->{tally_commands} = $ptally_commands . "-". $tally_count . "/" . $self->total_processes;
 

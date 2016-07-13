@@ -1,6 +1,5 @@
 package TestsFor::HPC::Runner::Command::Test001;
 
-
 use Test::Class::Moose;
 use HPC::Runner::Command;
 use Cwd;
@@ -15,6 +14,7 @@ use File::Slurp;
 sub test_001 : Tags(prep) {
     my $test = shift;
 
+    remove_tree("$Bin/test001");
     make_path("$Bin/test001/script");
     make_path("$Bin/test001/scratch");
 
