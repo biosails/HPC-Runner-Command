@@ -13,6 +13,7 @@ requires "File::Path", "0";
 requires "File::Spec", "0";
 requires "File::Temp", "0";
 requires "IO::File", "0";
+requires "IO::Interactive", "0";
 requires "IO::Select", "0";
 requires "IPC::Cmd", "0";
 requires "IPC::Open3", "0";
