@@ -1,7 +1,6 @@
 package HPC::Runner::Command;
 
 use MooseX::App qw(Color Config);
-#use MooseX::App qw(Config);
 
 our $VERSION = '0.01';
 
@@ -20,19 +19,84 @@ app_strict 0;
 
 =head3 plugins
 
-Load plugins. PBS, Slurm, Web, etc.
+Load plugins that are used both by the submitter and executor such as logging pluggins
 
 =cut
 
 option 'plugins' => (
     is                 => 'rw',
     isa                => 'ArrayRef[Str]',
-    documentation      => 'Load plugins',
+    documentation      => 'Load aplication plugins',
     cmd_split          => qr/,/,
     required => 0,
 );
 
+option 'plugins_opts' => (
+    is => 'rw',
+    isa => 'HashRef',
+    documentation => 'Options for application plugins',
+    required => 0,
+);
+
+
+=head3 hpc_plugins
+
+Load hpc_plugins. PBS, Slurm, Web, etc.
+
+=cut
+
+option 'hpc_plugins' => (
+    is                 => 'rw',
+    isa                => 'ArrayRef[Str]',
+    documentation      => 'Load hpc_plugins',
+    cmd_split          => qr/,/,
+    required => 0,
+);
+
+option 'hpc_plugins_opts' => (
+    is => 'rw',
+    isa => 'HashRef',
+    documentation => 'Options for hpc_plugins',
+    required => 0,
+);
+
+=head3 job_plugins
+
+Load job execution plugins
+
+=cut
+
+option 'job_plugins' => (
+    is                 => 'rw',
+    isa                => 'ArrayRef[Str]',
+    documentation      => 'Load job execution plugins',
+    cmd_split          => qr/,/,
+    required => 0,
+);
+
+option 'job_plugins_opts' => (
+    is => 'rw',
+    isa => 'HashRef',
+    documentation => 'Options for job_plugins',
+    required => 0,
+);
+
 =head2 Subroutines
+
+=cut
+
+=head3 gen_load_plugins
+
+=cut
+
+sub gen_load_plugins {
+    my $self = shift;
+
+    return unless $self->plugins;
+
+    $self->load_plugins(@{$self->plugins});
+    $self->parse_plugin_opts($self->plugins_opts);
+}
 
 =head3 hpc_load_plugins
 
@@ -41,9 +105,42 @@ option 'plugins' => (
 sub hpc_load_plugins {
     my $self = shift;
 
-    return unless $self->plugins;
+    return unless $self->hpc_plugins;
 
-    $self->load_plugins(@{$self->plugins});
+    $self->load_plugins(@{$self->hpc_plugins});
+    $self->parse_plugin_opts($self->hpc_plugins_opts);
+}
+
+=head2 Subroutines
+
+=head3 hpc_load_plugins
+
+=cut
+
+sub job_load_plugins {
+    my $self = shift;
+
+    return unless $self->job_plugins;
+
+    $self->load_plugins(@{$self->job_plugins});
+
+    $self->parse_plugin_opts($self->job_plugins_opts);
+}
+
+=head3 parse_plugin_opts
+
+parse the opts from --plugin_opts
+
+=cut
+
+sub parse_plugin_opts {
+    my $self = shift;
+    my $opt_href = shift;
+
+    return unless $opt_href;
+    while(my($k, $v) = each %{$opt_href}){
+        $self->$k($v) if $self->can($k);
+    }
 }
 
 1;

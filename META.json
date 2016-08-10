@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "HPC-Runner-App",
+   "name" : "HPC-Runner-Command",
    "no_index" : {
       "directory" : [
          "eg",

@@ -1,23 +1,8 @@
-use strict;
-use warnings;
 package HPC::Runner::Command::submit_jobs::Plugin::Dummy;
-
-use File::Path qw(make_path remove_tree);
-use File::Temp qw/ tempfile tempdir /;
-use IO::File;
-use IO::Select;
-use Cwd;
-use IPC::Open3;
-use Symbol;
-use Template;
-use Log::Log4perl qw(:easy);
-use DateTime;
-use Data::Dumper;
-use List::Util qw/shuffle/;
 
 use Moose::Role;
 
-=head1 HPC::Runner::Command::Plugin::Scheduler::Dummy;
+=head1 HPC::Runner::Command::submit_jobs::Plugin::Dummy;
 
 This is just a dummy to use for testing
 
@@ -27,14 +12,13 @@ This is just a dummy to use for testing
 
 =cut
 
-=head3 submit_slurm()
+=head3 submit_jobs()
 
-Submit jobs to slurm queue using sbatch.
-
+This is a dummy for testing - just return a value as a placeholder in job_stats
 
 =cut
 
-sub submit_job{
+sub submit_jobs{
     my $self = shift;
 
     my $jobid = "1234";

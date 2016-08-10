@@ -4,8 +4,6 @@ package HPC::Runner::App::Scheduler::JobStats;
 use Moose;
 use Data::Dumper;
 
-#TODO Add these to their own package
-
 =head1 HPC::Runner::App::Scheduler::JobStats
 
 =head2 Attributes
@@ -36,9 +34,7 @@ has 'tally_commands' => (
     is      => 'rw',
     isa     => 'Num',
     default => 1,
-    handles => {
-        add_tally_commands => 'add',
-    },
+    handles => { add_tally_commands => 'add', },
 );
 
 has 'total_batches' => (
@@ -49,11 +45,6 @@ has 'total_batches' => (
     handles => {
         set_total_batches => 'set',
         add_total_batches => 'add',
-        sub_total_batches => 'sub',
-        mul_total_batches => 'mul',
-        div_total_batches => 'div',
-        mod_total_batches => 'mod',
-        abs_total_batches => 'abs',
     },
 );
 
@@ -63,15 +54,16 @@ has batches => (
     isa     => 'HashRef',
     default => sub { {} },
     handles => {
-        keys_batches     => 'keys',
         set_batches     => 'set',
-        exists_batches  => 'exists',
         defined_batches => 'defined',
-        get_batches     => 'get',
-        has_no_batches  => 'is_empty',
-        num_batches     => 'count',
-        delete_batches  => 'delete',
-        pairs_batches   => 'kv',
+
+        #keys_batches     => 'keys',
+        #exists_batches  => 'exists',
+        #get_batches     => 'get',
+        #has_no_batches  => 'is_empty',
+        #num_batches     => 'count',
+        #delete_batches  => 'delete',
+        #pairs_batches   => 'kv',
     },
 );
 
@@ -81,15 +73,16 @@ has jobnames => (
     isa     => 'HashRef',
     default => sub { {} },
     handles => {
-        keys_jobnames     => 'keys',
+        keys_jobnames    => 'keys',
+        defined_jobnames => 'defined',
         set_jobnames     => 'set',
         exists_jobnames  => 'exists',
-        defined_jobnames => 'defined',
-        get_jobnames     => 'get',
-        has_no_jobnames  => 'is_empty',
-        num_jobnames     => 'count',
-        delete_jobnames  => 'delete',
-        pairs_jobnames   => 'kv',
+
+        #get_jobnames     => 'get',
+        #has_no_jobnames  => 'is_empty',
+        #num_jobnames     => 'count',
+        #delete_jobnames  => 'delete',
+        #pairs_jobnames   => 'kv',
     },
 );
 
@@ -102,7 +95,7 @@ has jobnames => (
 
 sub create_meta_str {
     my $self          = shift;
-    my $counter = shift;
+    my $counter       = shift;
     my $batch_counter = shift;
     my $current_job   = shift;
 
@@ -110,22 +103,26 @@ sub create_meta_str {
 
     my $batch = $self->{batches}->{$batchname};
     $batch->{total_processes} = $self->total_processes;
-    $batch->{total_batches} = $self->total_batches;
-    $batch->{batch_index} = $batch_counter . "/" . $self->total_batches;
+    $batch->{total_batches}   = $self->total_batches;
+    $batch->{batch_index}     = $batch_counter . "/" . $self->total_batches;
 
     ## This is wrong
     my $ptally_commands = $self->tally_commands;
-    my $tally_count = $self->tally_commands + ($batch->{commands} - 1);
-    $batch->{tally_commands} = $ptally_commands . "-". $tally_count . "/" . $self->total_processes;
+    my $tally_count = $self->tally_commands + ( $batch->{commands} - 1 );
+    $batch->{tally_commands}
+        = $ptally_commands . "-"
+        . $tally_count . "/"
+        . $self->total_processes;
 
-    $self->add_tally_commands($batch->{commands});
+    $self->add_tally_commands( $batch->{commands} );
 
     my $json      = JSON->new->allow_nonref;
     my $json_text = $json->encode($batch);
 
+    $batch->{meta_str} = $json_text;
     $DB::single = 2;
     $DB::single = 2;
-    $json_text  = " --metastr \'$json_text\'";
+    $json_text  = "--metastr \'$json_text\'";
     return $json_text;
 }
 
@@ -150,9 +147,9 @@ sub collect_stats {
     $self->set_batches(
         $batch_counter . "_"
             . $current_job => {
-            commands      => $cmd_counter,
-            jobname       => $current_job,
-            batch         => $batch_counter,
+            commands => $cmd_counter,
+            jobname  => $current_job,
+            batch    => $batch_counter,
             }
     );
 
@@ -194,7 +191,9 @@ sub do_stats {
         my $lenjobs = $#job_batches + 1;
         $self->batches->{$batch}->{job_batches} = $index . "/" . $lenjobs;
 
-        print "Job batches are ".$self->batches->{$batch}->{job_batches}."\n";
+        print "Job batches are "
+            . $self->batches->{$batch}->{job_batches} . "\n";
+
         #$href->{total_processes} = $self->total_processes;
         #$href->{total_batches}   = $self->total_batches;
 
@@ -203,8 +202,10 @@ sub do_stats {
         $self->batches->{total_processes} = $self->total_processes;
         $self->batches->{total_batches}   = $self->total_batches;
 
-        $self->batches->{batch_count} = $href->{batch} . "/" . $self->total_batches;
+        $self->batches->{batch_count}
+            = $href->{batch} . "/" . $self->total_batches;
 
     }
 }
+
 1;

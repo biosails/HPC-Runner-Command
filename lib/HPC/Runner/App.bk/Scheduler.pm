@@ -974,7 +974,7 @@ sub process_batch {
 
     chmod 0777, $self->slurmfile;
 
-    my $scheduler_id = $self->submit_job;
+    my $scheduler_id = $self->submit_jobs;
 
     $self->jobs->{$self->current_job}->add_scheduler_ids($scheduler_id);
 }
@@ -1016,13 +1016,62 @@ sub process_batch_command {
 
     my $metastr = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
         $self->current_job );
+    $command .= " \\\n\t" if $metastr;
     $command .= $metastr if $metastr;
 
-    #$command .= "\n";
-    #my $pluginstr = $self->create_plugin_str;
-    #$command .= $pluginstr if $pluginstr;
+    my $pluginstr = $self->create_plugin_str;
+    $command .= $pluginstr if $pluginstr;
 
+    $command .= "\n";
     return $command;
+}
+
+=head3 create_plugin_str
+
+Make sure to pass plugins to job runner
+
+=cut
+
+sub create_plugin_str{
+    my $self = shift;
+
+    my $plugin_str = "";
+
+    if($self->job_plugins){
+        $plugin_str .= " \\\n\t";
+        $plugin_str .= "--job_plugins ".join(",", @{$self->job_plugins});
+        $plugin_str .= " \\\n\t" if $self->job_plugins_opts;
+        $plugin_str .= $self->unparse_plugin_opts($self->job_plugins_opts, 'job_plugins') if $self->job_plugins_opts;
+    }
+
+    if($self->plugins){
+        $plugin_str .= " \\\n\t";
+        $plugin_str .= "--plugins ".join(",", @{$self->plugins});
+        $plugin_str .= " \\\n\t" if $self->plugins_opts;
+        $plugin_str .= $self->unparse_plugin_opts($self->plugins_opts, 'plugins') if $self->plugins_opts;
+    }
+
+    return $plugin_str;
+}
+
+sub unparse_plugin_opts {
+    my $self = shift;
+    my $opt_href = shift;
+    my $opt_opt = shift;
+
+    my $opt_str = "";
+
+    return unless $opt_href;
+
+    #Get the opts
+
+    while(my($k, $v) = each %{$opt_href}){
+        next unless $k;
+        $v = "" unless $v;
+        $opt_str .= "--$opt_opt"."_opts ".$k."=".$v." ";
+    }
+
+    return $opt_str;
 }
 
 =head3 submit_to_scheduler

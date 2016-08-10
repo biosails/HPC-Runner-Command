@@ -20,7 +20,6 @@ Execute the job.
 
 =cut
 
-
 =head3 jobname
 
 Specify a job name, and jobs will be 001_jobname, 002_jobname, 003_jobname
@@ -60,6 +59,31 @@ has 'queue' => (
     }
 );
 
+has 'wait' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+);
+
+has 'counter' => (
+    traits   => ['Counter'],
+    is       => 'rw',
+    isa      => 'Num',
+    required => 1,
+    default  => 1,
+    handles  => {
+        inc_counter   => 'inc',
+        dec_counter   => 'dec',
+        reset_counter => 'reset',
+    },
+);
+
+has 'jobref' => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [ [] ] },
+);
+
 has 'mce' => (
     is => 'rw',
     lazy => 1,
@@ -93,11 +117,11 @@ has 'using_mce' => (
 
 =head3 go
 
-Initialize MCE things and use Runner::Init to parse and exec commands
+Initialize MCE queues
 
 =cut
 
-sub go{
+sub run_mce{
     my $self = shift;
 
     my $dt1 = DateTime->now();
@@ -123,7 +147,6 @@ sub go{
         pattern => '%Y years, %m months, %e days, %H hours, %M minutes, %S seconds'
     );
 
-    #$self->log->info("Total execution time ".$format->format_duration($duration));
     $self->log_main_messages('info', "Total execution time ".$format->format_duration($duration));
     return;
 }

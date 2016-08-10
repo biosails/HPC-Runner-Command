@@ -15,8 +15,9 @@ sub test_000 : Tags(require) {
     my $self = shift;
 
     require_ok('HPC::Runner::Command');
-    require_ok('HPC::Runner::App::Base');
-    require_ok('HPC::Runner::App::Scheduler');
+    require_ok('HPC::Runner::Command::Utils::Base');
+    require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
+    ok(1);
 }
 
 sub test_001 : Tags(prep) {
@@ -63,7 +64,7 @@ sub construct {
         argv => [
             "submit_jobs",       "--infile",
             $t,                  "--outdir",
-            "$Bin/test002/logs", "--plugins",
+            "$Bin/test002/logs", "--hpc_plugins",
             "Dummy",
         ]
     );
@@ -96,8 +97,6 @@ sub test_005 : Tags(submit_jobs) {
 
     my $test05 = construct();
 
-    $test05->hpc_load_plugins();
-
     $test05->first_pass(1);
     $test05->parse_file_slurm();
     $test05->schedule_jobs();
@@ -127,13 +126,13 @@ EOF
     $expect .= "\t--infile $cwd/t/test002/logs/001_job01.in \\\n";
     $expect .= "\t--outdir $cwd/t/test002/logs \\\n";
     $expect .= "\t--logname 001_job01 \\\n";
-    $expect .= "\t--process_table $logdir/process_table.md";
+    $expect .= "\t--process_table $logdir/process_table.md \\\n\t";
 
     my $got = read_file( $cwd . "/t/test002/logs/001_job01.sh" );
 
-    $got =~ s/ --metastr.*//g;
+    $got =~ s/--metastr.*//g;
 
-    is_deeply( $got, $expect );
+    is_deeply( $got, $expect);
 
     ok(1);
 }
@@ -142,7 +141,6 @@ sub test_007 : Tags(check_hpc_meta) {
     my $self = shift;
 
     my $test07 = construct();
-    $test07->hpc_load_plugins();
 
     my $line = "#HPC module=thing1,thing2\n";
     $test07->process_hpc_meta($line);
@@ -154,7 +152,6 @@ sub test_008 : Tags(check_hpc_meta) {
     my $self = shift;
 
     my $test08 = construct();
-    $test08->hpc_load_plugins();
 
     my $line = "#HPC jobname=job03\n";
     $test08->process_hpc_meta($line);
@@ -162,7 +159,7 @@ sub test_008 : Tags(check_hpc_meta) {
     $line = "#HPC deps=job01,job02\n";
     $test08->process_hpc_meta($line);
 
-    is_deeply( [ 'job01', 'job02' ], $test08->deps, 'Deps pass' );
+    is_deeply( [ 'job01', 'job02' ], $test08->deps, 'Deps pass');
     is_deeply( { job03 => [ 'job01', 'job02' ] },
         $test08->job_deps, 'Job Deps Pass' );
 }
@@ -171,7 +168,6 @@ sub test_009 : Tags(check_hpc_meta) {
     my $self = shift;
 
     my $test09 = construct();
-    $test09->hpc_load_plugins();
 
     my $line = "#HPC jobname=job01\n";
     $test09->process_hpc_meta($line);
@@ -183,7 +179,6 @@ sub test_010 : Tags(check_note_meta) {
     my $self = shift;
 
     my $test09 = construct();
-    $test09->hpc_load_plugins();
 
     my $line = "#NOTE job_tags=SAMPLE_01\n";
     $test09->check_note_meta($line);
@@ -195,7 +190,6 @@ sub test_011 : Tags(check_hpc_meta) {
     my $self = shift;
 
     my $test = construct();
-    $test->hpc_load_plugins();
 
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
@@ -209,7 +203,6 @@ sub test_012 : Tags(job_stats) {
 
     my $test = construct();
 
-    $test->hpc_load_plugins();
 
     $test->first_pass(1);
     $test->parse_file_slurm();
@@ -260,7 +253,6 @@ sub test_013 : Tags(jobname) {
 
     my $test = construct();
 
-    $test->hpc_load_plugins();
     is( 'hpcjob_001', $test->jobname, 'Jobname is ok' );
 }
 
@@ -268,7 +260,6 @@ sub test_014 : Tags(job_stats) {
     my $self = shift;
 
     my $test = construct();
-    $test->hpc_load_plugins();
 
     $test->first_pass(1);
     $test->parse_file_slurm();

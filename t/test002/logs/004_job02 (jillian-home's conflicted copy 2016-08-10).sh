@@ -14,4 +14,4 @@ hpcrunner.pl execute_job \
 	--outdir /home/jillian/Dropbox/projects/perl/HPC-Runner-App/t/test002/logs \
 	--logname 004_job02 \
 	--process_table /home/jillian/Dropbox/projects/perl/HPC-Runner-App/t/test002/logs/2016-08-10-slurm_logs/process_table.md \
-	--metastr '{"total_processes":4,"commands":1,"tally_commands":"4-4/4","jobname":"job02","batch_index":"4/4","batch":"004","total_batches":4}'
+	--metastr '{"tally_commands":"4-4/4","jobname":"job02","commands":1,"total_batches":4,"batch_index":"4/4","total_processes":4,"batch":"004"}'

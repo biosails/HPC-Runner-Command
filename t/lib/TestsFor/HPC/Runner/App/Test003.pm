@@ -18,7 +18,7 @@ sub construct {
         argv => [
             "submit_jobs",       "--infile",
             $t,                  "--outdir",
-            "$Bin/test003/logs", "--plugins",
+            "$Bin/test003/logs", "--hpc_plugins",
             "Dummy",
         ]
     );
@@ -68,9 +68,6 @@ sub test_003 : Tags(construct) {
     my $self = shift;
 
     my $test = construct();
-
-    $test->hpc_load_plugins();
-
 
     $test->first_pass(1);
     $test->parse_file_slurm();
@@ -130,8 +127,7 @@ sub test_004 : Tags(job_stats) {
 
     my $test = construct();
 
-    $test->hpc_load_plugins();
-
+    #$test->submit_jobs;
     $test->first_pass(1);
     $test->parse_file_slurm();
     $test->schedule_jobs();
@@ -143,4 +139,5 @@ sub test_004 : Tags(job_stats) {
 
     ok(1);
 }
+
 1;
