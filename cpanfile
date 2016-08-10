@@ -38,4 +38,13 @@ requires "YAML::XS", "0";
 
 on test => sub {
     requires 'Test::More', '0.96';
+    requires "Capture::Tiny", "0";
+    requires "File::Slurp", "0";
+    requires "FindBin", "0";
+    requires "Slurp", "0";
+    requires "Test::Class::Moose", "0";
+    requires "Test::Class::Moose::Load", "0";
+    requires "Test::Class::Moose::Runner", "0";
+    requires "Test::More" : "0.96";
+    requires "Text::Diff", "0";
 };
