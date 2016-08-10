@@ -1,0 +1,2 @@
+#NOTE job_tags=Sample3
+echo "goodbye from job 3"

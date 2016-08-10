@@ -1,0 +1,9 @@
+#!/bin/bash
+
+random-string()
+{
+    cat /dev/urandom | tr -dc '0-9' | fold -w ${1:-32} | head -n 1
+}
+
+echo "Submitted job batch"
+random-string
