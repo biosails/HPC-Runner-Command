@@ -20,6 +20,7 @@ install:
   - cpanm --notest Package::DeprecationManager
   - cpanm --notest --installdeps .
   - cpanm --quiet --notest --skip-satisfied Dist::Milla
+  - cpan-install --notest Dist::Zilla::Plugin::AutoPrereqs
   - cpan-install --coverage   # installs converage prereqs, if enabled
 before_script:
   - coverage-setup
