@@ -13,14 +13,10 @@ use File::Slurp;
 
 sub construct {
 
+    chdir("$Bin/test003");
     my $t = "$Bin/test003/script/test003.1.sh";
     MooseX::App::ParsedArgv->new(
-        argv => [
-            "submit_jobs",       "--infile",
-            $t,                  "--outdir",
-            "$Bin/test003/logs", "--hpc_plugins",
-            "Dummy",
-        ]
+        argv => [ "submit_jobs", "--infile", $t, "--hpc_plugins", "Dummy", ]
     );
 
     my $test = HPC::Runner::Command->new_with_command();
@@ -117,8 +113,9 @@ sub test_003 : Tags(construct) {
         },
     };
 
-    is_deeply($href, $test->jobs, 'JobRef passes');
-    is_deeply(['hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004'], $test->schedule, 'Schedule passes');
+    is_deeply( $href, $test->jobs, 'JobRef passes' );
+    is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
+        $test->schedule, 'Schedule passes' );
     ok(1);
 }
 
@@ -127,7 +124,6 @@ sub test_004 : Tags(job_stats) {
 
     my $test = construct();
 
-    #$test->submit_jobs;
     $test->first_pass(1);
     $test->parse_file_slurm();
     $test->schedule_jobs();
@@ -137,6 +133,13 @@ sub test_004 : Tags(job_stats) {
     $test->first_pass(0);
     $test->iterate_schedule();
 
+    ok(1);
+}
+
+sub test_005 : Tags(submit_jobs) {
+    my $test = construct();
+
+    $test->execute();
     ok(1);
 }
 

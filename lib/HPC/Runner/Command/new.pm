@@ -5,10 +5,10 @@ package HPC::Runner::Command::new;
 use IPC::Cmd qw[can_run];
 use File::Basename;
 use Cwd;
-#use String::CamelCase qw(camelize decamelize wordsplit);
 use File::Path qw(make_path remove_tree);
-#use String::Escape qw( quote  );
 use YAML::XS;
+#use String::CamelCase qw(camelize decamelize wordsplit);
+#use String::Escape qw( quote  );
 
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
@@ -57,44 +57,21 @@ sub execute_command{
 sub execute{
     my $self = shift;
 
-
-    #Will make this a separate plugin
-    #can_run('npm') or $self->log->warn("NPM is not installed or not in your path! You must install Nodejs/npm in order to view your new lab notebook!");
-    #can_run('hexo') or $self->log->warn("Hexo is not installed or not in your path! You must install hexo in order to view your new lab notebook!");
-
     my $project = $self->projectname;
-    #$self->projectname(camelize($self->projectname));
 
     $DB::single=2;
-    make_path($self->projectname."/lib");
     make_path($self->projectname."/conf");
     make_path($self->projectname."/script");
-    make_path($self->projectname."/test");
-    make_path($self->projectname."/graph");
-    make_path($self->projectname."/www");
-    make_path($self->projectname."/archive");
     make_path($self->projectname."/data");
-    make_path($self->projectname."/scratch");
+    make_path($self->projectname."/hpcrunner");
 
     chdir $self->projectname;
     $self->gen_project_yml;
-
     $self->gen_gitignore;
 
-    $self->log->info("By default ./data and ./archive are added to your git ignore.");
-    chdir 'www/' or die $self->log->fatal("Could not change to www directory!");
-
-    $self->log->info("Creating new notebook this could take some time...");
-#    $self->execute_command("hexo init ".quote($self->projectname)) or die $self->log->fatal("Could not run hexo init");
-    #$self->execute_command("hexo init ".quote($self->projectname));
+    $self->log->info("By default ./data and ./hpcrunner are added to your git ignore.");
 
     $DB::single=2;
-
-    chdir $self->projectname or die $self->log->fatal("Could not cd to projectdir");
-
-    #$self->execute_command("npm install", "Installing npm packages... This could take some take") or die $self->log->fatal("Could not complete npm install!");
-
-    #$self->execute_command("npm install hexo-generator-feed --save");
 
     $self->log->info("Setup complete!");
 }
@@ -104,7 +81,7 @@ sub gen_project_yml {
 
     open(my $p, ">.project.yml") or die print "Couldn't open a file for writing! $!\n";
 
-    my $hash = {ProjectName => $self->projectname, TopDir => getcwd(), LogDir => getcwd()."/www/".$self->projectname."/logs"};
+    my $hash = {ProjectName => $self->projectname, TopDir => getcwd(), LogDir => getcwd()."/hpcrunner/logs", BlogDir => getcwd()."/hpcrunner/www/hexo/"};
     print $p Dump $hash;
 
     close $p;
@@ -120,9 +97,7 @@ sub gen_gitignore {
     open(my $p, ">.gitignore") or die print "Couldn't open a file for writing! $!\n";
 
     print $p "data\n";
-    print $p "archive\n";
-    print $p "www\n";
-    print $p "scratch\n";
+    print $p "hpcrunner\n";
 
     $self->execute_command("git add .gitignore", "Added .gitignore...");
 

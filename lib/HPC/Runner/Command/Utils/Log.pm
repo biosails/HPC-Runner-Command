@@ -12,8 +12,8 @@ use Cwd;
 use File::Path qw(make_path);
 use File::Spec;
 
-use Moose::Role;
 use MooseX::App::Role;
+use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 =head1 HPC::Runner::App::Log
 
@@ -30,12 +30,14 @@ Pattern to use to write out logs directory. Defaults to outdir/prunner_current_d
 
 option 'logdir' => (
     is       => 'rw',
-    isa      => 'Str',
+    isa      => AbsPath,
+    coerce   => 1,
     lazy     => 1,
     required => 1,
     default  => \&set_logdir,
     documentation =>
         q{Directory where logfiles are written. Defaults to current_working_directory/prunner_current_date_time/log1 .. log2 .. log3'},
+    trigger => \&_make_the_dirs,
 );
 
 =head3 show_process_id
@@ -68,7 +70,7 @@ option 'process_table' => (
     },
     default => sub {
         my $self = shift;
-        return $self->logdir . "/process_table.md";
+        return $self->logdir . "/001-process_table.md";
     },
     lazy => 1,
 );
@@ -106,9 +108,29 @@ has 'dt' => (
     lazy    => 1,
 );
 
+#TODO Change to submit_log and execute_log
+
 has 'log' => ( is => 'rw', );
 
 has 'command_log' => ( is => 'rw', );
+
+has 'app_log' => (
+    is      => 'rw',
+    default => sub {
+        my $self = shift;
+
+        return Log::Log4perl->init( \ <<'EOT');
+  log4perl.category = DEBUG, Screen
+  log4perl.appender.Screen = \
+      Log::Log4perl::Appender::ScreenColoredLevels
+  log4perl.appender.Screen.layout = \
+      Log::Log4perl::Layout::PatternLayout
+  log4perl.appender.Screen.layout.ConversionPattern = \
+      [%d] %m %n
+EOT
+        }
+
+);
 
 has 'logfile' => (
     traits  => ['String'],
@@ -170,12 +192,25 @@ sub set_logdir {
     my $self = shift;
 
     my $logdir;
-    $logdir = $self->outdir . "/" . $self->set_logfile . "-" . $self->logname;
 
-    $DB::single = 2;
+    #TODO Add in Version
+    if ( $self->has_version && $self->has_git ) {
+        $logdir
+            = "hpc-runner/"
+            . $self->version . "/logs" . "/"
+            . $self->set_logfile . "-"
+            . $self->logname;
+    }
+    else {
+        $logdir
+            = "hpc-runner/logs" . "/"
+            . $self->set_logfile . "-"
+            . $self->logname;
+    }
     $logdir =~ s/\.log$//;
 
-    make_path($logdir) if !-d $logdir;
+    $self->_make_the_dirs($logdir);
+
     return $logdir;
 }
 
@@ -189,8 +224,6 @@ sub set_logfile {
     my $self = shift;
 
     my $tt = DateTime->now( time_zone => 'local' )->ymd();
-
-    #my $tt = $self->dt->ymd();
     return "$tt";
 }
 
@@ -235,6 +268,8 @@ perl command.pl 2
 
 =cut
 
+#TODO move to execute_jobs
+
 sub _log_commands {
     my ( $self, $pid ) = @_;
 
@@ -249,7 +284,7 @@ sub _log_commands {
 
     #TODO Make table data its own class and return it
     $self->clear_table_data;
-    $self->set_table_data( cmdpid => $cmdpid );
+    $self->set_table_data( cmdpid     => $cmdpid );
     $self->set_table_data( start_time => "$ymd $hms" );
 
     my $meta = $self->pop_note_meta;
@@ -283,13 +318,19 @@ Default is dt, jobname, counter
 =cut
 
 sub name_log {
-    my $self = shift;
-    my $pid  = shift;
+    my $self   = shift;
+    my $cmdpid = shift;
+
+    my $counter = $self->counter;
 
     $self->logfile( $self->set_logfile );
-    my $string = sprintf( "%03d", $self->counter );
-    $self->append_logfile( "-CMD_" . $string . ".log" );
+    $counter = sprintf( "%03d", $counter );
+    $self->append_logfile( "-CMD_" . $counter . "-PID_$cmdpid.md" );
+
+    $self->set_job_tag( "$counter" => $cmdpid );
 }
+
+#TODO move to execute_jobs
 
 sub log_table {
     my $self     = shift;
@@ -305,15 +346,15 @@ sub log_table {
     $self->set_table_data( exitcode  => $exitcode );
     $self->set_table_data( duration  => $duration );
 
-    my $version = "0.0.0";
-
-    #my $version = $self->version;
+    my $version = $self->version || "0.0";
     my $job_tags = "";
 
     my $logfile = $self->logdir . "/" . $self->logfile;
 
     open( my $pidtablefh, ">>" . $self->process_table )
-        or die print "Couldn't open process file $!\n";
+        or die $self->app_log->fatal("Couldn't open process file $!\n");
+
+    #or die print "Couldn't open process file $!\n";
 
     if ( $self->can('job_tags') ) {
         my $aref = $self->get_job_tag($cmdpid) // [];
@@ -322,7 +363,7 @@ sub log_table {
         $self->set_table_data( job_tags => $job_tags );
     }
 
-    if ( $self->can('version') ) {
+    if ( $self->can('version') && $self->has_version ) {
         $version = $self->version;
         $self->set_table_data( version => $version );
     }
@@ -331,7 +372,7 @@ sub log_table {
         my $schedulerid = $self->job_scheduler_id || '';
         my $jobname     = $self->jobname          || '';
         print $pidtablefh <<EOF;
-|$schedulerid|$jobname|$version|$job_tags|$cmdpid|$exitcode|$duration|
+|$version|$schedulerid|$jobname|$job_tags|$cmdpid|$exitcode|$duration|
 EOF
 
         $self->set_table_data( schedulerid => $schedulerid );
@@ -343,6 +384,8 @@ EOF
 EOF
     }
 }
+
+#TODO move to execute_jobs
 
 sub log_cmd_messages {
     my ( $self, $level, $message, $cmdpid ) = @_;
@@ -373,10 +416,19 @@ sub log_job {
     $errfh = gensym();    # if you uncomment this line, $errfh will
     my $cmdpid;
     eval { $cmdpid = open3( $infh, $outfh, $errfh, $self->cmd ); };
-    die $@ if $@;
+
+    if ($@) {
+        die $self->app_log->fatal(
+            "There was an error running the command $@\n");
+    }
+
     if ( !$cmdpid ) {
-        print
-            "There is no $cmdpid please contact your administrator with the full command given\n";
+
+#print
+#"There is no $cmdpid please contact your administrator with the full command given\n";
+        $self->app_log->fatal(
+            "There is no process id please contact your administrator with the full command\n"
+        );
         die;
     }
     $infh->autoflush();

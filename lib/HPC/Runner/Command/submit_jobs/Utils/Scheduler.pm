@@ -650,7 +650,7 @@ sub run {
     my $self = shift;
 
     $self->logname('slurm_logs');
-    $self->log( $self->init_log );
+    #$self->log( $self->init_log );
 
     #TODO add back in support for serial workflows
     if ( $self->serial ) {
@@ -935,6 +935,7 @@ sub process_batch {
     my $counter = $self->batch_counter;
     $counter = sprintf( "%03d", $counter );
 
+    make_path($self->outdir) unless -d $self->outdir;
     $self->cmdfile(
         $self->outdir . "/$counter" . "_" . $self->current_job . ".in" );
     $self->slurmfile(

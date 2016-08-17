@@ -37,9 +37,9 @@ option 'outdir' => (
     isa           => AbsPath,
     coerce        => 1,
     required      => 1,
-    default       => sub { return "logs" },
+    default       => sub { return "hpc-runner/scratch" },
     documentation => q{Directory to write out files.},
-    trigger       => \&_set_outdir,
+    trigger       => \&_make_the_dirs,
 );
 
 
@@ -99,10 +99,47 @@ Internal variable
 
 =cut
 
-sub _set_outdir {
+sub _make_the_dirs {
     my ( $self, $outdir ) = @_;
 
-    make_path($outdir) if -d $outdir;
+    make_path($outdir) unless -d $outdir;
+}
+
+=head3 datetime_now
+
+=cut
+
+sub datetime_now {
+    my $self = shift;
+
+    my $dt = DateTime->now( time_zone => 'local' );
+
+    my $ymd = $dt->ymd();
+    my $hms = $dt->hms();
+
+    return($dt, $ymd, $hms);
+}
+
+=head3 git_things
+
+Git versioning
+
+=cut
+
+sub git_things {
+    my $self = shift;
+
+    $self->init_git;
+    $self->dirty_run;
+    $self->git_info;
+    if ( $self->tags ) {
+        push( @{ $self->tags }, "$self->{version}" );
+    }
+    else {
+        $self->tags( [ $self->version ] );
+    }
+    my @tmp = uniq( @{ $self->tags } );
+    $self->tags( \@tmp );
 }
 
 1;

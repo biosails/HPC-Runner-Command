@@ -5,6 +5,7 @@ extends 'HPC::Runner::Command';
 
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
+with 'HPC::Runner::Command::Utils::Git';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler';
 
 command_short_description 'Submit jobs to the HPC system';

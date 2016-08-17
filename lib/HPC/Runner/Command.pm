@@ -81,6 +81,20 @@ option 'job_plugins_opts' => (
     required => 0,
 );
 
+=head3 tags
+
+Submission tags
+
+=cut
+
+option 'tags' => (
+    is                 => 'rw',
+    isa                => 'ArrayRef[Str]',
+    documentation      => 'Tags for the whole submission',
+    cmd_split          => qr/,/,
+    required => 0,
+);
+
 =head2 Subroutines
 
 =cut

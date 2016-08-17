@@ -174,7 +174,8 @@ sub parse_file_mce{
     $DB::single=2;
 
     my $fh = IO::File->new( $self->infile, q{<} ) or $self->log_main_messages("fatal", "Error opening file  ".$self->infile."  ".$!);
-    die unless $fh;
+    die print "The infile does not exist!\n" unless $fh;
+    #die unless $fh;
 
     while(<$fh>){
         my $line = $_;

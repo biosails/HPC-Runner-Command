@@ -16,6 +16,8 @@ sub test_000 : Tags(require) {
 
     require_ok('HPC::Runner::Command');
     require_ok('HPC::Runner::Command::Utils::Base');
+    require_ok('HPC::Runner::Command::Utils::Log');
+    require_ok('HPC::Runner::Command::Utils::Git');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
     ok(1);
 }
@@ -59,6 +61,7 @@ EOF
 
 sub construct {
 
+    chdir("$Bin/test002");
     my $t = "$Bin/test002/script/test002.1.sh";
     MooseX::App::ParsedArgv->new(
         argv => [
@@ -123,12 +126,12 @@ cd $cwd
 hpcrunner.pl execute_job \\
 EOF
     $expect .= "\t--procs 4 \\\n";
-    $expect .= "\t--infile $cwd/t/test002/logs/001_job01.in \\\n";
-    $expect .= "\t--outdir $cwd/t/test002/logs \\\n";
+    $expect .= "\t--infile $Bin/test002/logs/001_job01.in \\\n";
+    $expect .= "\t--outdir $Bin/test002/logs \\\n";
     $expect .= "\t--logname 001_job01 \\\n";
-    $expect .= "\t--process_table $logdir/process_table.md \\\n\t";
+    $expect .= "\t--process_table $logdir/001-process_table.md \\\n\t";
 
-    my $got = read_file( $cwd . "/t/test002/logs/001_job01.sh" );
+    my $got = read_file( $Bin . "/test002/logs/001_job01.sh" );
 
     $got =~ s/--metastr.*//g;
 
