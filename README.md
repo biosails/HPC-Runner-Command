@@ -14,6 +14,10 @@ Load hpc\_plugins. PBS, Slurm, Web, etc.
 
 Load job execution plugins
 
+### tags
+
+Submission tags
+
 ## Subroutines
 
 ### gen\_load\_plugins
