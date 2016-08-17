@@ -50,10 +50,12 @@ sub test_003 : Tags(construction) {
 
     my $cwd = getcwd();
 
+    #Worst test ever
     MooseX::App::ParsedArgv->new( argv => [qw(new ProjectName)] );
     my $test01 = HPC::Runner::Command->new_with_command();
     isa_ok( $test01, 'HPC::Runner::Command' );
 
+    chdir("$Bin/test001");
     my $t = "$Bin/test001/script/test001.1.sh";
     MooseX::App::ParsedArgv->new(
         argv => [
@@ -67,28 +69,6 @@ sub test_003 : Tags(construction) {
     is( $test03->outdir, "$Bin/test001/logs", "Outdir is logs" );
     is( $test03->infile, "$t", "Infile is ok" );
     isa_ok( $test03, 'HPC::Runner::Command' );
-}
-
-sub print_diff {
-    my $got = shift;
-    my $expect = shift;
-
-    use Text::Diff;
-
-
-    my $diff = diff \$got, \$expect;
-    print "Diff is\n\n$diff\n\n";
-
-    my $fh;
-    open($fh, ">test01.got.diff") or die print "Couldn't open $!\n";
-    print $fh $got;
-    close($fh);
-
-    open($fh, ">test01.expect.diff") or die print "Couldn't open $!\n";
-    print $fh $expect;
-    close($fh);
-
-    ok(1);
 }
 
 1;

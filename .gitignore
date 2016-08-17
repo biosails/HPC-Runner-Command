@@ -5,3 +5,6 @@
 MYMETA.*
 !META.json
 /.prove
+/t/test001
+/t/test002
+/t/test003

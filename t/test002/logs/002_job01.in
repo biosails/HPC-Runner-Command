@@ -1,2 +1,0 @@
-#NOTE job_tags=Sample2
-echo "hello again from job 2" && sleep 5
