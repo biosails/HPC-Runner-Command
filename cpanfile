@@ -25,6 +25,7 @@ requires "IPC::Open3" , "0";
 requires "JSON" , "0";
 requires "List::MoreUtils" , "0";
 requires "List::Util" , "0";
+requires "List::Uniq" , "0";
 requires "Log::Log4perl" , "0";
 requires "MCE" , "0";
 requires "MCE::Queue" , "0";
