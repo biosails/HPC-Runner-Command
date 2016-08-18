@@ -15,6 +15,7 @@ command_long_description 'Take the parsed files from hpcrunner.pl submit_jobs an
 sub BUILD {
     my $self = shift;
 
+    $self->git_things;
     $self->gen_load_plugins;
     $self->job_load_plugins;
 }

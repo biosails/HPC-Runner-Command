@@ -1022,8 +1022,30 @@ sub process_batch_command {
     my $pluginstr = $self->create_plugin_str;
     $command .= $pluginstr if $pluginstr;
 
+    my $version_str = $self->create_version_str;
+    $command .= $version_str if $version_str;
+
     $command .= "\n";
     return $command;
+}
+
+=head3 create_version_str
+
+If there is a version add it
+
+=cut
+
+sub create_version_str{
+    my $self = shift;
+
+    my $version_str = "";
+
+    if($self->has_git && $self->has_version){
+        $version_str .= " \\\n\t";
+        $version_str .= "--version ".$self->version;
+    }
+
+    return $version_str;
 }
 
 =head3 create_plugin_str

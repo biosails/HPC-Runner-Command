@@ -2,6 +2,7 @@ package HPC::Runner::Command::Utils::Base;
 
 use Cwd;
 use File::Path qw(make_path remove_tree);
+use List::Uniq ':all';
 
 use Moose::Role;
 use MooseX::App::Role;
@@ -35,13 +36,14 @@ Directory to write out files and optionally, logs.
 option 'outdir' => (
     is            => 'rw',
     isa           => AbsPath,
+    lazy          => 1,
     coerce        => 1,
     required      => 1,
-    default       => sub { return "hpc-runner/scratch" },
+    default       => \&set_outdir,
     documentation => q{Directory to write out files.},
     trigger       => \&_make_the_dirs,
+    predicate     => 'has_outdir',
 );
-
 
 =head3 job_scheduler_id
 
@@ -92,10 +94,37 @@ has 'cmd' => (
     clearer   => 'clear_cmd',
 );
 
-
-=head3 _set_outdir
+=head3 set_outdir
 
 Internal variable
+
+=cut
+
+sub set_outdir {
+    my $self = shift;
+
+    if ( $self->has_outdir ) {
+        $self->_make_the_dirs( $self->outdir );
+        return;
+    }
+
+    my $outdir;
+
+    if ( $self->has_version && $self->has_git ) {
+        $outdir = "hpc-runner/" . $self->version . "/scratch";
+    }
+    else {
+        $outdir = "hpc-runner/scratch";
+    }
+
+    $self->_make_the_dirs($outdir);
+
+    return $outdir;
+}
+
+=head3 make_the_dirs
+
+Make any necessary directories
 
 =cut
 
@@ -117,7 +146,7 @@ sub datetime_now {
     my $ymd = $dt->ymd();
     my $hms = $dt->hms();
 
-    return($dt, $ymd, $hms);
+    return ( $dt, $ymd, $hms );
 }
 
 =head3 git_things

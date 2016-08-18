@@ -129,6 +129,7 @@ sub run_mce{
     $self->prepend_logfile("MAIN_");
     $self->append_logfile(".log");
     $self->log($self->init_log);
+
     $self->mce->spawn;
 
     #MCE specific

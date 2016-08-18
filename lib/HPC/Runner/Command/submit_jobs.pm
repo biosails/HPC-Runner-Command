@@ -15,6 +15,7 @@ more templates to submit to the scheduler of your choice (SLURM, PBS, etc)';
 sub BUILD {
     my $self = shift;
 
+    $self->git_things;
     $self->gen_load_plugins;
     $self->hpc_load_plugins;
 }

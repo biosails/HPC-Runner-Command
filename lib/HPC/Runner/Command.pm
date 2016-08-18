@@ -7,13 +7,37 @@ our $VERSION = '0.01';
 use IPC::Cmd;
 use Data::Dumper;
 use Cwd qw(getcwd);
+use Try::Tiny;
 
 with 'MooseX::Object::Pluggable';
 
 app_strict 0;
 
+=encoding utf-8
 
-=head1 HPC::Runner::Command
+=head1 NAME
+
+HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
+
+=head1 SYNOPSIS
+
+To create a new project
+
+    hpcrunner.pl new
+
+To submit jobs to a cluster
+
+    hpcrunner.pl submit_jobs
+
+To run jobs on an interactive queue or workstation
+
+    hpcrunner.pl execute_job
+
+=head1 DESCRIPTION
+
+HPC::Runner::App is a set of libraries for scaffolding data analysis projects, submitting and executing jobs on an HPC cluster or workstation, and obsessively logging results.
+
+=head1 HPC::Runner::Command In Line Code Documentation
 
 =head2 Command Line Opts
 
@@ -89,8 +113,9 @@ Submission tags
 
 option 'tags' => (
     is                 => 'rw',
-    isa                => 'ArrayRef[Str]',
+    isa                => 'ArrayRef',
     documentation      => 'Tags for the whole submission',
+    default => sub {return []},
     cmd_split          => qr/,/,
     required => 0,
 );
@@ -121,6 +146,15 @@ sub hpc_load_plugins {
 
     return unless $self->hpc_plugins;
 
+    foreach my $plugin (@{$self->hpc_plugins}){
+        try {
+            $self->load_plugin($plugin);
+        }
+        catch {
+            $self->app_log->warn("Could not load plugin $plugin!");
+        }
+    }
+
     $self->load_plugins(@{$self->hpc_plugins});
     $self->parse_plugin_opts($self->hpc_plugins_opts);
 }
@@ -136,9 +170,32 @@ sub job_load_plugins {
 
     return unless $self->job_plugins;
 
-    $self->load_plugins(@{$self->job_plugins});
+    #$self->load_plugins(@{$self->job_plugins});
+    $self->app_load_plugins($self->job_plugins);
 
     $self->parse_plugin_opts($self->job_plugins_opts);
+}
+
+=head3 app_load_plugin
+
+=cut
+
+sub app_load_plugins {
+    my $self = shift;
+    my $plugins = shift;
+
+    return unless $plugins;
+
+    foreach my $plugin (@{$plugins}){
+        try {
+            $self->load_plugin($plugin);
+        }
+        catch {
+            $self->app_log->warn("Could not load plugin $plugin!");
+        }
+    }
+
+
 }
 
 =head3 parse_plugin_opts
@@ -160,30 +217,6 @@ sub parse_plugin_opts {
 1;
 
 __END__
-
-=encoding utf-8
-
-=head1 NAME
-
-HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
-
-=head1 SYNOPSIS
-
-To create a new project
-
-    hpcrunner.pl new
-
-To submit jobs to a cluster
-
-    hpcrunner.pl submit_jobs
-
-To run jobs on an interactive queue or workstation
-
-    hpcrunner.pl execute_job
-
-=head1 DESCRIPTION
-
-HPC::Runner::App is a set of libraries for scaffolding data analysis projects, submitting and executing jobs on an HPC cluster or workstation, and obsessively logging results.
 
 =head1 AUTHOR
 

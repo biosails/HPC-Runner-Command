@@ -5,7 +5,6 @@ use Data::Dumper;
 use IPC::Open3;
 use IO::Select;
 use Symbol;
-use Log::Log4perl qw(:easy);
 use DateTime;
 use DateTime::Format::Duration;
 use Cwd;
@@ -14,6 +13,8 @@ use File::Spec;
 
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
+
+with 'HPC::Runner::Command::Utils::Base';
 
 =head1 HPC::Runner::App::Log
 
@@ -110,16 +111,13 @@ has 'dt' => (
 
 #TODO Change to submit_log and execute_log
 
-has 'log' => ( is => 'rw', );
-
-has 'command_log' => ( is => 'rw', );
-
+##Application log
 has 'app_log' => (
     is      => 'rw',
     default => sub {
         my $self = shift;
 
-        return Log::Log4perl->init( \ <<'EOT');
+        Log::Log4perl->init( \ <<'EOT');
   log4perl.category = DEBUG, Screen
   log4perl.appender.Screen = \
       Log::Log4perl::Appender::ScreenColoredLevels
@@ -128,9 +126,16 @@ has 'app_log' => (
   log4perl.appender.Screen.layout.ConversionPattern = \
       [%d] %m %n
 EOT
+        return get_logger();
         }
 
 );
+
+##Submit Log
+has 'log' => ( is => 'rw', );
+
+##Command Log
+has 'command_log' => ( is => 'rw', );
 
 has 'logfile' => (
     traits  => ['String'],
@@ -404,7 +409,7 @@ sub log_main_messages {
     my ( $self, $level, $message ) = @_;
 
     return unless $message;
-    $level = 'debug' unless $level;
+    $level = 'info' unless $level;
     $self->log->$level($message);
 }
 
