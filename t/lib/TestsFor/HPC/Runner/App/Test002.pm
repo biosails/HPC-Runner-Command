@@ -75,6 +75,7 @@ sub construct {
     my $test = HPC::Runner::Command->new_with_command();
     $test->logname('slurm_logs');
     $test->log( $test->init_log );
+    system("git tag -d ".$test->version);
     return $test;
 }
 
@@ -93,23 +94,24 @@ sub test_003 : Tags(construction) {
     is( $test03->outdir, "$Bin/test002/logs", "Outdir is logs" );
     is( $test03->infile, "$t", "Infile is ok" );
     isa_ok( $test03, 'HPC::Runner::Command' );
+    system("git tag -d ".$test03->version);
 }
 
 sub test_005 : Tags(submit_jobs) {
     my $self = shift;
 
-    my $test05 = construct();
+    my $test = construct();
 
-    $test05->first_pass(1);
-    $test05->parse_file_slurm();
-    $test05->schedule_jobs();
-    $test05->iterate_schedule();
+    $test->first_pass(1);
+    $test->parse_file_slurm();
+    $test->schedule_jobs();
+    $test->iterate_schedule();
 
-    $test05->reset_batch_counter;
-    $test05->first_pass(0);
-    $test05->iterate_schedule();
+    $test->reset_batch_counter;
+    $test->first_pass(0);
+    $test->iterate_schedule();
 
-    my $logdir = $test05->logdir;
+    my $logdir = $test->logdir;
     diag( 'logdir is ', $logdir );
     my $cwd = getcwd();
     my $got = read_file( $Bin . "/test002/logs/001_job01.sh" );
@@ -139,6 +141,7 @@ EOF
     #ok( $got =~ m/expected/, 'this is like that' );
 
     #print_diff($got, $expect);
+    system("git tag -d ".$test->version);
 
     ok(1);
 }
@@ -146,50 +149,55 @@ EOF
 sub test_007 : Tags(check_hpc_meta) {
     my $self = shift;
 
-    my $test07 = construct();
+    my $test = construct();
 
     my $line = "#HPC module=thing1,thing2\n";
-    $test07->process_hpc_meta($line);
+    $test->process_hpc_meta($line);
 
-    is_deeply( [ 'thing1', 'thing2' ], $test07->module, 'Modules pass' );
+    is_deeply( [ 'thing1', 'thing2' ], $test->module, 'Modules pass' );
+    system("git tag -d ".$test->version);
 }
 
 sub test_008 : Tags(check_hpc_meta) {
     my $self = shift;
 
-    my $test08 = construct();
+    my $test = construct();
 
     my $line = "#HPC jobname=job03\n";
-    $test08->process_hpc_meta($line);
+    $test->process_hpc_meta($line);
 
     $line = "#HPC deps=job01,job02\n";
-    $test08->process_hpc_meta($line);
+    $test->process_hpc_meta($line);
 
-    is_deeply( [ 'job01', 'job02' ], $test08->deps, 'Deps pass');
+    is_deeply( [ 'job01', 'job02' ], $test->deps, 'Deps pass');
     is_deeply( { job03 => [ 'job01', 'job02' ] },
-        $test08->job_deps, 'Job Deps Pass' );
+        $test->job_deps, 'Job Deps Pass' );
+
+    system("git tag -d ".$test->version);
 }
 
 sub test_009 : Tags(check_hpc_meta) {
     my $self = shift;
 
-    my $test09 = construct();
+    my $test = construct();
 
     my $line = "#HPC jobname=job01\n";
-    $test09->process_hpc_meta($line);
+    $test->process_hpc_meta($line);
 
-    is_deeply( 'job01', $test09->jobname, 'Jobname pass' );
+    is_deeply( 'job01', $test->jobname, 'Jobname pass' );
+    system("git tag -d ".$test->version);
 }
 
 sub test_010 : Tags(check_note_meta) {
     my $self = shift;
 
-    my $test09 = construct();
+    my $test = construct();
 
     my $line = "#NOTE job_tags=SAMPLE_01\n";
-    $test09->check_note_meta($line);
+    $test->check_note_meta($line);
 
-    is_deeply( $line, $test09->cmd, 'Note meta passes' );
+    is_deeply( $line, $test->cmd, 'Note meta passes' );
+    system("git tag -d ".$test->version);
 }
 
 sub test_011 : Tags(check_hpc_meta) {
@@ -200,6 +208,7 @@ sub test_011 : Tags(check_hpc_meta) {
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
     $test->check_add_to_jobs();
+    system("git tag -d ".$test->version);
 
     ok(1);
 }
@@ -251,6 +260,7 @@ sub test_012 : Tags(job_stats) {
     is_deeply( $job_stats, $test->job_stats, 'Job stats pass' );
     is_deeply( [ 'job01', 'job02' ], $test->schedule, 'Schedule passes' );
 
+    system("git tag -d ".$test->version);
     ok(1);
 }
 
@@ -314,6 +324,7 @@ echo "goodbye from job 3"
     is($test->jobs->{'job02'}->count_scheduler_ids, 2);
     is($test->jobs->{'job01'}->submitted, 1);
     is($test->jobs->{'job02'}->submitted, 1);
+    system("git tag -d ".$test->version);
     ok(1);
 }
 

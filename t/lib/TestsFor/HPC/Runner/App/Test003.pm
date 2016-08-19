@@ -116,6 +116,7 @@ sub test_003 : Tags(construct) {
     is_deeply( $href, $test->jobs, 'JobRef passes' );
     is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
         $test->schedule, 'Schedule passes' );
+    system("git tag -d ".$test->version);
     ok(1);
 }
 
@@ -133,6 +134,7 @@ sub test_004 : Tags(job_stats) {
     $test->first_pass(0);
     $test->iterate_schedule();
 
+    system("git tag -d ".$test->version);
     ok(1);
 }
 
@@ -140,7 +142,12 @@ sub test_005 : Tags(submit_jobs) {
     my $test = construct();
 
     $test->execute();
+    system("git tag -d ".$test->version);
     ok(1);
 }
+
+#sub test_cleanup : Tags(cleanup){
+    #system("git tag -d ".$test->version);
+#}
 
 1;

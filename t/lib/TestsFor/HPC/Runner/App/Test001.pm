@@ -66,6 +66,8 @@ sub test_003 : Tags(construction) {
     is( $test03->outdir, "$Bin/test001/logs", "Outdir is logs" );
     is( $test03->infile, "$t", "Infile is ok" );
     isa_ok( $test03, 'HPC::Runner::Command' );
+
+    system("git tag -d ".$test03->version);
 }
 
 1;

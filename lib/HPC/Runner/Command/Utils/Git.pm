@@ -3,13 +3,16 @@ package HPC::Runner::Command::Utils::Git;
 use MooseX::App::Role;
 
 use namespace::autoclean;
+
 use Git::Wrapper;
 use Git::Wrapper::Plus::Ref::Tag;
 use Git::Wrapper::Plus::Tags;
 use Git::Wrapper::Plus::Branches;
-use Perl::Version;
-use Sort::Versions;
+
 use Try::Tiny;
+
+use Sort::Versions;
+use Version::Next qw/next_version/;
 
 use Cwd;
 use List::Uniq ':all';
@@ -145,23 +148,21 @@ sub get_version {
     my @versions = ();
     for my $tag ( $tags_finder->tags ) {
         my $name = $tag->name;
-        if ( $name =~ m/(\d+)\.(\d+)/ ) {
+        if ( $name =~ m/^(\d+)\.(\d+)$/ ) {
             push( @versions, $name );
         }
     }
 
-    if ( @versions && $#versions > 1 ) {
-        $self->app_log->info("Versions are @versions");
+    if ( @versions && $#versions >= 0 ) {
         my @l = sort { versioncmp( $a, $b ) } @versions;
         my $v = pop(@l);
 
-        my $pv = Perl::Version->new($v);
-        $pv->inc_subversion;
+        my $pv = next_version($v);
         $pv = "$pv";
         $self->version($pv);
     }
     else {
-        $self->version("0.1");
+        $self->version("0.01");
     }
 
     #$self->git_push_tags;
@@ -172,13 +173,15 @@ sub git_push_tags {
     my ($self) = shift;
 
     return unless $self->has_git;
+    return unless $self->has_version;
+
     my @remote = $self->git->remote;
 
     $self->git->tag( $self->version );
 
-    foreach my $remote (@remote) {
-        $self->git->push( { tags => 1 }, $remote );
-    }
+    #foreach my $remote (@remote) {
+        #$self->git->push( { tags => 1 }, $remote );
+    #}
 }
 
 sub create_release {

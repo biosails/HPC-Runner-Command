@@ -38,13 +38,13 @@ requires "MooseX::App::Role" , "0";
 requires "MooseX::App::Role::Log4perl" , "0";
 requires "MooseX::Object::Pluggable" , "0";
 requires "MooseX::Types::Path::Tiny" , "0";
-requires "Perl::Version" , "0";
 requires "Sort::Versions" , "0";
 requires "Storable" , "0";
 requires "Symbol" , "0";
 requires "Template" , "0";
 requires "Try::Tiny" , "0";
 requires "YAML::XS" , "0";
+requires "Version::Next" , "0";
 requires "namespace::autoclean" , "0";
 
 on test => sub {
