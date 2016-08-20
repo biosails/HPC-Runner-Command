@@ -2,7 +2,4 @@
 
 Documentation for the HPC-Runner-Command libraries.
 
-```js
-var thing = 'other thing';
-```
-
+Version 1.0
