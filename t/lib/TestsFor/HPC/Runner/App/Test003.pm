@@ -11,35 +11,30 @@ use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
 
-sub construct {
+sub make_test_dir{
 
-    chdir("$Bin/test003");
-    my $t = "$Bin/test003/script/test003.1.sh";
-    MooseX::App::ParsedArgv->new(
-        argv => [ "submit_jobs", "--infile", $t, "--hpc_plugins", "Dummy", ]
-    );
+    my $test_dir;
 
-    my $test = HPC::Runner::Command->new_with_command();
-    $test->logname('slurm_logs');
-    $test->log( $test->init_log );
-    system("git tag -d ".$test->version);
-    return $test;
-}
+    my @chars = ('a'..'z', 'A'..'Z', 0..9);
+    my $string = join '', map { @chars[rand @chars]  } 1 .. 8;
 
-sub test_001 : Tags(prep) {
-    my $test = shift;
+    if(exists $ENV{'TMP'}){
+        $test_dir = $ENV{TMP}."/hpcrunner/$string";
+    }
+    else{
+        $test_dir = "/tmp/hpcrunner/$string";
+    }
 
-    remove_tree("$Bin/test003");
-    make_path("$Bin/test003/script");
-    make_path("$Bin/test003/scratch");
+    make_path($test_dir);
+    make_path("$test_dir/script");
 
-    ok(1);
-}
+    chdir($test_dir);
 
-sub test_002 : Tags(prep) {
-    my $test = shift;
+    if(can_run('git') && !-d $test_dir."/.git"){
+        system('git init');
+    }
 
-    open( my $fh, ">$Bin/test003/script/test003.1.sh" );
+    open( my $fh, ">$test_dir/script/test003.1.sh" );
     print $fh <<EOF;
 echo "hello world from job 1" && sleep 5
 
@@ -58,7 +53,35 @@ EOF
 
     close($fh);
 
-    ok(1);
+    return $test_dir;
+}
+
+sub test_shutdown {
+
+    if ( exists $ENV{'TMP'} ) {
+        remove_tree( $ENV{TMP} . "/hpcrunner" );
+    }
+    else {
+        remove_tree("/tmp/hpcrunner");
+    }
+}
+
+sub construct {
+
+    my $test_dir = make_test_dir();
+    my $cwd = getcwd();
+
+    my $t = "$test_dir/script/test003.1.sh";
+
+    MooseX::App::ParsedArgv->new(
+        argv => [ "submit_jobs", "--infile", $t, "--hpc_plugins", "Dummy", ]
+    );
+
+    my $test = HPC::Runner::Command->new_with_command();
+    $test->logname('slurm_logs');
+    $test->log( $test->init_log );
+
+    return $test;
 }
 
 sub test_003 : Tags(construct) {
@@ -117,11 +140,10 @@ sub test_003 : Tags(construct) {
     is_deeply( $href, $test->jobs, 'JobRef passes' );
     is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
         $test->schedule, 'Schedule passes' );
-    system("git tag -d ".$test->version);
     ok(1);
 }
 
-sub test_004 : Tags(job_stats) {
+sub test_004 : Tags(submit_jobs) {
     my $self = shift;
 
     my $test = construct();
@@ -135,7 +157,6 @@ sub test_004 : Tags(job_stats) {
     $test->first_pass(0);
     $test->iterate_schedule();
 
-    system("git tag -d ".$test->version);
     ok(1);
 }
 
@@ -143,12 +164,8 @@ sub test_005 : Tags(submit_jobs) {
     my $test = construct();
 
     $test->execute();
-    system("git tag -d ".$test->version);
+
     ok(1);
 }
-
-#sub test_cleanup : Tags(cleanup){
-    #system("git tag -d ".$test->version);
-#}
 
 1;

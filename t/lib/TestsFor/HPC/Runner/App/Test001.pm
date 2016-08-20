@@ -10,37 +10,40 @@ use Data::Dumper;
 use Capture::Tiny ':all';
 
 sub make_test_dir{
+
     my $test_dir;
 
+    my @chars = ('a'..'z', 'A'..'Z', 0..9);
+    my $string = join '', map { @chars[rand @chars]  } 1 .. 8;
+
     if(exists $ENV{'TMP'}){
-        $test_dir = $ENV{TMP}."/hpcrunner/test001";
+        $test_dir = $ENV{TMP}."/hpcrunner/$string";
     }
     else{
-        $test_dir = "/tmp/hpcrunner/test001";
+        $test_dir = "/tmp/hpcrunner/$string";
     }
 
     make_path($test_dir);
     make_path("$test_dir/script");
 
     chdir($test_dir);
+
     if(can_run('git') && !-d $test_dir."/.git"){
         system('git init');
     }
 
     open( my $fh, ">$test_dir/script/test001.1.sh" );
-    print $fh <<EOF;
-#HPC jobname=job01
-#HPC cpus_per_task=12
-#HPC commands_per_node=1
 
-#NOTE job_tags=Sample1
+    print $fh <<EOF;
 echo "hello world from job 1" && sleep 5
 
-#NOTE job_tags=Sample2
 echo "hello again from job 2" && sleep 5
 
-#NOTE job_tags=Sample3
 echo "goodbye from job 3"
+
+#NOTE job_tags=hello,world
+echo "hello again from job 3" && sleep 5
+
 EOF
 
     close($fh);
@@ -50,9 +53,12 @@ EOF
 
 sub test_shutdown {
 
-    my $test_dir = make_test_dir;
-    chdir("$Bin");
-    remove_tree($test_dir);
+    if ( exists $ENV{'TMP'} ) {
+        remove_tree( $ENV{TMP} . "/hpcrunner" );
+    }
+    else {
+        remove_tree("/tmp/hpcrunner");
+    }
 }
 
 sub test_001 : Tags(new) {
@@ -64,15 +70,7 @@ sub test_001 : Tags(new) {
     ok(1);
 }
 
-#sub test_002 : Tags(prep) {
-    #my $test = shift;
-
-    #my $test_dir = make_test_dir();
-
-    #ok(1);
-#}
-
-sub test_003 : Tags(construction) {
+sub test_002 : Tags(construction) {
 
     my $test_dir = make_test_dir();
     my $cwd = getcwd();
@@ -90,6 +88,8 @@ sub test_003 : Tags(construction) {
     is( $test->outdir, "$test_dir/logs", "Outdir is logs" );
     is( $test->infile, "$t", "Infile is ok" );
     isa_ok( $test, 'HPC::Runner::Command' );
+
+    remove_tree($test_dir);
 }
 
 1;

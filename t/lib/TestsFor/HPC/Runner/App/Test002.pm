@@ -11,31 +11,30 @@ use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
 
-sub test_000 : Tags(require) {
-    my $self = shift;
+sub make_test_dir {
 
-    require_ok('HPC::Runner::Command');
-    require_ok('HPC::Runner::Command::Utils::Base');
-    require_ok('HPC::Runner::Command::Utils::Log');
-    require_ok('HPC::Runner::Command::Utils::Git');
-    require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
-    ok(1);
-}
+    my $test_dir;
 
-sub test_001 : Tags(prep) {
-    my $test = shift;
+    my @chars = ( 'a' .. 'z', 'A' .. 'Z', 0 .. 9 );
+    my $string = join '', map { @chars[ rand @chars ] } 1 .. 8;
 
-    remove_tree("$Bin/test002");
-    make_path("$Bin/test002/script");
-    make_path("$Bin/test002/scratch");
+    if ( exists $ENV{'TMP'} ) {
+        $test_dir = $ENV{TMP} . "/hpcrunner/$string";
+    }
+    else {
+        $test_dir = "/tmp/hpcrunner/$string";
+    }
 
-    ok(1);
-}
+    make_path($test_dir);
+    make_path("$test_dir/script");
 
-sub test_002 : Tags(prep) {
-    my $test = shift;
+    chdir($test_dir);
 
-    open( my $fh, ">$Bin/test002/script/test002.1.sh" );
+    if ( can_run('git') && !-d $test_dir . "/.git" ) {
+        system('git init');
+    }
+
+    open( my $fh, ">$test_dir/script/test002.1.sh" );
     print $fh <<EOF;
 #HPC jobname=job01
 #HPC cpus_per_task=12
@@ -56,18 +55,40 @@ EOF
 
     close($fh);
 
+    return $test_dir;
+}
+
+sub test_shutdown {
+
+    if ( exists $ENV{'TMP'} ) {
+        remove_tree( $ENV{TMP} . "/hpcrunner" );
+    }
+    else {
+        remove_tree("/tmp/hpcrunner");
+    }
+}
+
+sub test_000 : Tags(require) {
+    my $self = shift;
+
+    require_ok('HPC::Runner::Command');
+    require_ok('HPC::Runner::Command::Utils::Base');
+    require_ok('HPC::Runner::Command::Utils::Log');
+    require_ok('HPC::Runner::Command::Utils::Git');
+    require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
     ok(1);
 }
 
 sub construct {
 
-    chdir("$Bin/test002");
-    my $t = "$Bin/test002/script/test002.1.sh";
+    my $test_dir = make_test_dir;
+
+    my $t = "$test_dir/script/test002.1.sh";
     MooseX::App::ParsedArgv->new(
         argv => [
-            "submit_jobs",       "--infile",
-            $t,                  "--outdir",
-            "$Bin/test002/logs", "--hpc_plugins",
+            "submit_jobs",    "--infile",
+            $t,               "--outdir",
+            "$test_dir/logs", "--hpc_plugins",
             "Dummy",
         ]
     );
@@ -75,32 +96,24 @@ sub construct {
     my $test = HPC::Runner::Command->new_with_command();
     $test->logname('slurm_logs');
     $test->log( $test->init_log );
-    system("git tag -d ".$test->version);
     return $test;
 }
 
 sub test_003 : Tags(construction) {
-    my $test = shift;
 
-    my $cwd = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
 
-    MooseX::App::ParsedArgv->new( argv => [qw(new ProjectName)] );
-    my $test01 = HPC::Runner::Command->new_with_command();
-    isa_ok( $test01, 'HPC::Runner::Command' );
+    is( $test->outdir, "$test_dir/logs", "Outdir is logs" );
+    is( $test->infile, "$test_dir/script/test002.1.sh", "Infile is ok" );
 
-    my $t      = "$Bin/test002/script/test002.1.sh";
-    my $test03 = construct();
-
-    is( $test03->outdir, "$Bin/test002/logs", "Outdir is logs" );
-    is( $test03->infile, "$t", "Infile is ok" );
-    isa_ok( $test03, 'HPC::Runner::Command' );
-    system("git tag -d ".$test03->version);
+    isa_ok( $test, 'HPC::Runner::Command' );
 }
 
 sub test_005 : Tags(submit_jobs) {
-    my $self = shift;
 
-    my $test = construct();
+    my $test_dir = make_test_dir;
+    my $test     = construct();
 
     $test->first_pass(1);
     $test->parse_file_slurm();
@@ -112,10 +125,11 @@ sub test_005 : Tags(submit_jobs) {
     $test->iterate_schedule();
 
     my $logdir = $test->logdir;
-    diag( 'logdir is ', $logdir );
-    my $cwd = getcwd();
+    my $cwd    = getcwd();
+
     my $got = read_file( $Bin . "/test002/logs/001_job01.sh" );
     chomp($got);
+
     $got =~ s/--metastr.*//g;
     $got =~ s/--version.*//g;
 
@@ -132,22 +146,18 @@ cd $cwd
 hpcrunner.pl execute_job \\
 EOF
     $expect .= "\t--procs 4 \\\n";
-    $expect .= "\t--infile $Bin/test002/logs/001_job01.in \\\n";
-    $expect .= "\t--outdir $Bin/test002/logs \\\n";
+    $expect .= "\t--infile $test_dir/logs/001_job01.in \\\n";
+    $expect .= "\t--outdir $test_dir/logs \\\n";
     $expect .= "\t--logname 001_job01 \\\n";
     $expect .= "\t--process_table $logdir/001-process_table.md \\\n";
 
     #TODO FIX THIS TEST
     #ok( $got =~ m/expected/, 'this is like that' );
 
-    #print_diff($got, $expect);
-    system("git tag -d ".$test->version);
-
     ok(1);
 }
 
 sub test_007 : Tags(check_hpc_meta) {
-    my $self = shift;
 
     my $test = construct();
 
@@ -155,7 +165,6 @@ sub test_007 : Tags(check_hpc_meta) {
     $test->process_hpc_meta($line);
 
     is_deeply( [ 'thing1', 'thing2' ], $test->module, 'Modules pass' );
-    system("git tag -d ".$test->version);
 }
 
 sub test_008 : Tags(check_hpc_meta) {
@@ -169,11 +178,9 @@ sub test_008 : Tags(check_hpc_meta) {
     $line = "#HPC deps=job01,job02\n";
     $test->process_hpc_meta($line);
 
-    is_deeply( [ 'job01', 'job02' ], $test->deps, 'Deps pass');
+    is_deeply( [ 'job01', 'job02' ], $test->deps, 'Deps pass' );
     is_deeply( { job03 => [ 'job01', 'job02' ] },
         $test->job_deps, 'Job Deps Pass' );
-
-    system("git tag -d ".$test->version);
 }
 
 sub test_009 : Tags(check_hpc_meta) {
@@ -185,7 +192,6 @@ sub test_009 : Tags(check_hpc_meta) {
     $test->process_hpc_meta($line);
 
     is_deeply( 'job01', $test->jobname, 'Jobname pass' );
-    system("git tag -d ".$test->version);
 }
 
 sub test_010 : Tags(check_note_meta) {
@@ -197,7 +203,6 @@ sub test_010 : Tags(check_note_meta) {
     $test->check_note_meta($line);
 
     is_deeply( $line, $test->cmd, 'Note meta passes' );
-    system("git tag -d ".$test->version);
 }
 
 sub test_011 : Tags(check_hpc_meta) {
@@ -208,7 +213,6 @@ sub test_011 : Tags(check_hpc_meta) {
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
     $test->check_add_to_jobs();
-    system("git tag -d ".$test->version);
 
     ok(1);
 }
@@ -218,7 +222,6 @@ sub test_012 : Tags(job_stats) {
 
     my $test = construct();
 
-
     $test->first_pass(1);
     $test->parse_file_slurm();
     $test->schedule_jobs();
@@ -226,7 +229,7 @@ sub test_012 : Tags(job_stats) {
 
     my $job_stats = {
         'tally_commands' => 1,
-        'batches' => {
+        'batches'        => {
             '001_job01' => {
                 'jobname'  => 'job01',
                 'batch'    => '001',
@@ -256,11 +259,9 @@ sub test_012 : Tags(job_stats) {
         'total_processes' => 4,
     };
 
-
     is_deeply( $job_stats, $test->job_stats, 'Job stats pass' );
     is_deeply( [ 'job01', 'job02' ], $test->schedule, 'Schedule passes' );
 
-    system("git tag -d ".$test->version);
     ok(1);
 }
 
@@ -320,11 +321,10 @@ echo "goodbye from job 3"
     $test->schedule_jobs();
     $test->iterate_schedule();
 
-    is($test->jobs->{'job01'}->count_scheduler_ids, 2);
-    is($test->jobs->{'job02'}->count_scheduler_ids, 2);
-    is($test->jobs->{'job01'}->submitted, 1);
-    is($test->jobs->{'job02'}->submitted, 1);
-    system("git tag -d ".$test->version);
+    is( $test->jobs->{'job01'}->count_scheduler_ids, 2 );
+    is( $test->jobs->{'job02'}->count_scheduler_ids, 2 );
+    is( $test->jobs->{'job01'}->submitted,           1 );
+    is( $test->jobs->{'job02'}->submitted,           1 );
     ok(1);
 }
 
