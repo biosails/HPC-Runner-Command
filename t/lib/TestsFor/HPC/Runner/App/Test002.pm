@@ -60,6 +60,7 @@ EOF
 
 sub test_shutdown {
 
+    chdir("$Bin");
     if ( exists $ENV{'TMP'} ) {
         remove_tree( $ENV{TMP} . "/hpcrunner" );
     }
@@ -114,6 +115,7 @@ sub test_005 : Tags(submit_jobs) {
 
     my $test_dir = make_test_dir;
     my $test     = construct();
+    my $cwd      = getcwd();
 
     $test->first_pass(1);
     $test->parse_file_slurm();
@@ -125,9 +127,9 @@ sub test_005 : Tags(submit_jobs) {
     $test->iterate_schedule();
 
     my $logdir = $test->logdir;
-    my $cwd    = getcwd();
+    my $outdir = $test->outdir;
 
-    my $got = read_file( $Bin . "/test002/logs/001_job01.sh" );
+    my $got = read_file( $test->outdir . "/001_job01.sh" );
     chomp($got);
 
     $got =~ s/--metastr.*//g;
@@ -146,8 +148,8 @@ cd $cwd
 hpcrunner.pl execute_job \\
 EOF
     $expect .= "\t--procs 4 \\\n";
-    $expect .= "\t--infile $test_dir/logs/001_job01.in \\\n";
-    $expect .= "\t--outdir $test_dir/logs \\\n";
+    $expect .= "\t--infile $outdir/001_job01.in \\\n";
+    $expect .= "\t--outdir $outdir \\\n";
     $expect .= "\t--logname 001_job01 \\\n";
     $expect .= "\t--process_table $logdir/001-process_table.md \\\n";
 

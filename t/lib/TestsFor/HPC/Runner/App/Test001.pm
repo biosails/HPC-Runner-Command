@@ -53,6 +53,8 @@ EOF
 
 sub test_shutdown {
 
+    chdir("$Bin");
+
     if ( exists $ENV{'TMP'} ) {
         remove_tree( $ENV{TMP} . "/hpcrunner" );
     }
