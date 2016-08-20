@@ -2,5 +2,7 @@
 
 Documentation for the HPC-Runner-Command libraries.
 
-Coming soon!
+```js
+var thing = 'other thing';
+```
 
