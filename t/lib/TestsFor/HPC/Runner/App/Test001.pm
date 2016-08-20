@@ -5,23 +5,29 @@ use HPC::Runner::Command;
 use Cwd;
 use FindBin qw($Bin);
 use File::Path qw(make_path remove_tree);
+use IPC::Cmd qw[can_run];
 use Data::Dumper;
 use Capture::Tiny ':all';
 
-sub test_001 : Tags(prep) {
-    my $test = shift;
+sub make_test_dir{
+    my $test_dir;
 
-    remove_tree("$Bin/test001");
-    make_path("$Bin/test001/script");
-    make_path("$Bin/test001/scratch");
+    if(exists $ENV{'TMP'}){
+        $test_dir = $ENV{TMP}."/hpcrunner/test001";
+    }
+    else{
+        $test_dir = "/tmp/hpcrunner/test001";
+    }
 
-    ok(1);
-}
+    make_path($test_dir);
+    make_path("$test_dir/script");
 
-sub test_002 : Tags(prep) {
-    my $test = shift;
+    chdir($test_dir);
+    if(can_run('git') && !-d $test_dir."/.git"){
+        system('git init');
+    }
 
-    open( my $fh, ">$Bin/test001/script/test001.1.sh" );
+    open( my $fh, ">$test_dir/script/test001.1.sh" );
     print $fh <<EOF;
 #HPC jobname=job01
 #HPC cpus_per_task=12
@@ -39,35 +45,51 @@ EOF
 
     close($fh);
 
+    return $test_dir;
+}
+
+sub test_shutdown {
+
+    my $test_dir = make_test_dir;
+    chdir("$Bin");
+    remove_tree($test_dir);
+}
+
+sub test_001 : Tags(new) {
+
+    MooseX::App::ParsedArgv->new( argv => [qw(new ProjectName)] );
+    my $test = HPC::Runner::Command->new_with_command();
+    isa_ok( $test, 'HPC::Runner::Command' );
+
     ok(1);
 }
 
-sub test_003 : Tags(construction) {
-    my $test = shift;
+#sub test_002 : Tags(prep) {
+    #my $test = shift;
 
+    #my $test_dir = make_test_dir();
+
+    #ok(1);
+#}
+
+sub test_003 : Tags(construction) {
+
+    my $test_dir = make_test_dir();
     my $cwd = getcwd();
 
-    #Worst test ever
-    MooseX::App::ParsedArgv->new( argv => [qw(new ProjectName)] );
-    my $test01 = HPC::Runner::Command->new_with_command();
-    isa_ok( $test01, 'HPC::Runner::Command' );
-
-    chdir("$Bin/test001");
-    my $t = "$Bin/test001/script/test001.1.sh";
+    my $t = "$test_dir/script/test001.1.sh";
     MooseX::App::ParsedArgv->new(
         argv => [
             "submit_jobs", "--infile",
             $t,            "--outdir",
-            "$Bin/test001/logs",
+            "$test_dir/logs",
         ]
     );
-    my $test03 = HPC::Runner::Command->new_with_command();
+    my $test = HPC::Runner::Command->new_with_command();
 
-    is( $test03->outdir, "$Bin/test001/logs", "Outdir is logs" );
-    is( $test03->infile, "$t", "Infile is ok" );
-    isa_ok( $test03, 'HPC::Runner::Command' );
-
-    system("git tag -d ".$test03->version);
+    is( $test->outdir, "$test_dir/logs", "Outdir is logs" );
+    is( $test->infile, "$t", "Infile is ok" );
+    isa_ok( $test, 'HPC::Runner::Command' );
 }
 
 1;

@@ -104,12 +104,17 @@ sub branch_things {
     my ($self) = @_;
 
     return unless $self->has_git;
-
-    my $branches = Git::Wrapper::Plus::Branches->new( git => $self->git );
-
     my $current;
-    for my $branch ( $branches->current_branch ) {
-        $self->current_branch( $branch->name );
+
+    try {
+        my $branches = Git::Wrapper::Plus::Branches->new( git => $self->git );
+
+        for my $branch ( $branches->current_branch ) {
+            $self->current_branch( $branch->name );
+        }
+    }
+    catch {
+        $self->current_branch('master');
     }
 }
 
