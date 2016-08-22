@@ -232,6 +232,8 @@ sub git_push_tags {
     return unless $self->has_git;
     return unless $self->has_version;
 
+    return if  $self->git->status->is_dirty;
+
     my @remote = $self->git->remote;
 
     $self->git->tag( $self->version );
