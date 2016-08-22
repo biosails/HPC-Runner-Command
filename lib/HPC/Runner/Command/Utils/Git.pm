@@ -148,6 +148,9 @@ sub dirty_run {
         }
         catch {
             $self->app_log->warn("Were not able to commit files to git");
+            $self->app_log->warn("STDERR: ".$_->error);
+            $self->app_log->warn("STDOUT: ".$_->output);
+            $self->app_log->warn("STATUS: ".$_->status);
         }
     }
 }
