@@ -223,6 +223,34 @@ option 'partition' => (
     clearer   => 'clear_partition'
 );
 
+=head3 walltime
+
+Define scheduler walltime
+
+=cut
+
+option 'walltime' => (
+    is => 'rw',
+    isa => 'Str',
+    required => 1,
+    default => '04:00:00',
+    predicate => 'has_walltime',
+    clearer => 'clear_walltime,'
+);
+
+=head2 mem
+
+=cut
+
+option 'mem' => (
+    is => 'rw',
+    isa => 'Str|Undef',
+    predicate => 'has_mem',
+    clearer => 'clear_mem',
+    required => 0,
+    documentation => q{Supply a memory limit},
+);
+
 =head3 no_submit_to_slurm
 
 Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.
@@ -268,6 +296,12 @@ has 'template_file' => (
 [% END %]
 [% IF self.has_cpus_per_task %]
 #SBATCH --cpus-per-task=[% self.cpus_per_task %]
+[% END %]
+[% IF self.has_mem %]
+#SBATCH --mem=[% self.mem %]
+[% END %]
+[% IF self.has_walltime %]
+#SBATCH --walltime=[% self.walltime %]
 [% END %]
 [% IF AFTEROK %]
 #SBATCH --dependency=afterok:[% AFTEROK %]
