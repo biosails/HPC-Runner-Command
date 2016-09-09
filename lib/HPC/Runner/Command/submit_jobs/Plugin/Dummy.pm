@@ -29,7 +29,4 @@ sub submit_jobs{
 }
 
 
-
-1;
-
 1;

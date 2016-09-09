@@ -30,7 +30,7 @@ Submit jobs to slurm queue using sbatch.
 
 =cut
 
-sub submit_job{
+sub submit_jobs{
     my $self = shift;
 
     my($exitcode, $stdout, $stderr) = $self->submit_to_scheduler("sbatch");

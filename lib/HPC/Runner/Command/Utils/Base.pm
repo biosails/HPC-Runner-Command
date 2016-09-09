@@ -169,8 +169,13 @@ sub git_things {
     $self->init_git;
     $self->dirty_run;
     $self->git_info;
-    if ( $self->tags ) {
-        push( @{ $self->tags }, "$self->{version}" );
+
+    return unless $self->has_git;
+
+    return unless $self->has_version;
+
+    if ( $self->tags  ) {
+        push( @{ $self->tags }, "$self->{version}" ) if $self->has_version;
     }
     else {
         $self->tags( [ $self->version ] );

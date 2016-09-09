@@ -132,7 +132,11 @@ EOT
 );
 
 ##Submit Log
-has 'log' => ( is => 'rw', );
+has 'log' => (
+    is      => 'rw',
+    default => sub { my $self = shift; return $self->init_log },
+    lazy    => 1
+);
 
 ##Command Log
 has 'command_log' => ( is => 'rw', );

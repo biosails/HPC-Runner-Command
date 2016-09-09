@@ -30,6 +30,7 @@ sub parse_file_slurm {
 
     $self->reset_cmd_counter;
     $self->reset_batch_counter;
+    $self->check_add_to_jobs;
 
     #If we pass in commandline afterok
     #This is not supported within a file
@@ -52,6 +53,27 @@ sub parse_file_slurm {
     }
 
     close($fh);
+
+    $self->check_for_commands();
+
+}
+
+=head3 check_for_commands
+
+Check all jobs to make sure they have commands
+
+=cut
+
+sub check_for_commands {
+    my $self = shift;
+
+    my @keys = keys %{$self->jobs};
+
+    foreach my $key (@keys){
+        next if $self->jobs->{$key}->count_cmds;
+        delete $self->jobs->{$key};
+        delete $self->job_deps->{ $key };
+    }
 
 }
 
