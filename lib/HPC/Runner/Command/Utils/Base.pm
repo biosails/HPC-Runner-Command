@@ -4,11 +4,19 @@ use Cwd;
 use File::Path qw(make_path remove_tree);
 use List::Uniq ':all';
 
-use Moose::Role;
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
-=head1 HPC::Runner::App::Base
+=head1 HPC::Runner::Command::Utils::Base
+
+Base class for HPC::Runner::Command libraries.
+
+This is a Moose Role. To use in any another applications or plugins call as
+
+    package MyApp;
+
+    use Moose;
+    with 'HPC::Runner::Command::Utils::Base';
 
 =head2 Command Line Options
 
@@ -151,7 +159,7 @@ sub datetime_now {
 
 =head3 git_things
 
-Git versioning
+Get git versions, branch, and tags
 
 =cut
 
@@ -161,8 +169,13 @@ sub git_things {
     $self->init_git;
     $self->dirty_run;
     $self->git_info;
-    if ( $self->tags ) {
-        push( @{ $self->tags }, "$self->{version}" );
+
+    return unless $self->has_git;
+
+    return unless $self->has_version;
+
+    if ( $self->tags  ) {
+        push( @{ $self->tags }, "$self->{version}" ) if $self->has_version;
     }
     else {
         $self->tags( [ $self->version ] );

@@ -1,37 +1,3 @@
-# HPC::Runner::Command
-
-## Command Line Opts
-
-### plugins
-
-Load plugins that are used both by the submitter and executor such as logging pluggins
-
-### hpc\_plugins
-
-Load hpc\_plugins. PBS, Slurm, Web, etc.
-
-### job\_plugins
-
-Load job execution plugins
-
-### tags
-
-Submission tags
-
-## Subroutines
-
-### gen\_load\_plugins
-
-### hpc\_load\_plugins
-
-## Subroutines
-
-### hpc\_load\_plugins
-
-### parse\_plugin\_opts
-
-parse the opts from --plugin\_opts
-
 # NAME
 
 HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
@@ -53,6 +19,38 @@ To run jobs on an interactive queue or workstation
 # DESCRIPTION
 
 HPC::Runner::App is a set of libraries for scaffolding data analysis projects, submitting and executing jobs on an HPC cluster or workstation, and obsessively logging results.
+
+# HPC::Runner::Command In Line Code Documentation
+
+## Command Line Opts
+
+### plugins
+
+Load plugins that are used both by the submitter and executor such as logging pluggins
+
+### hpc\_plugins
+
+Load hpc\_plugins. PBS, Slurm, Web, etc.
+
+### job\_plugins
+
+Load job execution plugins
+
+## Subroutines
+
+### gen\_load\_plugins
+
+### hpc\_load\_plugins
+
+## Subroutines
+
+### hpc\_load\_plugins
+
+### app\_load\_plugin
+
+### parse\_plugin\_opts
+
+parse the opts from --plugin\_opts
 
 # AUTHOR
 

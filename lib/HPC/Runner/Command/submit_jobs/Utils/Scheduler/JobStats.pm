@@ -4,7 +4,7 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
 use Moose;
 use Data::Dumper;
 
-=head1 HPC::Runner::App::Scheduler::JobStats
+=head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats
 
 =head2 Attributes
 

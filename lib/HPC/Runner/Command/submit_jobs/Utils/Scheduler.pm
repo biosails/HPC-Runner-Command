@@ -102,8 +102,7 @@ option 'jobname' => (
     },
     trigger => sub {
         my $self = shift;
-        $self->check_add_to_jobs;
-        $self->job_deps->{ $self->jobname } = [];
+        $self->check_add_to_jobs();
     },
     documentation =>
         q{Specify a job name, each job will be appended with its batch order},
@@ -223,6 +222,34 @@ option 'partition' => (
     clearer   => 'clear_partition'
 );
 
+=head3 walltime
+
+Define scheduler walltime
+
+=cut
+
+option 'walltime' => (
+    is => 'rw',
+    isa => 'Str',
+    required => 1,
+    default => '04:00:00',
+    predicate => 'has_walltime',
+    clearer => 'clear_walltime,'
+);
+
+=head2 mem
+
+=cut
+
+option 'mem' => (
+    is => 'rw',
+    isa => 'Str|Undef',
+    predicate => 'has_mem',
+    clearer => 'clear_mem',
+    required => 0,
+    documentation => q{Supply a memory limit},
+);
+
 =head3 no_submit_to_slurm
 
 Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.
@@ -268,6 +295,12 @@ has 'template_file' => (
 [% END %]
 [% IF self.has_cpus_per_task %]
 #SBATCH --cpus-per-task=[% self.cpus_per_task %]
+[% END %]
+[% IF self.has_mem %]
+#SBATCH --mem=[% self.mem %]
+[% END %]
+[% IF self.has_walltime %]
+#SBATCH --time=[% self.walltime %]
 [% END %]
 [% IF AFTEROK %]
 #SBATCH --dependency=afterok:[% AFTEROK %]
@@ -420,6 +453,7 @@ has 'deps' => (
     trigger   => sub {
         my $self = shift;
 
+        #Should these all be $self->current_job?
         $self->job_deps->{ $self->jobname } = $self->deps;
         $self->jobs->{ $self->jobname }->{deps} = $self->deps;
     }
@@ -652,7 +686,6 @@ sub run {
     my $self = shift;
 
     $self->logname('slurm_logs');
-    #$self->log( $self->init_log );
 
     #TODO add back in support for serial workflows
     if ( $self->serial ) {
@@ -700,9 +733,7 @@ sub check_add_to_jobs {
         $self->jobs->{ $self->jobname }
             = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps->new();
     }
-    if ( !exists $self->job_deps->{ $self->jobname } ) {
-        $self->job_deps->{ $self->jobname } = [];
-    }
+    $self->job_deps->{ $self->jobname } = [];
 }
 
 =head3 increase_jobname
@@ -778,13 +809,19 @@ sub iterate_schedule {
 
     return if $self->has_no_schedules;
 
-    #my @jobs = @{ $self->jobs->{schedule} };
-
     $self->clear_scheduler_ids();
 
     foreach my $job ($self->all_schedules) {
 
         $self->current_job($job);
+
+        next unless $self->jobs->{$self->current_job};
+
+        #TODO Add better way of dealing with this
+        die unless $self->jobs->{$self->current_job}->can('count_cmds');
+        next unless $self->jobs->{$self->current_job}->count_cmds;
+
+        $DB::single = 2;
 
         $self->reset_cmd_counter;
         $self->iterate_deps();
@@ -793,6 +830,8 @@ sub iterate_schedule {
         $self->post_process_jobs();
     }
 }
+
+
 
 =head3 iterate_deps
 
@@ -840,7 +879,14 @@ sub process_jobs {
 
     my $jobref = $self->jobs->{ $self->current_job };
 
-    return if $jobref->submitted;
+    #print Dumper($jobref);
+
+    $DB::single = 2;
+    if(!$jobref->can('submitted')){
+        print Dumper($jobref);
+    }
+
+    return if  $jobref->submitted;
 
     map { $self->process_hpc_meta($_) } $jobref->all_hpc_meta;
 

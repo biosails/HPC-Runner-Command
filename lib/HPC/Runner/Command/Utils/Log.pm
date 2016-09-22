@@ -76,6 +76,20 @@ option 'process_table' => (
     lazy => 1,
 );
 
+=head3 tags
+
+Submission tags
+
+=cut
+
+option 'tags' => (
+    is                 => 'rw',
+    isa                => 'ArrayRef',
+    documentation      => 'Tags for the whole submission',
+    default => sub {return []},
+    cmd_split          => qr/,/,
+    required => 0,
+);
 =head3 metastr
 
 JSON string passed from HPC::Runner::App::Scheduler. It describes the total number of jobs, processes, and job batches.
@@ -132,7 +146,11 @@ EOT
 );
 
 ##Submit Log
-has 'log' => ( is => 'rw', );
+has 'log' => (
+    is      => 'rw',
+    default => sub { my $self = shift; return $self->init_log },
+    lazy    => 1
+);
 
 ##Command Log
 has 'command_log' => ( is => 'rw', );

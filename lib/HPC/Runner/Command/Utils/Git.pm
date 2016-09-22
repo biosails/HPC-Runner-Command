@@ -24,13 +24,35 @@ use Data::Dumper;
 
 with 'HPC::Runner::Command::Utils::Log';
 
-#TODO add git flow support
+=head1 HPC::Runner::Command::Utils::Git
+
+For projects under version control (and they should all be under version control), tag each submission with a version. Keep track of branches, tag, remote, etc.
+
+=head2 Attributes
+
+=cut
+
+=head3 version
+
+Version of our submission. Has a corresponding git tag.
+
+=cut
 
 option 'version' => (
+    is        => 'rw',
+    required  => 0,
+    predicate => 'has_version',
+    documentation =>
+        'Submission version. Each version has a corresponding git tag. See the difference between tags with `git diff tag1 tag2`. Tags are always version numbers, starting with 0.01.',
+);
+
+option 'autocommit' => (
+    traits        => ['Bool'],
     is            => 'rw',
-    required      => 0,
-    predicate     => 'has_version',
-    documentation => 'run version',
+    isa           => 'Bool',
+    default       => 1,
+    documentation => 'Run a git add -A on dirty build',
+    handles       => { no_autocommit => 'unset', },
 );
 
 has 'git_dir' => (
@@ -62,6 +84,16 @@ has 'remote' => (
 
 #TODO Create option for adding archive
 
+=head2 Subroutines
+
+=cut
+
+=head3 init_git
+
+Create a new Git::Wrapper object
+
+=cut
+
 sub init_git {
     my $self = shift;
 
@@ -77,20 +109,6 @@ sub init_git {
 
 }
 
-sub dirty_run {
-    my ($self) = shift;
-
-    return unless $self->has_git;
-
-    my $dirty_flag = $self->git->status->is_dirty;
-
-    if ($dirty_flag) {
-        $self->app_log->warn(
-            "There are uncommited files in your repo!\nPlease commit these files before running."
-        );
-    }
-}
-
 sub git_info {
     my $self = shift;
 
@@ -98,6 +116,43 @@ sub git_info {
 
     $self->branch_things;
     $self->get_version;
+}
+
+=head3 dirty_run
+
+Check for uncommited files
+#TODO add in option for autocommiting
+
+=cut
+
+sub dirty_run {
+    my $self = shift;
+
+    return unless $self->has_git;
+
+    my $dirty_flag = $self->git->status->is_dirty;
+
+    if ( $dirty_flag && !$self->autocommit ) {
+        $self->app_log->warn(
+            "There are uncommited files in your repo!\n\tPlease commit these files."
+        );
+    }
+    elsif ( $dirty_flag && $self->autocommit ) {
+        $self->app_log->warn(
+            "There are uncommited files in your repo!\n\tWe will try to commit these files before running."
+        );
+        try {
+            $self->git->add(qw/ -A /);
+            $self->git->commit( qw/ --message "stuff" /, { all => 1 } );
+            $self->app_log->info("Files were commited to git");
+        }
+        catch {
+            $self->app_log->warn("Were not able to commit files to git");
+            $self->app_log->warn("STDERR: ".$_->error);
+            $self->app_log->warn("STDOUT: ".$_->output);
+            $self->app_log->warn("STATUS: ".$_->status);
+        }
+    }
 }
 
 sub branch_things {
@@ -170,7 +225,7 @@ sub get_version {
         $self->version("0.01");
     }
 
-    #$self->git_push_tags;
+    $self->git_push_tags;
 }
 
 #TODO Make this an option
@@ -180,13 +235,15 @@ sub git_push_tags {
     return unless $self->has_git;
     return unless $self->has_version;
 
+    return if  $self->git->status->is_dirty;
+
     my @remote = $self->git->remote;
 
     $self->git->tag( $self->version );
 
-    #foreach my $remote (@remote) {
-        #$self->git->push( { tags => 1 }, $remote );
-    #}
+    foreach my $remote (@remote) {
+        $self->git->push( { tags => 1 }, $remote );
+    }
 }
 
 sub create_release {
