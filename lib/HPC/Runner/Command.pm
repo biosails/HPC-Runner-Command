@@ -48,20 +48,19 @@ Load plugins that are used both by the submitter and executor such as logging pl
 =cut
 
 option 'plugins' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef[Str]',
-    documentation      => 'Load aplication plugins',
-    cmd_split          => qr/,/,
-    required => 0,
+    is            => 'rw',
+    isa           => 'ArrayRef[Str]',
+    documentation => 'Load aplication plugins',
+    cmd_split     => qr/,/,
+    required      => 0,
 );
 
 option 'plugins_opts' => (
-    is => 'rw',
-    isa => 'HashRef',
+    is            => 'rw',
+    isa           => 'HashRef',
     documentation => 'Options for application plugins',
-    required => 0,
+    required      => 0,
 );
-
 
 =head3 hpc_plugins
 
@@ -70,18 +69,18 @@ Load hpc_plugins. PBS, Slurm, Web, etc.
 =cut
 
 option 'hpc_plugins' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef[Str]',
-    documentation      => 'Load hpc_plugins',
-    cmd_split          => qr/,/,
-    required => 0,
+    is            => 'rw',
+    isa           => 'ArrayRef[Str]',
+    documentation => 'Load hpc_plugins',
+    cmd_split     => qr/,/,
+    required      => 0,
 );
 
 option 'hpc_plugins_opts' => (
-    is => 'rw',
-    isa => 'HashRef',
+    is            => 'rw',
+    isa           => 'HashRef',
     documentation => 'Options for hpc_plugins',
-    required => 0,
+    required      => 0,
 );
 
 =head3 job_plugins
@@ -91,33 +90,18 @@ Load job execution plugins
 =cut
 
 option 'job_plugins' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef[Str]',
-    documentation      => 'Load job execution plugins',
-    cmd_split          => qr/,/,
-    required => 0,
+    is            => 'rw',
+    isa           => 'ArrayRef[Str]',
+    documentation => 'Load job execution plugins',
+    cmd_split     => qr/,/,
+    required      => 0,
 );
 
 option 'job_plugins_opts' => (
-    is => 'rw',
-    isa => 'HashRef',
+    is            => 'rw',
+    isa           => 'HashRef',
     documentation => 'Options for job_plugins',
-    required => 0,
-);
-
-=head3 tags
-
-Submission tags
-
-=cut
-
-option 'tags' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef',
-    documentation      => 'Tags for the whole submission',
-    default => sub {return []},
-    cmd_split          => qr/,/,
-    required => 0,
+    required      => 0,
 );
 
 =head2 Subroutines
@@ -133,8 +117,8 @@ sub gen_load_plugins {
 
     return unless $self->plugins;
 
-    $self->load_plugins(@{$self->plugins});
-    $self->parse_plugin_opts($self->plugins_opts);
+    $self->app_load_plugins( $self->plugins );
+    $self->parse_plugin_opts( $self->plugins_opts );
 }
 
 =head3 hpc_load_plugins
@@ -146,17 +130,8 @@ sub hpc_load_plugins {
 
     return unless $self->hpc_plugins;
 
-    foreach my $plugin (@{$self->hpc_plugins}){
-        try {
-            $self->load_plugin($plugin);
-        }
-        catch {
-            $self->app_log->warn("Could not load plugin $plugin!");
-        }
-    }
-
-    $self->load_plugins(@{$self->hpc_plugins});
-    $self->parse_plugin_opts($self->hpc_plugins_opts);
+    $self->app_load_plugins( $self->hpc_plugins );
+    $self->parse_plugin_opts( $self->hpc_plugins_opts );
 }
 
 =head2 Subroutines
@@ -170,10 +145,8 @@ sub job_load_plugins {
 
     return unless $self->job_plugins;
 
-    #$self->load_plugins(@{$self->job_plugins});
-    $self->app_load_plugins($self->job_plugins);
-
-    $self->parse_plugin_opts($self->job_plugins_opts);
+    $self->app_load_plugins( $self->job_plugins );
+    $self->parse_plugin_opts( $self->job_plugins_opts );
 }
 
 =head3 app_load_plugin
@@ -181,12 +154,12 @@ sub job_load_plugins {
 =cut
 
 sub app_load_plugins {
-    my $self = shift;
+    my $self    = shift;
     my $plugins = shift;
 
     return unless $plugins;
 
-    foreach my $plugin (@{$plugins}){
+    foreach my $plugin ( @{$plugins} ) {
         try {
             $self->load_plugin($plugin);
         }
@@ -194,7 +167,6 @@ sub app_load_plugins {
             $self->app_log->warn("Could not load plugin $plugin!");
         }
     }
-
 
 }
 
@@ -205,11 +177,11 @@ parse the opts from --plugin_opts
 =cut
 
 sub parse_plugin_opts {
-    my $self = shift;
+    my $self     = shift;
     my $opt_href = shift;
 
     return unless $opt_href;
-    while(my($k, $v) = each %{$opt_href}){
+    while ( my ( $k, $v ) = each %{$opt_href} ) {
         $self->$k($v) if $self->can($k);
     }
 }

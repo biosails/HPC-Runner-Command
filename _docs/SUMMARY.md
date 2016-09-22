@@ -1,7 +1,7 @@
 # Summary
 
 * [Overview](overview.md)
-* [Why you should use HPC::Runner::Command](why.md)
+* [Why use HPC::Runner::Command](why.md)
 * [Changes](changes.md)
 * [Glossary of Terms](glossary.md)
 * [Job Submission](job_submission/job_submission.md)

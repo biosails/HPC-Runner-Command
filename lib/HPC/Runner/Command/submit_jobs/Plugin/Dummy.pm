@@ -23,7 +23,7 @@ sub submit_jobs{
 
     my $jobid = "1234";
 
-    print "Submitting dummy job ".$self->slurmfile."\n\tWith dummy jobid $jobid\n";
+    $self->app_log->info("Submitting dummy job ".$self->slurmfile."\n\tWith dummy jobid $jobid");
 
     return $jobid;
 }
