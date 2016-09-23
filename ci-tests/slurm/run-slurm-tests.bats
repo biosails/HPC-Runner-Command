@@ -26,6 +26,10 @@ install_hpc_sqlite() {
 @test "001 install hpc-runner-command libraries" {
 
 	run sh -c "cd /hpc-runner-command"
+	run sh -c "milla build"
+	assert_success
+	run sh -c "milla test"
+	assert_success
 	run sh -c "milla install"
 	assert_success
 
