@@ -38,8 +38,8 @@ sub submit_jobs{
     my($jobid) = $stdout =~ m/(\d.*)$/ if $stdout;
     if(!$jobid){
         $self->app_log->error("No job was submitted! \nFull error is:\t$stderr\n$stdout");
-        $self->app_log->warn("Submit scripts will be written, but will not be submitted to the queue.")
-        $self->app_log->warn("Please look at your submission scripts in ".$self->outdir)
+        $self->app_log->warn("Submit scripts will be written, but will not be submitted to the queue.");
+        $self->app_log->warn("Please look at your submission scripts in ".$self->outdir);
         $self->app_log->warn("And your logs in ".$self->logdir."\nfor more information");
         $self->no_submit_to_slurm(0);
     }
