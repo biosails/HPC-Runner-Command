@@ -8,3 +8,5 @@ MYMETA.*
 /t/test001
 /t/test002
 /t/test003
+hpc-runner*.db
+hpcrunner*.db

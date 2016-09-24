@@ -1,3 +1,26 @@
-use Test::Class::Moose::Load 't/lib';
+use File::Spec::Functions qw( catdir  );
+use FindBin qw( $Bin  );
+use Test::Class::Moose::Load catdir( $Bin, 'lib' );
 use Test::Class::Moose::Runner;
-Test::Class::Moose::Runner->new->runtests;
+
+#Run the main applications tests
+
+if ( !$ENV{'SCHEDULER'} ) {
+    Test::Class::Moose::Runner->new(
+        test_classes => [
+            'TestsFor::HPC::Runner::Command::Test001',
+            'TestsFor::HPC::Runner::Command::Test002',
+            'TestsFor::HPC::Runner::Command::Test003'
+        ],
+    )->runtests;
+}
+elsif ( $ENV{'SCHEDULER'} eq 'SLURM' ) {
+    Test::Class::Moose::Runner->new(
+        test_classes => [
+            'TestsFor::HPC::Runner::Command::Test001',
+            'TestsFor::HPC::Runner::Command::Test002',
+            'TestsFor::HPC::Runner::Command::Test003',
+            'TestsFor::HPC::Runner::Command::Test004',
+        ],
+    )->runtests;
+}

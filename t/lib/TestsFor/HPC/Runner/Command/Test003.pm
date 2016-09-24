@@ -1,6 +1,7 @@
 package TestsFor::HPC::Runner::Command::Test003;
 
 use Test::Class::Moose;
+
 use HPC::Runner::Command;
 use Cwd;
 use FindBin qw($Bin);
@@ -11,28 +12,13 @@ use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
 
-sub make_test_dir{
+extends 'TestMethods::Base';
 
-    my $test_dir;
+#Tests the template
+#Tests for linear dependency tree
 
-    my @chars = ('a'..'z', 'A'..'Z', 0..9);
-    my $string = join '', map { @chars[rand @chars]  } 1 .. 8;
-
-    if(exists $ENV{'TMP'}){
-        $test_dir = $ENV{TMP}."/hpcrunner/$string";
-    }
-    else{
-        $test_dir = "/tmp/hpcrunner/$string";
-    }
-
-    make_path($test_dir);
-    make_path("$test_dir/script");
-
-    chdir($test_dir);
-
-    if(can_run('git') && !-d $test_dir."/.git"){
-        system('git init');
-    }
+sub write_test_file {
+    my $test_dir = shift;
 
     open( my $fh, ">$test_dir/script/test003.1.sh" );
     print $fh <<EOF;
@@ -53,23 +39,14 @@ EOF
 
     close($fh);
 
-    return $test_dir;
-}
-
-sub test_shutdown {
-
-    chdir("$Bin");
-    if ( exists $ENV{'TMP'} ) {
-        remove_tree( $ENV{TMP} . "/hpcrunner" );
-    }
-    else {
-        remove_tree("/tmp/hpcrunner");
-    }
+    close($fh);
 }
 
 sub construct {
+    my $test_methods = TestMethods::Base->new();
+    my $test_dir     = $test_methods->make_test_dir();
+    write_test_file($test_dir);
 
-    my $test_dir = make_test_dir();
     my $cwd = getcwd();
 
     my $t = "$test_dir/script/test003.1.sh";

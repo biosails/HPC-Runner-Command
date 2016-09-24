@@ -1,5 +1,8 @@
 package TestsFor::HPC::Runner::Command::Test002;
 
+use strict;
+use warnings;
+
 use Test::Class::Moose;
 use HPC::Runner::Command;
 use Cwd;
@@ -11,28 +14,13 @@ use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
 
-sub make_test_dir {
+extends 'TestMethods::Base';
 
-    my $test_dir;
+#Tests the template
+#Tests for linear dependency tree
 
-    my @chars = ( 'a' .. 'z', 'A' .. 'Z', 0 .. 9 );
-    my $string = join '', map { @chars[ rand @chars ] } 1 .. 8;
-
-    if ( exists $ENV{'TMP'} ) {
-        $test_dir = $ENV{TMP} . "/hpcrunner/$string";
-    }
-    else {
-        $test_dir = "/tmp/hpcrunner/$string";
-    }
-
-    make_path($test_dir);
-    make_path("$test_dir/script");
-
-    chdir($test_dir);
-
-    if ( can_run('git') && !-d $test_dir . "/.git" ) {
-        system('git init');
-    }
+sub write_test_file {
+    my $test_dir = shift;
 
     open( my $fh, ">$test_dir/script/test002.1.sh" );
     print $fh <<EOF;
@@ -54,35 +42,14 @@ echo "hello again from job 3" && sleep 5
 EOF
 
     close($fh);
-
-    return $test_dir;
-}
-
-sub test_shutdown {
-
-    chdir("$Bin");
-    if ( exists $ENV{'TMP'} ) {
-        remove_tree( $ENV{TMP} . "/hpcrunner" );
-    }
-    else {
-        remove_tree("/tmp/hpcrunner");
-    }
-}
-
-sub test_000 : Tags(require) {
-    my $self = shift;
-
-    require_ok('HPC::Runner::Command');
-    require_ok('HPC::Runner::Command::Utils::Base');
-    require_ok('HPC::Runner::Command::Utils::Log');
-    require_ok('HPC::Runner::Command::Utils::Git');
-    require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
-    ok(1);
 }
 
 sub construct {
+    my $self = shift;
 
-    my $test_dir = make_test_dir;
+    my $test_methods = TestMethods::Base->new();
+    my $test_dir     = $test_methods->make_test_dir();
+    write_test_file($test_dir);
 
     my $t = "$test_dir/script/test002.1.sh";
     MooseX::App::ParsedArgv->new(
@@ -112,8 +79,9 @@ sub test_003 : Tags(construction) {
 }
 
 sub test_005 : Tags(submit_jobs) {
+    my $self = shift;
 
-    my $test_dir = make_test_dir;
+    my $test_dir = $self->make_test_dir;
     my $test     = construct();
     my $cwd      = getcwd();
 
@@ -135,26 +103,31 @@ sub test_005 : Tags(submit_jobs) {
     $got =~ s/--metastr.*//g;
     $got =~ s/--version.*//g;
 
-    my $expect = <<EOF;
-#!/bin/bash
+    my $expect1 = <<EOF;
 #
 #SBATCH --share
 #SBATCH --get-user-env
 #SBATCH --job-name=001_job01
 #SBATCH --output=$logdir/001_job01.log
 #SBATCH --cpus-per-task=12
-
-cd $cwd
-hpcrunner.pl execute_job \\
 EOF
-    $expect .= "\t--procs 4 \\\n";
-    $expect .= "\t--infile $outdir/001_job01.in \\\n";
-    $expect .= "\t--outdir $outdir \\\n";
-    $expect .= "\t--logname 001_job01 \\\n";
-    $expect .= "\t--process_table $logdir/001-process_table.md \\\n";
 
-    #TODO FIX THIS TEST
-    #ok( $got =~ m/expected/, 'this is like that' );
+    my $expect2 = "cd $cwd";
+    my $expect3 = "hpcrunner.pl execute_job";
+    my $expect4 = "\t--procs 4";
+    my $expect5 = "\t--infile $outdir/001_job01.in";
+    my $expect6 = "\t--outdir $outdir";
+    my $expect7 = "\t--logname 001_job01";
+    my $expect8 = "\t--process_table $logdir/001-process_table.md";
+
+    like( $got, qr/$expect1/, 'Template matches' );
+    like( $got, qr/$expect2/, 'Template matches' );
+    like( $got, qr/$expect3/, 'Template matches' );
+    like( $got, qr/$expect4/, 'Template matches' );
+    like( $got, qr/$expect5/, 'Template matches' );
+    like( $got, qr/$expect6/, 'Template matches' );
+    like( $got, qr/$expect7/, 'Template matches' );
+    like( $got, qr/$expect8/, 'Template matches' );
 
     ok(1);
 }
