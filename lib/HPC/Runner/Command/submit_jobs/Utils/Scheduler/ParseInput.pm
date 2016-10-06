@@ -1,6 +1,9 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput;
 
 use Moose::Role;
+use List::MoreUtils qw(natatime);
+use Storable qw(dclone);
+use Data::Dumper;
 
 =head1 HPC::Runner::App::Scheduler::ParseInput
 
@@ -37,8 +40,8 @@ sub parse_file_slurm {
     #HPC afterok=thing1,thing2 -> Not supported
 
     if ( $self->has_afterok ) {
-        $self->jobs->{$self->jobname}->{submitted} = 1;
-        $self->jobs->{$self->jobname}->{scheduler_ids} = $self->afterok;
+        $self->jobs->{ $self->jobname }->{submitted}     = 1;
+        $self->jobs->{ $self->jobname }->{scheduler_ids} = $self->afterok;
 
         my $oldjob = $self->jobname;
         $self->increase_jobname();
@@ -54,8 +57,19 @@ sub parse_file_slurm {
 
     close($fh);
 
-    $self->check_for_commands();
+    $self->post_process_file_slurm;
+}
 
+=head3 post_process_file_slurm
+
+=cut
+
+sub post_process_file_slurm {
+    my $self = shift;
+
+    $self->check_for_commands;
+    $self->schedule_jobs;
+    $self->chunk_commands;
 }
 
 =head3 check_for_commands
@@ -67,15 +81,27 @@ Check all jobs to make sure they have commands
 sub check_for_commands {
     my $self = shift;
 
-    my @keys = keys %{$self->jobs};
+    my @keys = keys %{ $self->jobs };
 
-    foreach my $key (@keys){
+    $self->reset_cmd_counter;
+    $self->reset_batch_counter;
+
+    foreach my $key (@keys) {
         next if $self->jobs->{$key}->count_cmds;
         delete $self->jobs->{$key};
-        delete $self->job_deps->{ $key };
+        delete $self->job_deps->{$key};
     }
 
 }
+
+=head3 process_lines
+
+Iterate through all lines in the job file
+1. Sanity check - can't use nohup or push commands to background
+2. Check for HPC meta - #HPC
+3. Check for Note meta
+
+=cut
 
 sub process_lines {
     my $self = shift;
@@ -90,7 +116,6 @@ sub process_lines {
     $self->check_add_to_jobs();
     $self->check_lines_add_cmd($line);
 }
-
 
 =head3 check_lines_add_cmd
 
@@ -115,7 +140,7 @@ We check for a few cases
 
     #HPC jobname=job01
     #HPC commands_per_node=1
-    #HPC cpus_per_task=12
+    #HPC cpus_per_task=1
 
     gzip VERY_LARGE_FILE
     gzip OTHER_VERY_LARGE_FILE
@@ -179,12 +204,14 @@ Check for lines starting with #NOTE - used to pass per process job_tags
 
 =cut
 
+#TODO Change this to HPC
 sub check_note_meta {
     my $self = shift;
     my $line = shift;
 
     return unless $line =~ m/^#NOTE/;
     $self->add_cmd($line);
+
 }
 
 =head3 check_hpc_meta
@@ -204,14 +231,14 @@ echo "This is my new job with new HPC params!"
 sub check_hpc_meta {
     my $self = shift;
     my $line = shift;
-    my ( @match, $t1, $t2 );
+    my ( $t1, $t2 );
 
     return unless $line =~ m/^#HPC/;
     chomp($line);
 
-    @match = $line =~ m/HPC (\w+)=(.+)$/;
-    ( $t1, $t2 ) = ( $match[0], $match[1] );
+    ( $t1, $t2 ) = $self->parse_meta($line);
 
+    return unless $t1;
     if ( !$self->can($t1) ) {
         print "Option $t1 is an invalid option!\n";
         return;
@@ -224,6 +251,18 @@ sub check_hpc_meta {
     }
 
     push( @{ $self->jobs->{ $self->jobname }->{hpc_meta} }, $line );
+}
+
+sub parse_meta {
+    my $self = shift;
+    my $line = shift;
+
+    my ( @match, $t1, $t2 );
+
+    @match = $line =~ m/ (\w+)=(.+)$/;
+    ( $t1, $t2 ) = ( $match[0], $match[1] );
+
+    return ( $t1, $2 );
 }
 
 1;

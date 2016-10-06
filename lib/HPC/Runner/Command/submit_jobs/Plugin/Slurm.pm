@@ -44,7 +44,7 @@ sub submit_jobs{
         $self->no_submit_to_slurm(0);
     }
     else{
-        $self->app_log->info("Submitting job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
+        $self->app_log->warn("Submitting job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
     }
 
     return $jobid;

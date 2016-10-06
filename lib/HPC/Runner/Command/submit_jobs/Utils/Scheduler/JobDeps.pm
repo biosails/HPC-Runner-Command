@@ -2,14 +2,6 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 use Moose;
 
-#$self->jobs->{ $self->jobname } = {
-#deps      => [],
-#cmds      => [],
-#hpc_meta => [],
-#scheduler_ids => [],
-#submitted => 0,
-#};
-
 =head1 HPC::Runner::App::Scheduler::JobDeps
 
 =cut
@@ -78,9 +70,46 @@ has scheduler_ids => (
         all_scheduler_ids    => 'elements',
         add_scheduler_ids    => 'push',
         has_scheduler_ids    => 'count',
-        count_scheduler_ids    => 'count',
+        count_scheduler_ids  => 'count',
         has_no_scheduler_ids => 'is_empty',
     },
+);
+
+#TODO Add object class for this
+
+has batches => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_batches    => 'elements',
+        add_batches    => 'push',
+        has_batches    => 'count',
+        count_batches  => 'count',
+        has_no_batches => 'is_empty',
+    },
+);
+
+has batch_tags => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_batch_tags    => 'elements',
+        add_batch_tags    => 'push',
+        has_batch_tags    => 'count',
+        count_batch_tags  => 'count',
+        has_no_batch_tags => 'is_empty',
+    },
+);
+
+has 'submit_by_tags' => (
+    traits  => ['Bool'],
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 has 'submitted' => (

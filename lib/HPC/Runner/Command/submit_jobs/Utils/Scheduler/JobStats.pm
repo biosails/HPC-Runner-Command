@@ -29,13 +29,13 @@ has 'total_processes' => (
     },
 );
 
-has 'tally_commands' => (
-    traits  => ['Number'],
-    is      => 'rw',
-    isa     => 'Num',
-    default => 1,
-    handles => { add_tally_commands => 'add', },
-);
+#has 'tally_commands' => (
+    #traits  => ['Number'],
+    #is      => 'rw',
+    #isa     => 'Num',
+    #default => 1,
+    #handles => { add_tally_commands => 'add', },
+#);
 
 has 'total_batches' => (
     traits  => ['Number'],
@@ -56,14 +56,6 @@ has batches => (
     handles => {
         set_batches     => 'set',
         defined_batches => 'defined',
-
-        #keys_batches     => 'keys',
-        #exists_batches  => 'exists',
-        #get_batches     => 'get',
-        #has_no_batches  => 'is_empty',
-        #num_batches     => 'count',
-        #delete_batches  => 'delete',
-        #pairs_batches   => 'kv',
     },
 );
 
@@ -77,12 +69,6 @@ has jobnames => (
         defined_jobnames => 'defined',
         set_jobnames     => 'set',
         exists_jobnames  => 'exists',
-
-        #get_jobnames     => 'get',
-        #has_no_jobnames  => 'is_empty',
-        #num_jobnames     => 'count',
-        #delete_jobnames  => 'delete',
-        #pairs_jobnames   => 'kv',
     },
 );
 
@@ -101,20 +87,11 @@ sub create_meta_str {
 
     my $batchname = $counter . "_" . $current_job;
 
+    #TODO Redo this part to take into account work already done by chunk_batches
     my $batch = $self->{batches}->{$batchname};
     $batch->{total_processes} = $self->total_processes;
     $batch->{total_batches}   = $self->total_batches;
     $batch->{batch_index}     = $batch_counter . "/" . $self->total_batches;
-
-    ## This is wrong
-    my $ptally_commands = $self->tally_commands;
-    my $tally_count = $self->tally_commands + ( $batch->{commands} - 1 );
-    $batch->{tally_commands}
-        = $ptally_commands . "-"
-        . $tally_count . "/"
-        . $self->total_processes;
-
-    $self->add_tally_commands( $batch->{commands} );
 
     my $json      = JSON->new->allow_nonref;
     my $json_text = $json->encode($batch);
@@ -191,6 +168,7 @@ sub do_stats {
         my $lenjobs = $#job_batches + 1;
         $self->batches->{$batch}->{job_batches} = $index . "/" . $lenjobs;
 
+        #Why do I have a print statement here??
         print "Job batches are "
             . $self->batches->{$batch}->{job_batches} . "\n";
 

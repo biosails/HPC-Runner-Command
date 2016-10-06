@@ -90,6 +90,7 @@ option 'tags' => (
     cmd_split          => qr/,/,
     required => 0,
 );
+
 =head3 metastr
 
 JSON string passed from HPC::Runner::App::Scheduler. It describes the total number of jobs, processes, and job batches.
@@ -165,6 +166,9 @@ has 'logfile' => (
         clear_logfile   => 'clear',
     }
 );
+
+#TODO This should be changed to execute_jobs Logging
+#We also have job_tags as an ArrayRef for JobDeps
 
 has 'job_tags' => (
     traits  => ['Hash'],

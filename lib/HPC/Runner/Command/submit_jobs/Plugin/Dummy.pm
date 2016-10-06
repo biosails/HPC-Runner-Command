@@ -8,6 +8,23 @@ This is just a dummy to use for testing
 
 =cut
 
+=head2 attributes
+
+=cut
+
+has 'sched_counter' => (
+    traits   => ['Counter'],
+    is       => 'ro',
+    isa      => 'Num',
+    required => 1,
+    default  => 1234,
+    handles  => {
+        inc_sched_counter   => 'inc',
+        dec_sched_counter   => 'dec',
+        reset_sched_counter => 'reset',
+    },
+);
+
 =head2 Subroutines
 
 =cut
@@ -21,9 +38,11 @@ This is a dummy for testing - just return a value as a placeholder in job_stats
 sub submit_jobs{
     my $self = shift;
 
-    my $jobid = "1234";
+    my $jobid = $self->sched_counter;
 
-    $self->app_log->info("Submitting dummy job ".$self->slurmfile."\n\tWith dummy jobid $jobid");
+    $self->app_log->warn("SUBMITTING DUMMY JOB ".$self->slurmfile."\n\tWith dummy jobid $jobid");
+
+    $self->inc_sched_counter;
 
     return $jobid;
 }

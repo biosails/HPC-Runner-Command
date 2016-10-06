@@ -47,7 +47,6 @@ echo "hello again from job 3" && sleep 5
 EOF
 
     close($fh);
-    print "i'm still around foo\n";
 }
 
 sub test_001 : Tags(new) {
@@ -58,6 +57,7 @@ sub test_001 : Tags(new) {
 
     ok(1);
 }
+
 sub test_002 : Tags(construction) {
    my $self = shift;
 
@@ -100,6 +100,7 @@ sub test_003 : Tags(construction) {
     is( $test->infile, "$t",             "Infile is ok" );
     isa_ok( $test, 'HPC::Runner::Command' );
 
+    chdir('/tmp');
     remove_tree($test_dir);
 }
 

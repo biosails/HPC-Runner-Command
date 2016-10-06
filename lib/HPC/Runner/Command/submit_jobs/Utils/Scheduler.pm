@@ -15,6 +15,7 @@ use List::Util qw(shuffle);
 use List::MoreUtils qw(firstidx);
 use JSON;
 use DBM::Deep;
+use Storable qw(dclone);
 
 use Algorithm::Dependency;
 use Algorithm::Dependency::Source::HoA;
@@ -25,6 +26,8 @@ use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 use Moose::Util::TypeConstraints;
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput';
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps';
+
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
@@ -140,10 +143,11 @@ option afterok => (
     is       => 'rw',
     required => 0,
     isa      => 'ArrayRefOfStrs',
-    documentation => 'afterok switch in slurm. --afterok 123,134 will tell slurm to start this job after 123,134 have exited successfully',
-    default  => sub { [] },
-    cmd_split     => qr/,/,
-    handles  => {
+    documentation =>
+        'afterok switch in slurm. --afterok 123,134 will tell slurm to start this job after 123,134 have exited successfully',
+    default   => sub { [] },
+    cmd_split => qr/,/,
+    handles   => {
         all_afterok   => 'elements',
         has_afterok   => 'count',
         clear_afterok => 'clear',
@@ -152,33 +156,78 @@ option afterok => (
 
 =head3 cpus_per_task
 
-slurm item --cpus_per_task defaults to 4, which is probably fine
+slurm item --cpus_per_task defaults to 1
 
 =cut
 
 option 'cpus_per_task' => (
-    is        => 'rw',
-    isa       => 'Int',
-    required  => 0,
-    default   => 12,
-    predicate => 'has_cpus_per_task',
-    clearer   => 'clear_cpus_per_task'
-);
-
-=head3 commands_per_node
-
---commands_per_node defaults to 8, which is probably fine
-
-=cut
-
-has 'commands_per_node' => (
     is            => 'rw',
     isa           => 'Int',
     required      => 0,
     default       => 12,
-    documentation => q{Commands to run on each node. },
-    predicate     => 'has_commands_per_node',
-    clearer       => 'clear_commands_per_node'
+    predicate     => 'has_cpus_per_task',
+    clearer       => 'clear_cpus_per_task',
+    documentation => '--cpus-per-task switch in slurm'
+);
+
+=head3 ntasks
+
+slurm item --ntasks defaults to 28
+
+=cut
+
+option 'ntasks' => (
+    is        => 'rw',
+    isa       => 'Int',
+    required  => 0,
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        return $self->procs;
+    },
+    predicate => 'has_ntasks',
+    clearer   => 'clear_ntasks',
+    documentation =>
+        '--ntasks switch in slurm. This is equal to the number of concurrent tasks, not the total number of tasks'
+);
+
+=head3 ntasks-per-node
+
+slurm item --ntasks-per-node defaults to 28
+
+=cut
+
+option 'ntasks_per_node' => (
+    is       => 'rw',
+    isa      => 'Int',
+    required => 0,
+    lazy     => 1,
+    default  => sub {
+        my $self = shift;
+        return $self->ntasks * $self->nodes_count;
+    },
+    predicate     => 'has_ntasks_per_node',
+    clearer       => 'clear_ntasks_per_node',
+    documentation => '--ntasks-per-node switch in slurm'
+);
+
+=head3 commands_per_node
+
+commands to run per node
+
+=cut
+
+#TODO Update this for job arrays
+
+has 'commands_per_node' => (
+    is       => 'rw',
+    isa      => 'Int',
+    required => 0,
+    default  => 28,
+    documentation =>
+        q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
+    predicate => 'has_commands_per_node',
+    clearer   => 'clear_commands_per_node'
 );
 
 =head3 nodes_count
@@ -229,12 +278,12 @@ Define scheduler walltime
 =cut
 
 option 'walltime' => (
-    is => 'rw',
-    isa => 'Str',
-    required => 1,
-    default => '04:00:00',
+    is        => 'rw',
+    isa       => 'Str',
+    required  => 1,
+    default   => '04:00:00',
     predicate => 'has_walltime',
-    clearer => 'clear_walltime,'
+    clearer   => 'clear_walltime,'
 );
 
 =head2 mem
@@ -242,11 +291,11 @@ option 'walltime' => (
 =cut
 
 option 'mem' => (
-    is => 'rw',
-    isa => 'Str|Undef',
-    predicate => 'has_mem',
-    clearer => 'clear_mem',
-    required => 0,
+    is            => 'rw',
+    isa           => 'Str|Undef',
+    predicate     => 'has_mem',
+    clearer       => 'clear_mem',
+    required      => 0,
     documentation => q{Supply a memory limit},
 );
 
@@ -262,7 +311,7 @@ option 'no_submit_to_slurm' => (
     is       => 'rw',
     isa      => 'Bool',
     default  => 0,
-    required => 1,
+    required => 0,
     documentation =>
         q{Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.},
 );
@@ -283,6 +332,7 @@ has 'template_file' => (
 
         my ( $fh, $filename ) = tempfile();
 
+
         my $tt = <<EOF;
 #!/bin/bash
 #
@@ -293,8 +343,14 @@ has 'template_file' => (
 [% IF self.has_partition %]
 #SBATCH --partition=[% self.partition %]
 [% END %]
+[% IF self.has_ntasks %]
+#SBATCH --ntasks=[% self.ntasks %]
+[% END %]
 [% IF self.has_cpus_per_task %]
 #SBATCH --cpus-per-task=[% self.cpus_per_task %]
+[% END %]
+[% IF self.has_ntasks_per_node %]
+#SBATCH --ntasks-per-node=[% self.ntasks_per_node %]
 [% END %]
 [% IF self.has_mem %]
 #SBATCH --mem=[% self.mem %]
@@ -401,25 +457,6 @@ has 'scheduler_ids' => (
     },
 );
 
-=head3 schedule
-
-Schedule our jobs
-
-=cut
-
-has 'schedule' => (
-    traits  => ['Array'],
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
-    handles => {
-        all_schedules    => 'elements',
-        add_schedule     => 'push',
-        has_schedules    => 'count',
-        clear_schedule   => 'clear',
-        has_no_schedules => 'is_empty',
-    },
-);
 
 =head3 job_stats
 
@@ -428,10 +465,11 @@ Object describing the number of jobs, number of batches per job, etc
 =cut
 
 has 'job_stats' => (
-    is      => 'rw',
-    isa     => 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats',
+    is  => 'rw',
+    isa => 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats',
     default => sub {
-        return HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats->new();
+        return HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats
+            ->new();
     }
 );
 
@@ -471,6 +509,9 @@ has 'current_job' => (
     default  => '',
     required => 0,
 );
+
+#TODO
+#HAHAHA FINALLY GETTING RID OF THIS!!!
 
 =head3 first_pass
 
@@ -696,16 +737,7 @@ sub run {
     $self->check_jobname;
 
     $self->parse_file_slurm;
-    $self->schedule_jobs();
-
-    $self->first_pass(1);
     $self->iterate_schedule;
-
-    $self->reset_batch_counter;
-    $self->first_pass(0);
-    $self->iterate_schedule;
-
-    #$DB::single = 2;
 }
 
 =head3 check_jobname
@@ -731,7 +763,8 @@ sub check_add_to_jobs {
 
     if ( !exists $self->jobs->{ $self->jobname } ) {
         $self->jobs->{ $self->jobname }
-            = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps->new();
+            = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps
+            ->new();
     }
     $self->job_deps->{ $self->jobname } = [];
 }
@@ -765,39 +798,6 @@ sub check_files {
     make_path( $self->outdir ) if !-d $self->outdir;
 }
 
-=head3 check_work
-
-Check to see if its time to submit to the scheduler...
-
-=cut
-
-sub check_work {
-    my $self = shift;
-
-    if (   $self->cmd_counter > 0
-        && 0 == $self->cmd_counter % ( $self->commands_per_node )
-        && $self->batch )
-    {
-        $self->work;
-    }
-}
-
-=head3 schedule_jobs
-
-Use Algorithm::Dependency to schedule the jobs
-
-=cut
-
-sub schedule_jobs {
-    my $self = shift;
-
-    my $source = Algorithm::Dependency::Source::HoA->new( $self->job_deps );
-    my $dep = Algorithm::Dependency->new( source => $source, selected => [] );
-
-    $self->schedule($dep->schedule_all);
-
-}
-
 =head3 iterate_schedule
 
 Iterate over the schedule generated by schedule_jobs
@@ -810,16 +810,12 @@ sub iterate_schedule {
     return if $self->has_no_schedules;
 
     $self->clear_scheduler_ids();
+    $self->app_log->debug('Beginning to submit jobs to the scheduler');
 
-    foreach my $job ($self->all_schedules) {
+    foreach my $job ( $self->all_schedules ) {
+        $self->app_log->debug('Submitting all '.$job.' job types');
 
         $self->current_job($job);
-
-        next unless $self->jobs->{$self->current_job};
-
-        #TODO Add better way of dealing with this
-        die unless $self->jobs->{$self->current_job}->can('count_cmds');
-        next unless $self->jobs->{$self->current_job}->count_cmds;
 
         $DB::single = 2;
 
@@ -831,8 +827,6 @@ sub iterate_schedule {
     }
 }
 
-
-
 =head3 iterate_deps
 
 Check to see if we are actually submitting
@@ -843,18 +837,22 @@ Return job schedulerIds
 
 =cut
 
+#TODO Update this to return batch ids
+
 sub iterate_deps {
     my $self = shift;
 
     my $deps = $self->job_deps->{ $self->current_job };
 
     foreach my $dep ( @{$deps} ) {
-        if ( $self->no_submit_to_slurm && $self->jobs->{$dep}->is_not_submitted )
+        if (   $self->no_submit_to_slurm
+            && $self->jobs->{$dep}->is_not_submitted )
         {
             die print "A cyclic dependencies found!!!\n";
         }
         else {
-                map { $self->add_scheduler_id($_) } $self->jobs->{$dep}->all_scheduler_ids;
+            map { $self->add_scheduler_id($_) }
+                $self->jobs->{$dep}->all_scheduler_ids;
         }
     }
 }
@@ -866,7 +864,8 @@ sub iterate_deps {
 sub post_process_jobs {
     my $self = shift;
 
-    $self->jobs->{ $self->current_job }->submitted(1) unless $self->first_pass;
+    $self->jobs->{ $self->current_job }->submitted(1);
+
     $self->clear_scheduler_ids();
 }
 
@@ -879,40 +878,90 @@ sub process_jobs {
 
     my $jobref = $self->jobs->{ $self->current_job };
 
-    #print Dumper($jobref);
-
     $DB::single = 2;
-    if(!$jobref->can('submitted')){
-        print Dumper($jobref);
+    if ( !$jobref->can('submitted') ) {
+        warn "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
     }
 
-    return if  $jobref->submitted;
+    return if $jobref->submitted;
 
     map { $self->process_hpc_meta($_) } $jobref->all_hpc_meta;
 
-    #TODO just split the cmds into batches and process that way
-    map { $self->check_work; $self->process_cmd($_) } $jobref->all_cmds;
+    $self->pre_process_batch;
 
-    $self->work if $self->has_batch;
 }
 
-=head3 process_cmd
+=head3 pre_process_batch
 
-Batch the jobs and submit
+Go through the batch, add it, and see if we have any tags
 
 =cut
 
-sub process_cmd {
+sub pre_process_batch {
     my $self = shift;
-    my $cmd  = shift;
 
-    return unless $cmd;
+    $self->clear_batch;
 
-    $self->inc_cmd_counter;
+    my $orig_scheduler_ids = dclone( $self->scheduler_ids );
+    my @batches = @{$self->jobs->{$self->current_job}->batches};
 
-    $self->add_batch($cmd);
+    $self->app_log->debug('There are '.scalar @batches.' batches for job type '.$self->current_job);
 
+    foreach my $batch ( @batches ) {
+
+        #TODO separate this into work
+        $self->inc_cmd_counter( $batch->{cmd_count} );
+        $self->batch( $batch->{batch_str} );
+
+        my $batch_scheduler_ids = $self->scheduler_ids_by_batch($batch);
+
+        if (scalar @{$batch_scheduler_ids}){
+            $self->scheduler_ids($batch_scheduler_ids);
+        }
+
+        #TODO Reassign scheduler ids
+        $self->work;
+        $self->scheduler_ids($orig_scheduler_ids);
+
+    }
 }
+
+
+=head3 scheduler_ids_by_batch
+
+=cut
+
+sub scheduler_ids_by_batch {
+    my $self = shift;
+    my $batch = shift;
+
+    my $scheduler_index = $batch->{scheduler_index};
+
+    my @jobs = keys %{$scheduler_index};
+
+    my @scheduler_ids = ();
+
+    foreach my $job (@jobs) {
+        my $batch_index = $scheduler_index->{$job};
+        my $dep_scheduler_ids = $self->jobs->{$job}->scheduler_ids;
+
+        foreach my $index ( @{$batch_index} ) {
+            push(@scheduler_ids, $dep_scheduler_ids->[$index]);
+        }
+
+    }
+
+    return \@scheduler_ids;
+}
+
+=head3 process_hpc_meta
+
+Make sure our hpc variables are current for filling in the template
+#HPC cpus_per_task=1
+to
+#SBATCH --cpus-per-task=1
+
+=cut
 
 sub process_hpc_meta {
     my $self = shift;
@@ -954,11 +1003,9 @@ sub work {
 
     $DB::single = 2;
 
-    $self->job_stats->collect_stats( $self->batch_counter,
-        $self->cmd_counter, $self->current_job )
-        if $self->first_pass;
+    return unless $self->has_batch;
 
-    $self->process_batch unless $self->first_pass;
+    $self->process_batch;
 
     $self->inc_batch_counter;
     $self->clear_batch;
@@ -983,7 +1030,7 @@ sub process_batch {
     my $counter = $self->batch_counter;
     $counter = sprintf( "%03d", $counter );
 
-    make_path($self->outdir) unless -d $self->outdir;
+    make_path( $self->outdir ) unless -d $self->outdir;
     $self->cmdfile(
         $self->outdir . "/$counter" . "_" . $self->current_job . ".in" );
     $self->slurmfile(
@@ -1024,7 +1071,7 @@ sub process_batch {
 
     my $scheduler_id = $self->submit_jobs;
 
-    $self->jobs->{$self->current_job}->add_scheduler_ids($scheduler_id);
+    $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
 }
 
 =head3 process_batch_command
@@ -1062,10 +1109,11 @@ sub process_batch_command {
         . "\t--process_table "
         . $self->process_table;
 
-    my $metastr = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
+    my $metastr
+        = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
         $self->current_job );
     $command .= " \\\n\t" if $metastr;
-    $command .= $metastr if $metastr;
+    $command .= $metastr  if $metastr;
 
     my $pluginstr = $self->create_plugin_str;
     $command .= $pluginstr if $pluginstr;
@@ -1083,18 +1131,20 @@ If there is a version add it
 
 =cut
 
-sub create_version_str{
+sub create_version_str {
     my $self = shift;
 
     my $version_str = "";
 
-    if($self->has_git && $self->has_version){
+    if ( $self->has_git && $self->has_version ) {
         $version_str .= " \\\n\t";
-        $version_str .= "--version ".$self->version;
+        $version_str .= "--version " . $self->version;
     }
 
     return $version_str;
 }
+
+#TODO Add a Plugins Role
 
 =head3 create_plugin_str
 
@@ -1102,32 +1152,38 @@ Make sure to pass plugins to job runner
 
 =cut
 
-sub create_plugin_str{
+sub create_plugin_str {
     my $self = shift;
 
     my $plugin_str = "";
 
-    if($self->job_plugins){
+    if ( $self->job_plugins ) {
         $plugin_str .= " \\\n\t";
-        $plugin_str .= "--job_plugins ".join(",", @{$self->job_plugins});
+        $plugin_str
+            .= "--job_plugins " . join( ",", @{ $self->job_plugins } );
         $plugin_str .= " \\\n\t" if $self->job_plugins_opts;
-        $plugin_str .= $self->unparse_plugin_opts($self->job_plugins_opts, 'job_plugins') if $self->job_plugins_opts;
+        $plugin_str
+            .= $self->unparse_plugin_opts( $self->job_plugins_opts,
+            'job_plugins' )
+            if $self->job_plugins_opts;
     }
 
-    if($self->plugins){
+    if ( $self->plugins ) {
         $plugin_str .= " \\\n\t";
-        $plugin_str .= "--plugins ".join(",", @{$self->plugins});
+        $plugin_str .= "--plugins " . join( ",", @{ $self->plugins } );
         $plugin_str .= " \\\n\t" if $self->plugins_opts;
-        $plugin_str .= $self->unparse_plugin_opts($self->plugins_opts, 'plugins') if $self->plugins_opts;
+        $plugin_str
+            .= $self->unparse_plugin_opts( $self->plugins_opts, 'plugins' )
+            if $self->plugins_opts;
     }
 
     return $plugin_str;
 }
 
 sub unparse_plugin_opts {
-    my $self = shift;
+    my $self     = shift;
     my $opt_href = shift;
-    my $opt_opt = shift;
+    my $opt_opt  = shift;
 
     my $opt_str = "";
 
@@ -1135,10 +1191,10 @@ sub unparse_plugin_opts {
 
     #Get the opts
 
-    while(my($k, $v) = each %{$opt_href}){
+    while ( my ( $k, $v ) = each %{$opt_href} ) {
         next unless $k;
         $v = "" unless $v;
-        $opt_str .= "--$opt_opt"."_opts ".$k."=".$v." ";
+        $opt_str .= "--$opt_opt" . "_opts " . $k . "=" . $v . " ";
     }
 
     return $opt_str;
@@ -1158,60 +1214,67 @@ http://www.perlmonks.org/?node_id=151886
 
 =cut
 
-sub submit_to_scheduler{
-    my $self = shift;
+sub submit_to_scheduler {
+    my $self           = shift;
     my $submit_command = shift;
 
-    my ($infh,$outfh,$errfh);
-    $errfh = gensym(); # if you uncomment this line, $errfh will
-    # never be initialized for you and you
-    # will get a warning in the next print
-    # line.
+    my ( $infh, $outfh, $errfh );
+    $errfh = gensym();    # if you uncomment this line, $errfh will
+                          # never be initialized for you and you
+                          # will get a warning in the next print
+                          # line.
     my $cmdpid;
-    eval{
-        $cmdpid = open3($infh, $outfh, $errfh, "$submit_command ".$self->slurmfile);
+    eval {
+        $cmdpid
+            = open3( $infh, $outfh, $errfh,
+            "$submit_command " . $self->slurmfile );
     };
     die $@ if $@;
 
-    my $sel = new IO::Select; # create a select object
-    $sel->add($outfh,$errfh); # and add the fhs
-    my($stdout, $stderr);
+    my $sel = new IO::Select;    # create a select object
+    $sel->add( $outfh, $errfh ); # and add the fhs
+    my ( $stdout, $stderr );
 
-    while(my @ready = $sel->can_read) {
-        foreach my $fh (@ready) { # loop through them
+    while ( my @ready = $sel->can_read ) {
+        foreach my $fh (@ready) {    # loop through them
             my $line;
+
             # read up to 4096 bytes from this fh.
             my $len = sysread $fh, $line, 4096;
-            if(not defined $len){
+            if ( not defined $len ) {
+
                 # There was an error reading
-                #$self->log->fatal("Error from child: $!");
-                $self->log_main_messages('fatal', "Error from child: $!");
-            } elsif ($len == 0){
+                $self->log_main_messages( 'fatal', "Error from child: $!" );
+            }
+            elsif ( $len == 0 ) {
+
                 # Finished reading from this FH because we read
                 # 0 bytes.  Remove this handle from $sel.
                 $sel->remove($fh);
                 next;
-            } else { # we read data alright
-                if($fh == $outfh) {
+            }
+            else {    # we read data alright
+                if ( $fh == $outfh ) {
                     $stdout .= $line;
-                    #$self->log->info($line);
-                    $self->log_main_messages('debug', $line)
-                } elsif($fh == $errfh) {
+
+                    $self->log_main_messages( 'debug', $line );
+                }
+                elsif ( $fh == $errfh ) {
                     $stderr .= $line;
-                    #$self->log->error($line);
-                    $self->log_main_messages('error', $line);
-                } else {
-                    #$self->log->fatal("Shouldn't be here!\n");
-                    $self->log_main_messages('fatal', "Shouldn't be here!");
+
+                    $self->log_main_messages( 'error', $line );
+                }
+                else {
+                    $self->log_main_messages( 'fatal', "Shouldn't be here!" );
                 }
             }
         }
     }
 
-    waitpid($cmdpid, 1);
+    waitpid( $cmdpid, 1 );
     my $exitcode = $?;
 
-    return ($exitcode, $stdout, $stderr);
+    return ( $exitcode, $stdout, $stderr );
 }
 
 1;
