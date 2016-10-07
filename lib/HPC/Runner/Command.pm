@@ -1,6 +1,7 @@
 package HPC::Runner::Command;
 
 use MooseX::App qw(Color Config);
+use HPC::Runner::Command qw(ConfigHome);
 
 our $VERSION = '0.01';
 

@@ -89,7 +89,7 @@ sub check_for_commands {
     foreach my $key (@keys) {
         next if $self->jobs->{$key}->count_cmds;
         delete $self->jobs->{$key};
-        delete $self->job_deps->{$key};
+        delete $self->graph_job_deps->{$key};
     }
 
 }

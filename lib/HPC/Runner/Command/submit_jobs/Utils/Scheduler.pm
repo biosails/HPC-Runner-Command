@@ -27,6 +27,8 @@ use Moose::Util::TypeConstraints;
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps';
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files';
+with 'HPC::Runner::Command::Utils::Plugin';
 
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
@@ -111,6 +113,40 @@ option 'jobname' => (
         q{Specify a job name, each job will be appended with its batch order},
 );
 
+=head3 use_batches
+
+The default is to submit using job arrays.
+
+If specified it will submit each job individually.
+
+Example:
+
+#HPC jobname=gzip
+#HPC commands_per_node=1
+gzip 1
+gzip 2
+gzip 3
+
+Batches:
+sbatch 001_gzip.sh
+sbatch 002_gzip.sh
+sbatch 003_gzip.sh
+
+Arrays:
+
+sbatch --array=1-3 gzip.sh
+
+=cut
+
+option 'use_batches' => (
+    is       => 'rw',
+    isa      => 'Bool',
+    default  => 0,
+    required => 0,
+    documentation =>
+        q{Switch to use batches. The default is to use job arrays.},
+);
+
 =head3 module
 
 modules to load with slurm
@@ -177,11 +213,11 @@ slurm item --ntasks defaults to 28
 =cut
 
 option 'ntasks' => (
-    is        => 'rw',
-    isa       => 'Int',
-    required  => 0,
-    lazy => 1,
-    default => sub {
+    is       => 'rw',
+    isa      => 'Int',
+    required => 0,
+    lazy     => 1,
+    default  => sub {
         my $self = shift;
         return $self->procs;
     },
@@ -332,7 +368,6 @@ has 'template_file' => (
 
         my ( $fh, $filename ) = tempfile();
 
-
         my $tt = <<EOF;
 #!/bin/bash
 #
@@ -357,6 +392,9 @@ has 'template_file' => (
 [% END %]
 [% IF self.has_walltime %]
 #SBATCH --time=[% self.walltime %]
+[% END %]
+[% IF ARRAY_STR %]
+#SBATCH --array=[% ARRAY_STR %]
 [% END %]
 [% IF AFTEROK %]
 #SBATCH --dependency=afterok:[% AFTEROK %]
@@ -457,7 +495,6 @@ has 'scheduler_ids' => (
     },
 );
 
-
 =head3 job_stats
 
 Object describing the number of jobs, number of batches per job, etc
@@ -492,7 +529,7 @@ has 'deps' => (
         my $self = shift;
 
         #Should these all be $self->current_job?
-        $self->job_deps->{ $self->jobname } = $self->deps;
+        $self->graph_job_deps->{ $self->jobname } = $self->deps;
         $self->jobs->{ $self->jobname }->{deps} = $self->deps;
     }
 );
@@ -507,6 +544,17 @@ has 'current_job' => (
     is       => 'rw',
     isa      => 'Str',
     default  => '',
+    required => 0,
+);
+
+=head3 current_batch
+
+Keep track of our currently batch
+
+=cut
+
+has 'current_batch' => (
+    is       => 'rw',
     required => 0,
 );
 
@@ -576,6 +624,25 @@ has 'batch_counter' => (
         inc_batch_counter   => 'inc',
         dec_batch_counter   => 'dec',
         reset_batch_counter => 'reset',
+    },
+);
+
+=head2 job_counter
+
+Keep track of how many jobes we have submited to slurm
+
+=cut
+
+has 'job_counter' => (
+    traits   => ['Counter'],
+    is       => 'ro',
+    isa      => 'Num',
+    required => 1,
+    default  => 1,
+    handles  => {
+        inc_job_counter   => 'inc',
+        dec_job_counter   => 'dec',
+        reset_job_counter => 'reset',
     },
 );
 
@@ -669,26 +736,7 @@ has 'jobs' => (
     },
 );
 
-=head2 job_counter
-
-Keep track of how many jobs we have submited to slurm
-
-=cut
-
-has 'job_counter' => (
-    traits   => ['Counter'],
-    is       => 'ro',
-    isa      => 'Num',
-    required => 1,
-    default  => 1,
-    handles  => {
-        inc_job_counter   => 'inc',
-        dec_job_counter   => 'dec',
-        reset_job_counter => 'reset',
-    },
-);
-
-=head3 job_deps
+=head3 graph_job_deps
 
 Hashref of jobdeps to pass to Algorithm::Dependency
 
@@ -698,24 +746,46 @@ Job03 depends on job01 and job02
 
 =cut
 
-has 'job_deps' => (
+has 'graph_job_deps' => (
     traits  => ['Hash'],
     is      => 'rw',
     isa     => 'HashRef',
     lazy    => 1,
     handles => {
-        set_job_deps    => 'set',
-        get_job_deps    => 'get',
-        exists_job_deps => 'exists',
-        has_no_job_deps => 'is_empty',
-        num_job_depss   => 'count',
-        delete_job_deps => 'delete',
-        job_deps_pairs  => 'kv',
+        set_graph_job_deps    => 'set',
+        get_graph_job_deps    => 'get',
+        exists_graph_job_deps => 'exists',
+        has_no_graph_job_deps => 'is_empty',
+        num_graph_job_depss   => 'count',
+        delete_graph_job_deps => 'delete',
+        graph_job_deps_pairs  => 'kv',
     },
     default => sub { my $self = shift; return { $self->jobname => [] } },
 );
 
 =head2 Subroutines
+
+=head3 Workflow
+
+There are a lot of things happening here
+
+parse_file_slurm #we also resolve the dependency tree and write out the batch files in here
+schedule_jobs
+iterate_schedule
+
+    for $job (@scheduled_jobs)
+        (set current_job)
+        process_jobs
+        process_hpc_meta #slurm template
+        if !use_batches
+            submit_job #submit the whole job is using job arrays - which is the default
+        pre_process_batch
+            (current_job, current_batch)
+            scheduler_ids_by_batch
+            if use_batches
+                submit_job
+            else
+                run scontrol to update our jobs by job array id
 
 =cut
 
@@ -766,12 +836,12 @@ sub check_add_to_jobs {
             = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps
             ->new();
     }
-    $self->job_deps->{ $self->jobname } = [];
+    $self->graph_job_deps->{ $self->jobname } = [];
 }
 
 =head3 increase_jobname
 
-Increase jobname. job_001, job_002. Used for job_deps
+Increase jobname. job_001, job_002. Used for graph_job_deps
 
 =cut
 
@@ -785,7 +855,7 @@ sub increase_jobname {
     $self->jobname( "hpcjob_" . $counter );
 }
 
-=head3 check_files()
+=head3 check_files
 
 Check to make sure the outdir exists.
 If it doesn't exist the entire path will be created
@@ -808,12 +878,14 @@ sub iterate_schedule {
     my $self = shift;
 
     return if $self->has_no_schedules;
+    $self->reset_job_counter;
+    $self->reset_batch_counter;
 
     $self->clear_scheduler_ids();
     $self->app_log->debug('Beginning to submit jobs to the scheduler');
 
     foreach my $job ( $self->all_schedules ) {
-        $self->app_log->debug('Submitting all '.$job.' job types');
+        $self->app_log->debug( 'Submitting all ' . $job . ' job types' );
 
         $self->current_job($job);
 
@@ -824,6 +896,7 @@ sub iterate_schedule {
 
         $self->process_jobs();
         $self->post_process_jobs();
+        $self->inc_job_counter;
     }
 }
 
@@ -842,7 +915,7 @@ Return job schedulerIds
 sub iterate_deps {
     my $self = shift;
 
-    my $deps = $self->job_deps->{ $self->current_job };
+    my $deps = $self->graph_job_deps->{ $self->current_job };
 
     foreach my $dep ( @{$deps} ) {
         if (   $self->no_submit_to_slurm
@@ -880,12 +953,17 @@ sub process_jobs {
 
     $DB::single = 2;
     if ( !$jobref->can('submitted') ) {
-        warn "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
+        warn
+            "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
     }
 
     return if $jobref->submitted;
 
     map { $self->process_hpc_meta($_) } $jobref->all_hpc_meta;
+
+    if (!$self->use_batches){
+        $self->work;
+    }
 
     $self->pre_process_batch;
 
@@ -903,55 +981,102 @@ sub pre_process_batch {
     $self->clear_batch;
 
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
-    my @batches = @{$self->jobs->{$self->current_job}->batches};
+    my @batches = @{ $self->jobs->{ $self->current_job }->batches };
 
-    $self->app_log->debug('There are '.scalar @batches.' batches for job type '.$self->current_job);
+    $self->app_log->debug( 'There are '
+            . scalar @batches
+            . ' batches for job type '
+            . $self->current_job );
 
-    foreach my $batch ( @batches ) {
+    foreach my $batch (@batches) {
+        $self->current_batch($batch);
 
-        #TODO separate this into work
-        $self->inc_cmd_counter( $batch->{cmd_count} );
-        $self->batch( $batch->{batch_str} );
+        ###TODO --use_batches and not
+        if($self->use_batches){
+            #don't think I need this anymore - we take care of job_stats in parse_file_slurm
+            $self->batch( $batch->{batch_str} );
+            $self->scheduler_ids_by_batch;
 
-        my $batch_scheduler_ids = $self->scheduler_ids_by_batch($batch);
-
-        if (scalar @{$batch_scheduler_ids}){
-            $self->scheduler_ids($batch_scheduler_ids);
+            $self->work;
+            $self->scheduler_ids($orig_scheduler_ids);
+        }
+        else{
+            ### JOB ARRAY!
+            $self->scheduler_ids_by_array;
         }
 
-        #TODO Reassign scheduler ids
-        $self->work;
-        $self->scheduler_ids($orig_scheduler_ids);
+        #Only need this for job_arrays
+        $self->inc_batch_counter;
 
     }
 }
 
-
 =head3 scheduler_ids_by_batch
+
+When defining job tags there is an extra level of dependency
 
 =cut
 
 sub scheduler_ids_by_batch {
-    my $self = shift;
-    my $batch = shift;
+    my $self  = shift;
 
-    my $scheduler_index = $batch->{scheduler_index};
+    my $scheduler_index = $self->current_batch->{scheduler_index};
 
     my @jobs = keys %{$scheduler_index};
 
     my @scheduler_ids = ();
 
     foreach my $job (@jobs) {
-        my $batch_index = $scheduler_index->{$job};
+        my $batch_index       = $scheduler_index->{$job};
         my $dep_scheduler_ids = $self->jobs->{$job}->scheduler_ids;
 
         foreach my $index ( @{$batch_index} ) {
-            push(@scheduler_ids, $dep_scheduler_ids->[$index]);
+            push( @scheduler_ids, $dep_scheduler_ids->[$index] );
         }
 
     }
 
-    return \@scheduler_ids;
+    $self->scheduler_ids(\@scheduler_ids) if @scheduler_ids;
+}
+
+=head3 scheduler_ids_by_array
+
+=cut
+
+sub scheduler_ids_by_array {
+    my $self = shift;
+
+    print "Processing Job: ".$self->current_job." Batch: ".$self->batch_counter."\n";
+
+    my $scheduler_index = $self->current_batch->{scheduler_index};
+
+    my @jobs = keys %{$scheduler_index};
+
+    my @scheduler_ids = ();
+
+    foreach my $job (@jobs) {
+        my $batch_index       = $scheduler_index->{$job};
+        my $dep_scheduler_id = $self->jobs->{$job}->scheduler_ids->[0];
+
+        my $job_start = $self->jobs->{$job}->{batch_index_start};
+        my $job_end = $self->jobs->{$job}->{batch_index_end};
+
+        my @job_array = ($job_start .. $job_end);
+
+        #print "\tJob is $job Sched_id $dep_scheduler_id\n";
+        #print "\tBatch index is @{$batch_index}\n";
+
+        foreach my $index ( @{$batch_index} ) {
+            #print "\t\tBatch index is $index\n";
+            push( @scheduler_ids, $dep_scheduler_id.'_'.$job_array[$index] );
+        }
+
+    }
+
+    $self->current_batch->{array_deps} = \@scheduler_ids;
+
+    $self->update_job_deps;
+
 }
 
 =head3 process_hpc_meta
@@ -1003,11 +1128,13 @@ sub work {
 
     $DB::single = 2;
 
-    return unless $self->has_batch;
+    if ($self->use_batches){
+        return unless $self->has_batch;
+    }
 
     $self->process_batch;
 
-    $self->inc_batch_counter;
+    #$self->inc_batch_counter;
     $self->clear_batch;
 
     $self->reset_cmd_counter;
@@ -1020,49 +1147,50 @@ Write out template, submission job, and infile for parallel runner
 
 =cut
 
+#TODO think of more informative sub name
+
 sub process_batch {
     my $self = shift;
 
     return if $self->no_submit_to_slurm;
 
-    my ( $cmdfile, $slurmfile, $slurmsubmit, $fh, $command );
+    my $counter;
 
-    my $counter = $self->batch_counter;
-    $counter = sprintf( "%03d", $counter );
+    my($batch_counter, $job_counter) = $self->prepare_counter;
 
-    make_path( $self->outdir ) unless -d $self->outdir;
-    $self->cmdfile(
-        $self->outdir . "/$counter" . "_" . $self->current_job . ".in" );
-    $self->slurmfile(
-        $self->outdir . "/$counter" . "_" . $self->current_job . ".sh" );
+    $counter = $job_counter;
+    if($self->use_batches){
+        $counter = $batch_counter;
+    }
 
-    $fh = IO::File->new( $self->cmdfile, q{>} )
-        or die print "Error opening file  "
-        . $self->cmdfile . "  "
-        . $! . "\n";
-
-    print $fh $self->batch if defined $fh && defined $self->batch;
-    $fh->close;
+    $self->prepare_files();
 
     my $ok;
     if ( $self->has_scheduler_ids ) {
         $ok = $self->join_scheduler_ids(':');
     }
 
-    $command    = $self->process_batch_command();
+    my $array_str;
+    if( ! $self->use_batches ){
+        $array_str = $self->jobs->{$self->current_job}->{batch_index_start}."-".$self->jobs->{$self->current_job}->{batch_index_end};
+    }
+
+    my $command = $self->process_batch_command($counter);
     $DB::single = 2;
 
     #TODO Rewrite this to only use self
+
     $self->template->process(
         $self->template_file,
         {   JOBNAME => $counter . "_" . $self->current_job,
             USER    => $self->user,
+            COMMAND => $command,
+            ARRAY_STR => $array_str,
             AFTEROK => $ok,
             OUT     => $self->logdir
                 . "/$counter" . "_"
                 . $self->current_job . ".log",
             self    => $self,
-            COMMAND => $command
         },
         $self->slurmfile
     ) || die $self->template->error;
@@ -1074,6 +1202,7 @@ sub process_batch {
     $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
 }
 
+
 =head3 process_batch_command
 
 splitting this off from the main command
@@ -1081,26 +1210,28 @@ splitting this off from the main command
 =cut
 
 sub process_batch_command {
-    my ($self) = @_;
-    my $command;
+    my $self    = shift;
+    my $counter = shift;
 
-#Removing support for multiple job runners. Either its MCERunner or a custom command
+    my ( $command, $subcommand );
 
-    my $counter = $self->batch_counter;
-    $counter = sprintf( "%03d", $counter );
+    if ( $self->use_batches ) {
+        $subcommand = "execute_job";
+    }
+    else {
+        $subcommand = "execute_array";
+    }
 
     $command = "cd " . getcwd() . "\n";
     if ( $self->has_custom_command ) {
         $command .= $self->custom_command . " \\\n";
     }
     else {
-        $command .= "hpcrunner.pl execute_job \\\n";
+        $command .= "hpcrunner.pl $subcommand \\\n";
     }
     $command
         .= "\t--procs "
         . $self->procs . " \\\n"
-        . "\t--infile "
-        . $self->cmdfile . " \\\n"
         . "\t--outdir "
         . $self->outdir . " \\\n"
         . "\t--logname "
@@ -1109,9 +1240,13 @@ sub process_batch_command {
         . "\t--process_table "
         . $self->process_table;
 
+    $command .= "\\\n\t--infile ".$self->cmdfile if $self->use_batches;
+
+    #TODO Update metastring to give array index
     my $metastr
         = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
-        $self->current_job );
+        $self->current_job, $self->use_batches, $self->jobs->{$self->current_job} );
+
     $command .= " \\\n\t" if $metastr;
     $command .= $metastr  if $metastr;
 
@@ -1131,6 +1266,8 @@ If there is a version add it
 
 =cut
 
+#TODO Move to git
+
 sub create_version_str {
     my $self = shift;
 
@@ -1144,61 +1281,6 @@ sub create_version_str {
     return $version_str;
 }
 
-#TODO Add a Plugins Role
-
-=head3 create_plugin_str
-
-Make sure to pass plugins to job runner
-
-=cut
-
-sub create_plugin_str {
-    my $self = shift;
-
-    my $plugin_str = "";
-
-    if ( $self->job_plugins ) {
-        $plugin_str .= " \\\n\t";
-        $plugin_str
-            .= "--job_plugins " . join( ",", @{ $self->job_plugins } );
-        $plugin_str .= " \\\n\t" if $self->job_plugins_opts;
-        $plugin_str
-            .= $self->unparse_plugin_opts( $self->job_plugins_opts,
-            'job_plugins' )
-            if $self->job_plugins_opts;
-    }
-
-    if ( $self->plugins ) {
-        $plugin_str .= " \\\n\t";
-        $plugin_str .= "--plugins " . join( ",", @{ $self->plugins } );
-        $plugin_str .= " \\\n\t" if $self->plugins_opts;
-        $plugin_str
-            .= $self->unparse_plugin_opts( $self->plugins_opts, 'plugins' )
-            if $self->plugins_opts;
-    }
-
-    return $plugin_str;
-}
-
-sub unparse_plugin_opts {
-    my $self     = shift;
-    my $opt_href = shift;
-    my $opt_opt  = shift;
-
-    my $opt_str = "";
-
-    return unless $opt_href;
-
-    #Get the opts
-
-    while ( my ( $k, $v ) = each %{$opt_href} ) {
-        next unless $k;
-        $v = "" unless $v;
-        $opt_str .= "--$opt_opt" . "_opts " . $k . "=" . $v . " ";
-    }
-
-    return $opt_str;
-}
 
 =head3 submit_to_scheduler
 

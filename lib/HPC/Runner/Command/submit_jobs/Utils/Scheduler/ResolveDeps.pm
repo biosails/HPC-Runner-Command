@@ -7,7 +7,7 @@ use Data::Dumper;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps;
 
-Parse the infile for HPC params, jobs, and batches
+Once we have parsed the input file parse each job_type for job_batches
 
 =head2 Attributes
 
@@ -37,6 +37,9 @@ has 'schedule' => (
 
 =cut
 
+#Just putting this here
+#scontrol update job=9314_2 Dependency=afterok:9320_1
+
 =head3 schedule_jobs
 
 Use Algorithm::Dependency to schedule the jobs
@@ -46,7 +49,7 @@ Use Algorithm::Dependency to schedule the jobs
 sub schedule_jobs {
     my $self = shift;
 
-    my $source = Algorithm::Dependency::Source::HoA->new( $self->job_deps );
+    my $source = Algorithm::Dependency::Source::HoA->new( $self->graph_job_deps );
     my $dep = Algorithm::Dependency->new( source => $source, selected => [] );
 
     $self->schedule( $dep->schedule_all );
@@ -76,6 +79,8 @@ sub chunk_commands {
 
         next unless $self->jobs->{ $self->current_job };
 
+        $self->jobs->{$self->current_job}->{batch_index_start} = $self->batch_counter;
+
         if (!$self->jobs->{$self->current_job}->can('count_cmds')){
             warn "You seem to be mixing and matching job dependency declaration types! Here there be dragons! We are dying now.\n";
             exit 1;
@@ -91,15 +96,17 @@ sub chunk_commands {
 
         my $commands_per_node = $self->commands_per_node;
         my @cmds    = @{ $self->jobs->{ $self->current_job }->cmds };
-        my @batches = ();
 
         my $iter = natatime $commands_per_node, @cmds;
 
         $self->assign_batches($iter);
         $self->assign_batch_stats;
 
+        $self->jobs->{$self->current_job}->{batch_index_end} = $self->batch_counter - 1;
+        $self->inc_job_counter;
     }
 
+    $self->reset_job_counter;
     $self->reset_cmd_counter;
     $self->reset_batch_counter;
 }
@@ -120,6 +127,7 @@ sub assign_batch_stats {
         $self->job_stats->collect_stats( $self->batch_counter,
             $self->cmd_counter, $self->current_job );
 
+        $self->prepare_batch_files;
         $self->inc_batch_counter;
         $self->reset_cmd_counter;
     }
@@ -147,7 +155,7 @@ sub assign_batches {
             cmds       => $batch_cmds,
             batch_tags => $batch_tags,
             job        => $self->current_job,
-            job_deps   => $self->jobs->{ $self->current_job }->{deps},
+            graph_job_deps   => $self->jobs->{ $self->current_job }->{deps},
             cmd_count  => scalar @{$batch_cmds},
             batch_str  => join( "\n", @{$batch_cmds} ),
         };
@@ -160,6 +168,8 @@ sub assign_batches {
 
         $x++;
     }
+
+    $self->jobs->{$self->current_job}->{batch_count} = $x;
 
 }
 
@@ -251,12 +261,12 @@ search the batches for a particular scheduler id
 
 sub search_batches {
     my $self     = shift;
-    my $job_deps = shift;
+    my $graph_job_deps = shift;
     my $tags     = shift;
 
     my $scheduler_ref = {};
 
-    foreach my $dep ( @{$job_deps} ) {
+    foreach my $dep ( @{$graph_job_deps} ) {
 
         my @scheduler_index = ();
         next unless $self->jobs->{$dep}->submit_by_tags;

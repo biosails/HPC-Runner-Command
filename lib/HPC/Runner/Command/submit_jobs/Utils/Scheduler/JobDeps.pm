@@ -2,7 +2,7 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 use Moose;
 
-=head1 HPC::Runner::App::Scheduler::JobDeps
+=head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 =cut
 

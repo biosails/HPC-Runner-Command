@@ -30,11 +30,11 @@ has 'total_processes' => (
 );
 
 #has 'tally_commands' => (
-    #traits  => ['Number'],
-    #is      => 'rw',
-    #isa     => 'Num',
-    #default => 1,
-    #handles => { add_tally_commands => 'add', },
+#traits  => ['Number'],
+#is      => 'rw',
+#isa     => 'Num',
+#default => 1,
+#handles => { add_tally_commands => 'add', },
 #);
 
 has 'total_batches' => (
@@ -79,27 +79,38 @@ has jobnames => (
 
 =cut
 
+#TODO This is a mess
+
 sub create_meta_str {
     my $self          = shift;
     my $counter       = shift;
     my $batch_counter = shift;
     my $current_job   = shift;
+    my $use_batches   = shift;
+    my $job           = shift;
 
     my $batchname = $counter . "_" . $current_job;
 
-    #TODO Redo this part to take into account work already done by chunk_batches
     my $batch = $self->{batches}->{$batchname};
     $batch->{total_processes} = $self->total_processes;
     $batch->{total_batches}   = $self->total_batches;
-    $batch->{batch_index}     = $batch_counter . "/" . $self->total_batches;
+    $batch->{total_jobs}      = $self->keys_jobnames;
+    $batch->{jobname}         = $current_job;
+    $batch->{job_counter}     = $counter;
+
+    if ($use_batches) {
+        $batch->{batch_index} = $batch_counter . "/" . $self->total_batches;
+    }
+    else {
+        $batch->{array_start} = $job->{batch_index_start};
+        $batch->{array_end}   = $job->{batch_index_end};
+    }
 
     my $json      = JSON->new->allow_nonref;
     my $json_text = $json->encode($batch);
 
     $batch->{meta_str} = $json_text;
-    $DB::single = 2;
-    $DB::single = 2;
-    $json_text  = "--metastr \'$json_text\'";
+    $json_text = "--metastr \'$json_text\'";
     return $json_text;
 }
 
