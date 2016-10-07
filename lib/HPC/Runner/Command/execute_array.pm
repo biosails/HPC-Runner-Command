@@ -55,9 +55,10 @@ sub get_infile {
         exit 1;
     }
 
+    my $meta_str = $self->metastr;
     my $outdir = $self->outdir;
     my $array_counter = sprintf( "%03d", $self->task_id );
-    my $meta_ref  = decode_json $self->metastr;
+    my $meta_ref  = decode_json $meta_str;
 
     my $jobname = $meta_ref->{jobname};
     my $jobcounter = $meta_ref->{job_counter};
