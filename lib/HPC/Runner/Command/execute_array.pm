@@ -34,6 +34,12 @@ has 'task_id' => (
 sub BUILD {
     my $self = shift;
 
+    $self->task_id(1);
+    if (!$self->task_id && !$self->infile){
+        $self->app_log->fatal('There is no infile and this does not seem to be an array job. Aborting mission');
+        exit 1;
+    }
+
     $self->git_things;
     $self->gen_load_plugins;
     $self->job_load_plugins;
@@ -42,29 +48,19 @@ sub BUILD {
 sub execute {
     my $self = shift;
 
-    $self->task_id(1);
     $self->get_infile;
-    #$self->run_mce;
+    $self->run_mce;
 }
 
 sub get_infile {
     my $self = shift;
 
-    if (!$self->task_id && !$self->infile){
-        $self->app_log->fatal('There is no infile and this does not seem to be an array job. Aborting mission');
-        exit 1;
-    }
-
-    my $meta_str = $self->metastr;
     my $outdir = $self->outdir;
     my $array_counter = sprintf( "%03d", $self->task_id );
-    my $meta_ref  = decode_json $meta_str;
 
-    my $jobname = $meta_ref->{jobname};
-    my $jobcounter = $meta_ref->{job_counter};
+    my $infile = $self->outdir."/".$self->logname."_".$array_counter.".in";
 
-    my $infile = $self->outdir."/".$jobcounter."_".$jobname."_".$array_counter.".in";
-
+    $self->infile($infile);
     print "INFILE IS $infile\n";
 }
 
