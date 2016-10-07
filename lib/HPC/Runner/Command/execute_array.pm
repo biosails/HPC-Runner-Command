@@ -55,8 +55,16 @@ sub get_infile {
         exit 1;
     }
 
+    my $outdir = $self->outdir;
     my $array_counter = sprintf( "%03d", $self->task_id );
-    my $meta_str  = decode_json $self->meta_str;
+    my $meta_ref  = decode_json $self->metastr;
+
+    my $jobname = $meta_ref->{jobname};
+    my $jobcounter = $meta_ref->{job_counter};
+
+    my $infile = $self->outdir."/".$jobcounter."_".$jobname."_".$array_counter.".in";
+
+    print "INFILE IS $infile\n";
 }
 
 1;
