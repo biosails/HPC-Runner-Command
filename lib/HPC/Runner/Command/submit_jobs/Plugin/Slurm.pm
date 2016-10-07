@@ -12,6 +12,7 @@ use Log::Log4perl qw(:easy);
 use DateTime;
 use Data::Dumper;
 use List::Util qw/shuffle/;
+use IPC::Cmd qw[can_run];
 
 use Moose::Role;
 
@@ -66,7 +67,25 @@ sub update_job_deps{
     return unless scalar @{$scheduler_ids};
 
     foreach my $array_id (@{$scheduler_ids}){
-        print "\tscontrol update job=".$self->jobs->{$self->current_job}->scheduler_ids->[0]."_".$self->batch_counter." Dependency=afterok:$array_id\n";
+        my $cmd =  "scontrol update job=".$self->jobs->{$self->current_job}->scheduler_ids->[0]."_".$self->batch_counter." Dependency=afterok:$array_id";
+        $self->change_deps($cmd);
+    }
+
+}
+
+sub change_deps {
+    my $self = shift;
+    my $cmd = shift;
+
+    my $buffer = "";
+    if( scalar IPC::Cmd::run( command => $cmd,
+            verbose => 0,
+            buffer  => \$buffer )
+    ) {
+        $self->app_log->info($buffer);
+    }
+    else{
+        $self->app_log->warn($cmd);
     }
 }
 

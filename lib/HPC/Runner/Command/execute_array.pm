@@ -12,7 +12,8 @@ with 'HPC::Runner::Command::Utils::Git';
 with 'HPC::Runner::Command::execute_job::Utils::MCE';
 
 command_short_description 'Execute commands';
-command_long_description 'Take the parsed files from hpcrunner.pl submit_jobs and executes the code';
+command_long_description
+    'Take the parsed files from hpcrunner.pl submit_jobs and executes the code';
 
 option 'infile' => (
     is       => 'rw',
@@ -24,9 +25,13 @@ option 'infile' => (
 );
 
 has 'task_id' => (
-    is => 'rw',
+    is      => 'rw',
     default => sub {
-        return $ENV{'SLURM_ARRAY_TASK_ID'} || $ENV{'PBS_ARRAYID'} || 0;
+        return
+               $ENV{'SLURM_ARRAY_TASK_ID'}
+            || $ENV{'PBS_ARRAYID'}
+            || $ENV{'SGE_TASK_ID'}
+            || 0;
     },
     required => 0,
 );
@@ -34,9 +39,10 @@ has 'task_id' => (
 sub BUILD {
     my $self = shift;
 
-    $self->task_id(1);
-    if (!$self->task_id && !$self->infile){
-        $self->app_log->fatal('There is no infile and this does not seem to be an array job. Aborting mission');
+    if ( !$self->task_id && !$self->infile ) {
+        $self->app_log->fatal(
+            'There is no infile and this does not seem to be an array job. Aborting mission'
+        );
         exit 1;
     }
 
@@ -58,10 +64,10 @@ sub get_infile {
     my $outdir = $self->outdir;
     my $array_counter = sprintf( "%03d", $self->task_id );
 
-    my $infile = $self->outdir."/".$self->logname."_".$array_counter.".in";
+    my $infile
+        = $self->outdir . "/" . $self->logname . "_" . $array_counter . ".in";
 
     $self->infile($infile);
-    print "INFILE IS $infile\n";
 }
 
 1;

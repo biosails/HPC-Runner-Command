@@ -52,8 +52,6 @@ coerce 'ArrayRefOfStrs', from 'Str', via { [ split( ',', $_ ) ] };
 Config file to pass to command line as --config /path/to/file. It should be a yaml or other config supplied by L<Config::Any>
 This is optional. Paramaters can be passed straight to the command line
 
-Deprecated: configfile
-
 =head3 example.yml
 
     ---
@@ -200,7 +198,7 @@ option 'cpus_per_task' => (
     is            => 'rw',
     isa           => 'Int',
     required      => 0,
-    default       => 12,
+    default       => 4,
     predicate     => 'has_cpus_per_task',
     clearer       => 'clear_cpus_per_task',
     documentation => '--cpus-per-task switch in slurm'
@@ -219,7 +217,7 @@ option 'ntasks' => (
     lazy     => 1,
     default  => sub {
         my $self = shift;
-        return $self->procs;
+        return $self->ntasks * $self->nodes_count;
     },
     predicate => 'has_ntasks',
     clearer   => 'clear_ntasks',
@@ -240,7 +238,7 @@ option 'ntasks_per_node' => (
     lazy     => 1,
     default  => sub {
         my $self = shift;
-        return $self->ntasks * $self->nodes_count;
+        return $self->procs;
     },
     predicate     => 'has_ntasks_per_node',
     clearer       => 'clear_ntasks_per_node',
@@ -259,7 +257,7 @@ has 'commands_per_node' => (
     is       => 'rw',
     isa      => 'Int',
     required => 0,
-    default  => 28,
+    default  => 1,
     documentation =>
         q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
     predicate => 'has_commands_per_node',
@@ -317,7 +315,7 @@ option 'walltime' => (
     is        => 'rw',
     isa       => 'Str',
     required  => 1,
-    default   => '04:00:00',
+    default   => '00:20:00',
     predicate => 'has_walltime',
     clearer   => 'clear_walltime,'
 );
@@ -332,6 +330,7 @@ option 'mem' => (
     predicate     => 'has_mem',
     clearer       => 'clear_mem',
     required      => 0,
+    default       => '25GB',
     documentation => q{Supply a memory limit},
 );
 
@@ -961,7 +960,7 @@ sub process_jobs {
 
     map { $self->process_hpc_meta($_) } $jobref->all_hpc_meta;
 
-    if (!$self->use_batches){
+    if ( !$self->use_batches ) {
         $self->work;
     }
 
@@ -992,15 +991,16 @@ sub pre_process_batch {
         $self->current_batch($batch);
 
         ###TODO --use_batches and not
-        if($self->use_batches){
-            #don't think I need this anymore - we take care of job_stats in parse_file_slurm
+        if ( $self->use_batches ) {
+
+#don't think I need this anymore - we take care of job_stats in parse_file_slurm
             $self->batch( $batch->{batch_str} );
             $self->scheduler_ids_by_batch;
 
             $self->work;
             $self->scheduler_ids($orig_scheduler_ids);
         }
-        else{
+        else {
             ### JOB ARRAY!
             $self->scheduler_ids_by_array;
         }
@@ -1018,7 +1018,7 @@ When defining job tags there is an extra level of dependency
 =cut
 
 sub scheduler_ids_by_batch {
-    my $self  = shift;
+    my $self = shift;
 
     my $scheduler_index = $self->current_batch->{scheduler_index};
 
@@ -1036,7 +1036,7 @@ sub scheduler_ids_by_batch {
 
     }
 
-    $self->scheduler_ids(\@scheduler_ids) if @scheduler_ids;
+    $self->scheduler_ids( \@scheduler_ids ) if @scheduler_ids;
 }
 
 =head3 scheduler_ids_by_array
@@ -1046,7 +1046,10 @@ sub scheduler_ids_by_batch {
 sub scheduler_ids_by_array {
     my $self = shift;
 
-    print "Processing Job: ".$self->current_job." Batch: ".$self->batch_counter."\n";
+    print "Processing Job: "
+        . $self->current_job
+        . " Batch: "
+        . $self->batch_counter . "\n";
 
     my $scheduler_index = $self->current_batch->{scheduler_index};
 
@@ -1055,20 +1058,22 @@ sub scheduler_ids_by_array {
     my @scheduler_ids = ();
 
     foreach my $job (@jobs) {
-        my $batch_index       = $scheduler_index->{$job};
+        my $batch_index      = $scheduler_index->{$job};
         my $dep_scheduler_id = $self->jobs->{$job}->scheduler_ids->[0];
 
         my $job_start = $self->jobs->{$job}->{batch_index_start};
-        my $job_end = $self->jobs->{$job}->{batch_index_end};
+        my $job_end   = $self->jobs->{$job}->{batch_index_end};
 
-        my @job_array = ($job_start .. $job_end);
+        my @job_array = ( $job_start .. $job_end );
 
         #print "\tJob is $job Sched_id $dep_scheduler_id\n";
         #print "\tBatch index is @{$batch_index}\n";
 
         foreach my $index ( @{$batch_index} ) {
+
             #print "\t\tBatch index is $index\n";
-            push( @scheduler_ids, $dep_scheduler_id.'_'.$job_array[$index] );
+            push( @scheduler_ids,
+                $dep_scheduler_id . '_' . $job_array[$index] );
         }
 
     }
@@ -1128,7 +1133,7 @@ sub work {
 
     $DB::single = 2;
 
-    if ($self->use_batches){
+    if ( $self->use_batches ) {
         return unless $self->has_batch;
     }
 
@@ -1156,10 +1161,10 @@ sub process_batch {
 
     my $counter;
 
-    my($batch_counter, $job_counter) = $self->prepare_counter;
+    my ( $batch_counter, $job_counter ) = $self->prepare_counter;
 
     $counter = $job_counter;
-    if($self->use_batches){
+    if ( $self->use_batches ) {
         $counter = $batch_counter;
     }
 
@@ -1171,8 +1176,10 @@ sub process_batch {
     }
 
     my $array_str;
-    if( ! $self->use_batches ){
-        $array_str = $self->jobs->{$self->current_job}->{batch_index_start}."-".$self->jobs->{$self->current_job}->{batch_index_end};
+    if ( !$self->use_batches ) {
+        $array_str
+            = $self->jobs->{ $self->current_job }->{batch_index_start} . "-"
+            . $self->jobs->{ $self->current_job }->{batch_index_end};
     }
 
     my $command = $self->process_batch_command($counter);
@@ -1182,15 +1189,15 @@ sub process_batch {
 
     $self->template->process(
         $self->template_file,
-        {   JOBNAME => $counter . "_" . $self->current_job,
-            USER    => $self->user,
-            COMMAND => $command,
+        {   JOBNAME   => $counter . "_" . $self->current_job,
+            USER      => $self->user,
+            COMMAND   => $command,
             ARRAY_STR => $array_str,
-            AFTEROK => $ok,
-            OUT     => $self->logdir
+            AFTEROK   => $ok,
+            OUT       => $self->logdir
                 . "/$counter" . "_"
                 . $self->current_job . ".log",
-            self    => $self,
+            self => $self,
         },
         $self->slurmfile
     ) || die $self->template->error;
@@ -1201,7 +1208,6 @@ sub process_batch {
 
     $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
 }
-
 
 =head3 process_batch_command
 
@@ -1240,12 +1246,13 @@ sub process_batch_command {
         . "\t--process_table "
         . $self->process_table;
 
-    $command .= "\\\n\t--infile ".$self->cmdfile if $self->use_batches;
+    $command .= "\\\n\t--infile " . $self->cmdfile if $self->use_batches;
 
     #TODO Update metastring to give array index
     my $metastr
         = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
-        $self->current_job, $self->use_batches, $self->jobs->{$self->current_job} );
+        $self->current_job, $self->use_batches,
+        $self->jobs->{ $self->current_job } );
 
     $command .= " \\\n\t" if $metastr;
     $command .= $metastr  if $metastr;
@@ -1280,7 +1287,6 @@ sub create_version_str {
 
     return $version_str;
 }
-
 
 =head3 submit_to_scheduler
 
