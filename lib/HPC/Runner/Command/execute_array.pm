@@ -55,6 +55,7 @@ sub execute {
     my $self = shift;
 
     $self->get_infile;
+    $self->counter($self->task_id);
     $self->run_mce;
 }
 
