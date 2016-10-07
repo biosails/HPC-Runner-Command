@@ -31,7 +31,6 @@ sub prepare_files {
     make_path( $self->outdir ) unless -d $self->outdir;
 
     $self->prepare_sched_file;
-    #$self->prepare_batch_files;
 }
 
 =head3 prepare_counter
@@ -85,6 +84,8 @@ sub prepare_batch_files {
     my $self  = shift;
 
     my($batch_counter, $job_counter) = $self->prepare_counter;
+
+    $self->batch($self->current_batch->{batch_str});
 
     make_path( $self->outdir ) unless -d $self->outdir;
 

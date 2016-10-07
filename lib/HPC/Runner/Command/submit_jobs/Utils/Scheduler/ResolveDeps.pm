@@ -122,6 +122,7 @@ sub assign_batch_stats {
 
     foreach my $batch ( @{ $self->jobs->{ $self->current_job }->batches } ) {
 
+        $self->current_batch($batch);
         $self->inc_cmd_counter( $batch->{cmd_count} );
 
         $self->job_stats->collect_stats( $self->batch_counter,

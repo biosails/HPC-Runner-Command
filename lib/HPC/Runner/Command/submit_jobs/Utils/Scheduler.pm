@@ -1046,11 +1046,6 @@ sub scheduler_ids_by_batch {
 sub scheduler_ids_by_array {
     my $self = shift;
 
-    print "Processing Job: "
-        . $self->current_job
-        . " Batch: "
-        . $self->batch_counter . "\n";
-
     my $scheduler_index = $self->current_batch->{scheduler_index};
 
     my @jobs = keys %{$scheduler_index};
@@ -1066,12 +1061,8 @@ sub scheduler_ids_by_array {
 
         my @job_array = ( $job_start .. $job_end );
 
-        #print "\tJob is $job Sched_id $dep_scheduler_id\n";
-        #print "\tBatch index is @{$batch_index}\n";
-
         foreach my $index ( @{$batch_index} ) {
 
-            #print "\t\tBatch index is $index\n";
             push( @scheduler_ids,
                 $dep_scheduler_id . '_' . $job_array[$index] );
         }
