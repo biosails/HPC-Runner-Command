@@ -23,13 +23,7 @@ sub BUILD {
 sub execute {
     my $self = shift;
 
-    $self->first_pass(1);
     $self->parse_file_slurm();
-    $self->schedule_jobs();
-    $self->iterate_schedule();
-
-    $self->reset_batch_counter;
-    $self->first_pass(0);
     $self->iterate_schedule();
 }
 

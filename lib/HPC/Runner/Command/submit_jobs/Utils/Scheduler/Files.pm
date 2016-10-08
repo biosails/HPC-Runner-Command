@@ -15,6 +15,39 @@ Take care of all file operations
 =cut
 
 
+=head3 cmdfile
+
+File of commands for mcerunner
+Is cleared at the end of each slurm submission
+
+=cut
+
+has 'cmdfile' => (
+    traits   => ['String'],
+    default  => q{},
+    is       => 'rw',
+    isa      => 'Str',
+    required => 0,
+    handles  => { clear_cmdfile => 'clear', },
+);
+
+=head3 slurmfile
+
+File generated from slurm template
+
+Job submission file
+
+=cut
+
+has 'slurmfile' => (
+    traits   => ['String'],
+    default  => q{},
+    is       => 'rw',
+    isa      => 'Str',
+    required => 0,
+    handles  => { clear_slurmfile => 'clear', },
+);
+
 =head2 Subroutines
 
 =cut

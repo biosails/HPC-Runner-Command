@@ -45,7 +45,7 @@ sub submit_jobs{
         $self->no_submit_to_slurm(0);
     }
     else{
-        $self->app_log->warn("Submitting job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
+        $self->app_log->info("Submitting job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
     }
 
     return $jobid;
@@ -63,6 +63,8 @@ sub update_job_deps{
     return if $self->use_batches;
 
     my $scheduler_ids = $self->current_batch->{array_deps};
+
+    print Dumper($self->current_batch->{array_deps});
 
     return unless scalar @{$scheduler_ids};
 
@@ -85,7 +87,7 @@ sub change_deps {
         $self->app_log->info($buffer);
     }
     else{
-        $self->app_log->warn($cmd);
+        $self->app_log->warn($buffer);
     }
 }
 

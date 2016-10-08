@@ -20,14 +20,16 @@ use Storable qw(dclone);
 use Algorithm::Dependency;
 use Algorithm::Dependency::Source::HoA;
 
-use Moose::Role;
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 use Moose::Util::TypeConstraints;
 
+use HPC::Runner::Command::Utils::Traits qw(ArrayRefOfStrs);
+
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files';
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 with 'HPC::Runner::Command::Utils::Plugin';
 
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
@@ -35,13 +37,6 @@ use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler
 
-=head2 Utils
-
-=cut
-
-subtype 'ArrayRefOfStrs', as 'ArrayRef[Str]';
-
-coerce 'ArrayRefOfStrs', from 'Str', via { [ split( ',', $_ ) ] };
 
 =head2 Command Line Options
 
@@ -90,11 +85,11 @@ Separating this out from Base - submit_jobs and execute_job have different ways 
 =cut
 
 option 'jobname' => (
-    is        => 'rw',
-    isa       => 'Str',
-    required  => 0,
-    traits    => ['String'],
-    default   => 'hpcjob_001',
+    is       => 'rw',
+    isa      => 'Str',
+    required => 0,
+    default => 'hpcjob_001',
+    traits   => ['String'],
     predicate => 'has_jobname',
     handles   => {
         add_jobname     => 'append',
@@ -145,27 +140,6 @@ option 'use_batches' => (
         q{Switch to use batches. The default is to use job arrays.},
 );
 
-=head3 module
-
-modules to load with slurm
-Should use the same names used in 'module load'
-
-Example. R2 becomes 'module load R2'
-
-=cut
-
-option 'module' => (
-    traits        => ['Array'],
-    is            => 'rw',
-    isa           => 'ArrayRefOfStrs',
-    coerce        => 1,
-    required      => 0,
-    documentation => q{List of modules to load ex. R2, samtools, etc},
-    default       => sub { [] },
-    cmd_split     => qr/,/,
-    handles       => { has_modules => 'count', },
-);
-
 =head3 afterok
 
 The afterok switch in slurm. --afterok 123 will tell slurm to start this job after job 123 has completed successfully.
@@ -176,7 +150,7 @@ option afterok => (
     traits   => ['Array'],
     is       => 'rw',
     required => 0,
-    isa      => 'ArrayRefOfStrs',
+    isa      => ArrayRefOfStrs,
     documentation =>
         'afterok switch in slurm. --afterok 123,134 will tell slurm to start this job after 123,134 have exited successfully',
     default   => sub { [] },
@@ -185,153 +159,8 @@ option afterok => (
         all_afterok   => 'elements',
         has_afterok   => 'count',
         clear_afterok => 'clear',
+        join_afterok  => 'join',
     },
-);
-
-=head3 cpus_per_task
-
-slurm item --cpus_per_task defaults to 1
-
-=cut
-
-option 'cpus_per_task' => (
-    is            => 'rw',
-    isa           => 'Int',
-    required      => 0,
-    default       => 4,
-    predicate     => 'has_cpus_per_task',
-    clearer       => 'clear_cpus_per_task',
-    documentation => '--cpus-per-task switch in slurm'
-);
-
-=head3 ntasks
-
-slurm item --ntasks defaults to 28
-
-=cut
-
-option 'ntasks' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    lazy     => 1,
-    default  => sub {
-        my $self = shift;
-        return $self->ntasks * $self->nodes_count;
-    },
-    predicate => 'has_ntasks',
-    clearer   => 'clear_ntasks',
-    documentation =>
-        '--ntasks switch in slurm. This is equal to the number of concurrent tasks, not the total number of tasks'
-);
-
-=head3 ntasks-per-node
-
-slurm item --ntasks-per-node defaults to 28
-
-=cut
-
-option 'ntasks_per_node' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    lazy     => 1,
-    default  => sub {
-        my $self = shift;
-        return $self->procs;
-    },
-    predicate     => 'has_ntasks_per_node',
-    clearer       => 'clear_ntasks_per_node',
-    documentation => '--ntasks-per-node switch in slurm'
-);
-
-=head3 commands_per_node
-
-commands to run per node
-
-=cut
-
-#TODO Update this for job arrays
-
-has 'commands_per_node' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
-    documentation =>
-        q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
-    predicate => 'has_commands_per_node',
-    clearer   => 'clear_commands_per_node'
-);
-
-=head3 nodes_count
-
-Number of nodes to use on a job. This is only useful for mpi jobs.
-
-PBS:
-#PBS -l nodes=nodes_count:ppn=16 this
-
-Slurm:
-#SBATCH --nodes nodes_count
-
-=cut
-
-option 'nodes_count' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
-    documentation =>
-        q{Number of nodes requested. You should only use this if submitting parallel jobs.},
-    predicate => 'has_nodes_count',
-    clearer   => 'clear_nodes_count'
-);
-
-=head3 partition
-
-Specify the partition. Defaults to the partition that has the most nodes.
-
-In PBS this is called 'queue'
-
-=cut
-
-option 'partition' => (
-    is       => 'rw',
-    isa      => 'Str',
-    required => 0,
-    documentation =>
-        q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},
-    predicate => 'has_partition',
-    clearer   => 'clear_partition'
-);
-
-=head3 walltime
-
-Define scheduler walltime
-
-=cut
-
-option 'walltime' => (
-    is        => 'rw',
-    isa       => 'Str',
-    required  => 1,
-    default   => '00:20:00',
-    predicate => 'has_walltime',
-    clearer   => 'clear_walltime,'
-);
-
-=head2 mem
-
-=cut
-
-option 'mem' => (
-    is            => 'rw',
-    isa           => 'Str|Undef',
-    predicate     => 'has_mem',
-    clearer       => 'clear_mem',
-    required      => 0,
-    default       => '25GB',
-    documentation => q{Supply a memory limit},
 );
 
 =head3 no_submit_to_slurm
@@ -434,21 +263,6 @@ option serial => (
     clearer   => 'clear_serial'
 );
 
-=head3 user
-
-user running the script. Passed to slurm for mail information
-
-=cut
-
-option 'user' => (
-    is       => 'rw',
-    isa      => 'Str',
-    default  => sub { return $ENV{USER} || $ENV{LOGNAME} || getpwuid($<); },
-    required => 1,
-    documentation =>
-        q{This defaults to your current user ID. This can only be changed if running as an admin user}
-);
-
 =head3 use_custom
 
 Supply your own command instead of mcerunner/threadsrunner/etc
@@ -518,8 +332,9 @@ Call as
 =cut
 
 has 'deps' => (
+    traits   => ['Array'],
     is        => 'rw',
-    isa       => 'ArrayRefOfStrs',
+    isa       => ArrayRefOfStrs,
     coerce    => 1,
     predicate => 'has_deps',
     clearer   => 'clear_deps',
@@ -527,9 +342,12 @@ has 'deps' => (
     trigger   => sub {
         my $self = shift;
 
-        #Should these all be $self->current_job?
+        #print "Triggering deps deps ".Dumper($self->deps);
+        #print "Triggering deps graph deps".Dumper($self->deps);
+
         $self->graph_job_deps->{ $self->jobname } = $self->deps;
         $self->jobs->{ $self->jobname }->{deps} = $self->deps;
+
     }
 );
 
@@ -540,10 +358,11 @@ Keep track of our currently running job
 =cut
 
 has 'current_job' => (
-    is       => 'rw',
-    isa      => 'Str',
-    default  => '',
-    required => 0,
+    is        => 'rw',
+    isa       => 'Str',
+    default   => '',
+    required  => 0,
+    predicate => 'has_current_job',
 );
 
 =head3 current_batch
@@ -555,22 +374,6 @@ Keep track of our currently batch
 has 'current_batch' => (
     is       => 'rw',
     required => 0,
-);
-
-#TODO
-#HAHAHA FINALLY GETTING RID OF THIS!!!
-
-=head3 first_pass
-
-Do a first pass of the file to get all the stats
-
-=cut
-
-has 'first_pass' => (
-    is       => 'rw',
-    isa      => 'Bool',
-    default  => 1,
-    required => 1,
 );
 
 =head3 template
@@ -662,45 +465,6 @@ has 'batch' => (
     predicate => 'has_batch',
 );
 
-=head3 cmdfile
-
-File of commands for mcerunner
-Is cleared at the end of each slurm submission
-
-=cut
-
-has 'cmdfile' => (
-    traits   => ['String'],
-    default  => q{},
-    is       => 'rw',
-    isa      => 'Str',
-    required => 0,
-    handles  => { clear_cmdfile => 'clear', },
-);
-
-=head3 slurmfile
-
-File generated from slurm template
-
-Job submission file
-
-=cut
-
-has 'slurmfile' => (
-    traits   => ['String'],
-    default  => q{},
-    is       => 'rw',
-    isa      => 'Str',
-    required => 0,
-    handles  => { clear_slurmfile => 'clear', },
-);
-
-=head3 global_attr
-
-Save the initial attributes
-
-=cut
-
 =head3 jobs
 
 Contains all of our info for jobs
@@ -720,8 +484,6 @@ Contains all of our info for jobs
     }
 
 =cut
-
-#TODO This should be in its own package
 
 has 'jobs' => (
     is      => 'rw',
@@ -788,6 +550,11 @@ iterate_schedule
 
 =cut
 
+=head3 BUILD
+
+=cut
+
+
 =head3 run
 
 =cut
@@ -796,6 +563,7 @@ sub run {
     my $self = shift;
 
     $self->logname('slurm_logs');
+    $self->check_add_to_jobs;
 
     #TODO add back in support for serial workflows
     if ( $self->serial ) {
@@ -823,9 +591,11 @@ sub check_jobname {
 
 =head3 check_add_to_jobs
 
-Make sure each jobname has an entry
+Make sure each jobname has an entry. We set the defaults as the global configuration.
 
 =cut
+
+#Apply hpcjob_001 hpc_meta as globals
 
 sub check_add_to_jobs {
     my $self = shift;
@@ -833,7 +603,14 @@ sub check_add_to_jobs {
     if ( !exists $self->jobs->{ $self->jobname } ) {
         $self->jobs->{ $self->jobname }
             = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps
-            ->new();
+            ->new(
+                mem => $self->mem,
+                partition => $self->partition,
+                walltime => $self->walltime,
+                cpus_per_task => $self->cpus_per_task,
+                nodes_count => $self->nodes_count,
+                ntasks_per_nodes => $self->ntasks_per_node,
+            );
     }
     $self->graph_job_deps->{ $self->jobname } = [];
 }
@@ -880,11 +657,15 @@ sub iterate_schedule {
     $self->reset_job_counter;
     $self->reset_batch_counter;
 
-    $self->clear_scheduler_ids();
+    $self->clear_scheduler_ids;
     $self->app_log->debug('Beginning to submit jobs to the scheduler');
 
     foreach my $job ( $self->all_schedules ) {
+        #print "Current job is $job\n";
+
         $self->app_log->debug( 'Submitting all ' . $job . ' job types' );
+
+        #map { $self->process_hpc_meta($_) } $self->jobs->{$job}->all_hpc_meta;
 
         $self->current_job($job);
 
@@ -895,7 +676,6 @@ sub iterate_schedule {
 
         $self->process_jobs();
         $self->post_process_jobs();
-        $self->inc_job_counter;
     }
 }
 
@@ -917,6 +697,7 @@ sub iterate_deps {
     my $deps = $self->graph_job_deps->{ $self->current_job };
 
     foreach my $dep ( @{$deps} ) {
+
         if (   $self->no_submit_to_slurm
             && $self->jobs->{$dep}->is_not_submitted )
         {
@@ -938,7 +719,9 @@ sub post_process_jobs {
 
     $self->jobs->{ $self->current_job }->submitted(1);
 
-    $self->clear_scheduler_ids();
+    $self->inc_job_counter;
+
+    $self->clear_scheduler_ids;
 }
 
 =head3 process_jobs
@@ -957,8 +740,6 @@ sub process_jobs {
     }
 
     return if $jobref->submitted;
-
-    map { $self->process_hpc_meta($_) } $jobref->all_hpc_meta;
 
     if ( !$self->use_batches ) {
         $self->work;
@@ -1056,6 +837,8 @@ sub scheduler_ids_by_array {
         my $batch_index      = $scheduler_index->{$job};
         my $dep_scheduler_id = $self->jobs->{$job}->scheduler_ids->[0];
 
+        next unless $dep_scheduler_id;
+
         my $job_start = $self->jobs->{$job}->{batch_index_start};
         my $job_end   = $self->jobs->{$job}->{batch_index_end};
 
@@ -1072,44 +855,8 @@ sub scheduler_ids_by_array {
     $self->current_batch->{array_deps} = \@scheduler_ids;
 
     $self->update_job_deps;
-
 }
 
-=head3 process_hpc_meta
-
-Make sure our hpc variables are current for filling in the template
-#HPC cpus_per_task=1
-to
-#SBATCH --cpus-per-task=1
-
-=cut
-
-sub process_hpc_meta {
-    my $self = shift;
-    my $line = shift;
-    my ( @match, $t1, $t2 );
-
-    return unless $line =~ m/^#HPC/;
-
-    @match = $line =~ m/HPC (\w+)=(.+)$/;
-    ( $t1, $t2 ) = ( $match[0], $match[1] );
-
-    if ( !$self->can($t1) ) {
-        print "Option $t1 is an invalid option!\n";
-        return;
-    }
-
-    if ($t1) {
-        $self->$t1($t2);
-    }
-    else {
-        @match = $line =~ m/HPC (\w+)$/;
-        $t1    = $match[0];
-        return unless $t1;
-        $t1 = "clear_$t1";
-        $self->$t1;
-    }
-}
 
 =head3 work
 
@@ -1129,8 +876,6 @@ sub work {
     }
 
     $self->process_batch;
-
-    #$self->inc_batch_counter;
     $self->clear_batch;
 
     $self->reset_cmd_counter;
@@ -1196,6 +941,8 @@ sub process_batch {
     chmod 0777, $self->slurmfile;
 
     my $scheduler_id = $self->submit_jobs;
+
+    #print "Returned scheduler id $scheduler_id\n";
 
     $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
 }

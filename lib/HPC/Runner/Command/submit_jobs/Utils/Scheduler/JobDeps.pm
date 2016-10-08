@@ -1,6 +1,9 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 use Moose;
+use Moose::Util::TypeConstraints;
+
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
@@ -11,10 +14,10 @@ use Moose;
 =cut
 
 has deps => (
+    default => sub { [] },
     traits  => ['Array'],
     is      => 'rw',
     isa     => 'ArrayRef',
-    default => sub { [] },
     handles => {
         all_deps    => 'elements',
         add_deps    => 'push',
@@ -91,22 +94,17 @@ has batches => (
     },
 );
 
-has batch_tags => (
-    traits  => ['Array'],
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
-    handles => {
-        all_batch_tags    => 'elements',
-        add_batch_tags    => 'push',
-        has_batch_tags    => 'count',
-        count_batch_tags  => 'count',
-        has_no_batch_tags => 'is_empty',
-    },
+has 'batch_index_start' => (
+    isa => 'Int',
+    is => 'rw',
+);
+
+has 'batch_index_end' => (
+    isa => 'Int',
+    is => 'rw',
 );
 
 has 'submit_by_tags' => (
-    traits  => ['Bool'],
     is      => 'rw',
     isa     => 'Bool',
     default => 0,

@@ -14,8 +14,11 @@ use File::Slurp;
 
 extends 'TestMethods::Base';
 
-#Tests the template
-#Tests for linear dependency tree
+# Tests the template
+# Tests for linear dependency tree
+# With no jobnames specified
+
+#TODO Add tests for global/local hpc/job directives
 
 sub write_test_file {
     my $test_dir = shift;
@@ -67,55 +70,9 @@ sub test_003 : Tags(construct) {
 
     my $test = construct();
 
-    $test->first_pass(1);
     $test->parse_file_slurm();
-    $test->schedule_jobs();
     $test->iterate_schedule();
 
-    my $href = {
-        'hpcjob_001' => {
-            'submitted'     => '0',
-            'hpc_meta'      => [],
-            'deps'          => [],
-            'scheduler_ids' => [],
-            'cmds'          => [
-                'echo "hello world from job 1" && sleep 5
-'
-            ],
-        },
-        'hpcjob_002' => {
-            'submitted' => '0',
-            'hpc_meta'  => [],
-            'deps'      => ['hpcjob_001'],
-            'cmds'      => [
-                'echo "hello again from job 2" && sleep 5
-'
-            ],
-            'scheduler_ids' => []
-        },
-        'hpcjob_003' => {
-            'cmds' => [
-                'echo "goodbye from job 3"
-'
-            ],
-            'scheduler_ids' => [],
-            'deps'          => ['hpcjob_002'],
-            'hpc_meta'      => [],
-            'submitted'     => '0'
-        },
-        'hpcjob_004' => {
-            'submitted'     => '0',
-            'hpc_meta'      => [],
-            'deps'          => ['hpcjob_003'],
-            'scheduler_ids' => [],
-            'cmds'          => [
-                'echo "hello again from job 3" && sleep 5
-'
-            ],
-        },
-    };
-
-    is_deeply( $href, $test->jobs, 'JobRef passes' );
     is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
         $test->schedule, 'Schedule passes' );
     ok(1);
@@ -126,13 +83,7 @@ sub test_004 : Tags(submit_jobs) {
 
     my $test = construct();
 
-    $test->first_pass(1);
     $test->parse_file_slurm();
-    $test->schedule_jobs();
-    $test->iterate_schedule();
-
-    $test->reset_batch_counter;
-    $test->first_pass(0);
     $test->iterate_schedule();
 
     ok(1);

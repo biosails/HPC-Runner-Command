@@ -13,6 +13,7 @@ use Data::Dumper;
 use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
+use JSON::XS;
 
 extends 'TestMethods::Base';
 
@@ -121,6 +122,7 @@ EOF
     like( $got, qr/$expect2/, 'Template matches' );
     like( $got, qr/$expect3/, 'Template matches' );
     like( $got, qr/$expect4/, 'Template matches' );
+
     #like( $got, qr/$expect5/, 'Template matches' );
     like( $got, qr/$expect6/, 'Template matches' );
     like( $got, qr/$expect7/, 'Template matches' );
@@ -133,10 +135,16 @@ sub test_007 : Tags(check_hpc_meta) {
 
     my $test = construct();
 
+    $test->jobname('job01');
+
     my $line = "#HPC module=thing1,thing2\n";
     $test->process_hpc_meta($line);
 
-    is_deeply( [ 'thing1', 'thing2' ], $test->module, 'Modules pass' );
+    is_deeply(
+        [ 'thing1', 'thing2' ],
+        $test->jobs->{ $test->jobname }->module,
+        'Modules pass'
+    );
 }
 
 sub test_008 : Tags(check_hpc_meta) {
@@ -171,23 +179,25 @@ sub test_010 : Tags(check_note_meta) {
 
     my $test = construct();
 
-    my $line = "#NOTE job_tags=SAMPLE_01\n";
+    my $line = "#HPC jobname=job01\n";
+    $test->process_hpc_meta($line);
+
+    $line = "#NOTE job_tags=SAMPLE_01\n";
     $test->check_note_meta($line);
 
     is_deeply( $line, $test->cmd, 'Note meta passes' );
 }
 
-sub test_011 : Tags(check_hpc_meta) {
-    my $self = shift;
+#sub test_011 : Tags(check_hpc_meta) {
+#my $self = shift;
 
-    my $test = construct();
+#my $test = construct();
 
-    my $line = "#HPC jobname=job01\n";
-    $test->process_hpc_meta($line);
-    $test->check_add_to_jobs();
+#my $line = "#HPC jobname=job01\n";
+#$test->process_hpc_meta($line);
 
-    ok(1);
-}
+#ok(1);
+#}
 
 sub test_012 : Tags(job_stats) {
     my $self = shift;
@@ -197,10 +207,11 @@ sub test_012 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
+    #Add in job_stats tests
     my $job_stats = {
-        'tally_commands' => 1,
         'batches'        => {
             '001_job01' => {
+                'total_jobs' => 2,
                 'jobname'  => 'job01',
                 'batch'    => '001',
                 'commands' => 1,
@@ -230,7 +241,6 @@ sub test_012 : Tags(job_stats) {
     };
 
     #WHERE DID MY TESTS GO!!!
-    #is_deeply( $job_stats, $test->job_stats, 'Job stats pass' );
     is_deeply( [ 'job01', 'job02' ], $test->schedule, 'Schedule passes' );
 
     ok(1);
@@ -252,6 +262,85 @@ sub test_014 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
+    my $batch_job01_001 = {
+        'cmds' => [
+            '#NOTE job_tags=Sample1
+echo "hello world from job 1" && sleep 5
+'
+        ],
+        'job'        => 'job01',
+        'batch_tags' => ['Sample1'],
+        'job_deps'   => [],
+        'batch_str'  => '#NOTE job_tags=Sample1
+echo "hello world from job 1" && sleep 5
+',
+        'cmd_count'  => '1',
+        'array_deps' => [],
+    };
+
+    is_deeply( $test->jobs->{job01}->batches->[0],
+        $batch_job01_001, 'Job 01 Batch 001 matches' );
+
+    my $batch_job01_002 = {
+        'cmds' => [
+            '#NOTE job_tags=Sample2
+echo "hello again from job 2" && sleep 5
+'
+        ],
+        'job'        => 'job01',
+        'batch_tags' => ['Sample2'],
+        'job_deps'   => [],
+        'batch_str'  => '#NOTE job_tags=Sample2
+echo "hello again from job 2" && sleep 5
+',
+        'cmd_count'  => '1',
+        'array_deps' => [],
+    };
+
+    is_deeply( $test->jobs->{job01}->batches->[1],
+        $batch_job01_002, 'Job 01 Batch 002 matches' );
+
+    my $batch_job02_001 = {
+        'cmds' => [
+            '#NOTE job_tags=Sample1
+echo "goodbye from job 3"
+'
+        ],
+        'job'        => 'job02',
+        'batch_tags' => ['Sample1'],
+        'job_deps'   => ['job01'],
+        'batch_str'  => '#NOTE job_tags=Sample1
+echo "goodbye from job 3"
+',
+        'cmd_count'       => '1',
+        'array_deps'      => ['1234_1'],
+        'scheduler_index' => { 'job01' => [0] },
+    };
+
+    is_deeply( $test->jobs->{job02}->batches->[0],
+        $batch_job02_001, 'Job 02 Batch 001 matches' );
+
+    my $batch_job02_002 = {
+        'cmds' => [
+            '#NOTE job_tags=Sample2
+echo "hello again from job 3" && sleep 5
+'
+        ],
+        'job'        => 'job02',
+        'batch_tags' => ['Sample2'],
+        'job_deps'   => ['job01'],
+        'batch_str'  => '#NOTE job_tags=Sample2
+echo "hello again from job 3" && sleep 5
+',
+        'cmd_count'       => '1',
+        'array_deps'      => ['1234_2'],
+        'scheduler_index' => { 'job01' => [1] },
+    };
+
+    is_deeply( $test->jobs->{job02}->batches->[1],
+        $batch_job02_002, 'Job 02 Batch 002 matches' );
+
+    #Broke this test up into separate tests -> this is just here for reference
     my $expect = {
         'job01' => {
             'hpc_meta' =>
@@ -267,7 +356,6 @@ sub test_014 : Tags(job_stats) {
     echo "hello again from job 2" && sleep 5
     '
             ],
-            batch_tags => [ 'Sample1', 'Sample2' ],
         },
         'job02' => {
             'scheduler_ids' => [],
@@ -281,14 +369,19 @@ sub test_014 : Tags(job_stats) {
                 'echo "hello again from job 3" && sleep 5
     '
             ],
-            batch_tags => ['Sample1'],
         },
     };
 
-    #is_deeply( $expect, $test->jobs, 'Test jobs passes' );
-
-    $test->reset_batch_counter;
-
+    is_deeply( $test->jobs->{'job01'}->hpc_meta,
+        [ '#HPC cpus_per_task=12', '#HPC commands_per_node=1' ] );
+    is_deeply( $test->jobs->{'job01'}->scheduler_ids, ['1234'] );
+    is_deeply( $test->jobs->{'job02'}->scheduler_ids, ['1235'] );
+    is_deeply( $test->jobs->{'job01'}->deps,          [] );
+    is_deeply( $test->jobs->{'job02'}->deps,          ['job01'] );
+    is_deeply( $test->jobs->{'job01'}->batch_index_start, 1 );
+    is_deeply( $test->jobs->{'job01'}->batch_index_end,   2 );
+    is_deeply( $test->jobs->{'job02'}->batch_index_start, 3 );
+    is_deeply( $test->jobs->{'job02'}->batch_index_end,   4 );
     is( $test->jobs->{'job01'}->count_scheduler_ids, 1 );
     is( $test->jobs->{'job02'}->count_scheduler_ids, 1 );
     is( $test->jobs->{'job01'}->submitted,           1 );
@@ -299,9 +392,23 @@ sub test_014 : Tags(job_stats) {
 sub test_015 : Tags(submit_jobs) {
     my $self = shift;
 
-    my $test_dir = $self->make_test_dir;
-    my $test     = construct();
-    my $cwd      = getcwd();
+    my $test = construct();
+    $test->parse_file_slurm();
+    $test->iterate_schedule();
+
+    my $graph_job_deps = {
+        'job01' => [],
+        'job02' => ['job01']
+    };
+
+    is_deeply( $graph_job_deps, $test->graph_job_deps,
+        'Graph job dependency passes' );
+}
+
+sub test_016 : Tags(files) {
+    my $self = shift;
+
+    my $test = construct();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
@@ -309,44 +416,22 @@ sub test_015 : Tags(submit_jobs) {
     my $logdir = $test->logdir;
     my $outdir = $test->outdir;
 
-    my @files = glob( $test->outdir . "/*"  );
-    #print "Files are @files\n";
+    my @files = glob( $test->outdir . "/*" );
 
-    #TODO Update this test after we finish with job_array
-    my $got1 = read_file( $test->outdir . "/001_job01.sh" );
+    #TODO write tests for files
+    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01.sh
+    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01_001.in
+    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01_002.in
+    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02.sh
+    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02_003.in
+    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02_004.in
 
-    print "File is\n";
-    print "$got1\n";
+#my $ok;
+#$ok = grep/$outdir."\/001_job01.sh"/, @files;
+#ok($ok, 'Got the job01 submission file');
+#is(grep/$test->outdir."/001_job01_001.in"/, @files, 'Got the job01 batch 001 input file');
 
-    my $got2 = read_file( $test->outdir . "/002_job02.sh" );
-
-    print "File is\n";
-    print "$got2\n";
-    ok(1);
-}
-
-sub print_diff {
-    my $got    = shift;
-    my $expect = shift;
-
-    use Text::Diff;
-
-    my $diff = diff \$got, \$expect;
-    diag("Diff is\n\n$diff\n\n");
-
-    my $fh;
-    open( $fh, ">got.diff" ) or die print "Couldn't open $!\n";
-    print $fh $got;
-    close($fh);
-
-    open( $fh, ">expect.diff" ) or die print "Couldn't open $!\n";
-    print $fh $expect;
-    close($fh);
-
-    open( $fh, ">diff.diff" ) or die print "Couldn't open $!\n";
-    print $fh $diff;
-    close($fh);
-
+    #print "Files are ".join("\n", @files)."\n";
     ok(1);
 }
 

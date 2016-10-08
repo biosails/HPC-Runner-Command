@@ -91,8 +91,8 @@ sub chunk_commands {
 
         $self->reset_cmd_counter;
 
-        map { $self->process_hpc_meta($_) }
-            $self->jobs->{ $self->current_job }->all_hpc_meta;
+        #map { $self->process_hpc_meta($_) }
+            #$self->jobs->{ $self->current_job }->all_hpc_meta;
 
         my $commands_per_node = $self->commands_per_node;
         my @cmds    = @{ $self->jobs->{ $self->current_job }->cmds };
@@ -156,7 +156,7 @@ sub assign_batches {
             cmds       => $batch_cmds,
             batch_tags => $batch_tags,
             job        => $self->current_job,
-            graph_job_deps   => $self->jobs->{ $self->current_job }->{deps},
+            job_deps   => $self->jobs->{ $self->current_job }->{deps},
             cmd_count  => scalar @{$batch_cmds},
             batch_str  => join( "\n", @{$batch_cmds} ),
         };
@@ -262,12 +262,12 @@ search the batches for a particular scheduler id
 
 sub search_batches {
     my $self     = shift;
-    my $graph_job_deps = shift;
+    my $job_deps = shift;
     my $tags     = shift;
 
     my $scheduler_ref = {};
 
-    foreach my $dep ( @{$graph_job_deps} ) {
+    foreach my $dep ( @{$job_deps} ) {
 
         my @scheduler_index = ();
         next unless $self->jobs->{$dep}->submit_by_tags;

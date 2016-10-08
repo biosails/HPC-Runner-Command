@@ -108,12 +108,14 @@ sub process_lines {
     my $line = shift;
 
     $self->check_sanity($line);
-    $self->check_hpc_meta($line);
+    $self->process_hpc_meta($line);
     $self->check_note_meta($line);
 
     return if $line =~ m/^#/;
 
-    $self->check_add_to_jobs();
+    #Do I need this?
+    #$self->check_add_to_jobs();
+
     $self->check_lines_add_cmd($line);
 }
 
@@ -211,10 +213,10 @@ sub check_note_meta {
 
     return unless $line =~ m/^#NOTE/;
     $self->add_cmd($line);
-
 }
 
-=head3 check_hpc_meta
+
+=head3 process_hpc_meta
 
 allow for changing parameters mid through the script
 
@@ -226,23 +228,30 @@ echo "this is job one" && \
 
 echo "This is my new job with new HPC params!"
 
+Make sure our hpc variables are current for filling in the template
+#HPC cpus_per_task=1
+to
+#SBATCH --cpus-per-task=1
+
 =cut
 
-sub check_hpc_meta {
+#TODO This should be done in parse_input
+
+sub process_hpc_meta {
     my $self = shift;
     my $line = shift;
-    my ( $t1, $t2 );
 
     return unless $line =~ m/^#HPC/;
     chomp($line);
 
-    ( $t1, $t2 ) = $self->parse_meta($line);
+    my( $t1, $t2 ) = $self->parse_meta($line);
 
-    return unless $t1;
     if ( !$self->can($t1) ) {
         print "Option $t1 is an invalid option!\n";
         return;
     }
+
+    my $jobname = $self->jobname;
 
     #Only process jobnames
     if ( $t1 eq 'jobname' || $t1 eq 'deps' ) {
@@ -250,7 +259,33 @@ sub check_hpc_meta {
         return;
     }
 
+    if($jobname eq 'hpcjob_001'){
+        $self->apply_global_directives($t1, $t2);
+    }
+    else{
+        $self->apply_job_directives($t1, $t2);
+    }
+
     push( @{ $self->jobs->{ $self->jobname }->{hpc_meta} }, $line );
+}
+
+sub apply_global_directives {
+    my $self = shift;
+    my $t1 = shift;
+    my $t2 = shift;
+
+    if ($t1) {
+        $self->$t1($t2);
+    }
+}
+
+sub apply_job_directives {
+    my $self = shift;
+    my $t1 = shift;
+    my $t2 = shift;
+
+    return unless $self->jobs->{ $self->jobname };
+    $self->jobs->{ $self->jobname }->$t1($t2);
 }
 
 sub parse_meta {

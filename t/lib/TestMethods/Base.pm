@@ -47,4 +47,29 @@ sub test_shutdown {
     }
 }
 
+sub print_diff {
+    my $got    = shift;
+    my $expect = shift;
+
+    use Text::Diff;
+
+    my $diff = diff \$got, \$expect;
+    diag("Diff is\n\n$diff\n\n");
+
+    my $fh;
+    open( $fh, ">got.diff" ) or die print "Couldn't open $!\n";
+    print $fh $got;
+    close($fh);
+
+    open( $fh, ">expect.diff" ) or die print "Couldn't open $!\n";
+    print $fh $expect;
+    close($fh);
+
+    open( $fh, ">diff.diff" ) or die print "Couldn't open $!\n";
+    print $fh $diff;
+    close($fh);
+
+    ok(1);
+}
+
 1;
