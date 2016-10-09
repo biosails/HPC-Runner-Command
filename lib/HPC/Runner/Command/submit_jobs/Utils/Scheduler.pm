@@ -200,7 +200,6 @@ has 'template_file' => (
 #!/bin/bash
 #
 #SBATCH --share
-#SBATCH --get-user-env
 #SBATCH --job-name=[% JOBNAME %]
 #SBATCH --output=[% OUT %]
 [% IF job.has_partition %]
