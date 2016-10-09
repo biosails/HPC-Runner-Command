@@ -112,7 +112,7 @@ EOF
 ##SBATCH --cpus-per-task=1
     my $expect2 = "cd $cwd";
     my $expect3 = "hpcrunner.pl execute_array";
-    my $expect4 = "\t--procs 4";
+    my $expect4 = "\t--procs 1";
     my $expect5 = "\t--infile $outdir/001_job01.in";
     my $expect6 = "\t--outdir $outdir";
     my $expect7 = "\t--logname 001_job01";
