@@ -38,7 +38,7 @@ sub submit_jobs{
     if(!$exitcode){
         $self->app_log->fatal("Job was not submitted successfully");
         $self->app_log->warn("STDERR: ".$stderr) if $stderr;
-        $self->app_log->warn("STDOUT: ".$stderr) if $stdout;
+        $self->app_log->warn("STDOUT: ".$stdout) if $stdout;
     }
     else{
         $self->app_log->info("Job was submitted successfully");

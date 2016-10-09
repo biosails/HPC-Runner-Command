@@ -413,6 +413,8 @@ sub test_016 : Tags(files) {
 
     my @files = glob( $test->outdir . "/*" );
 
+    print "SCHEDULER IDS ARE\n";
+    print Dumper($test->scheduler_ids);
     #This did not work as well as expected
     #print "PARTITION IS ";
     #print Dumper($test->jobs->{job01}->partition);

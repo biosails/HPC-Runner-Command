@@ -914,8 +914,8 @@ sub process_batch {
     my $array_str;
     if ( !$self->use_batches ) {
         $array_str
-            = $self->jobs->{ $self->current_job }->{batch_index_start} . "-"
-            . $self->jobs->{ $self->current_job }->{batch_index_end};
+            = $self->jobs->{ $self->current_job }->batch_index_start . "-"
+            . $self->jobs->{ $self->current_job }->batch_index_end;
     }
 
     my $command = $self->process_batch_command($counter);
