@@ -87,9 +87,10 @@ option 'ntasks_per_node' => (
         my $self = shift;
         return $self->procs;
     },
-    predicate     => 'has_ntasks_per_node',
-    clearer       => 'clear_ntasks_per_node',
-    documentation => '--ntasks-per-node switch in slurm. total concurrent tasks on a node.'
+    predicate => 'has_ntasks_per_node',
+    clearer   => 'clear_ntasks_per_node',
+    documentation =>
+        '--ntasks-per-node switch in slurm. total concurrent tasks on a node.'
 );
 
 =head3 commands_per_node
@@ -101,11 +102,11 @@ commands to run per node
 #TODO Update this for job arrays
 
 has 'commands_per_node' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
-    documentation =>
+    is                  => 'rw',
+    isa                 => 'Int',
+    required            => 0,
+    default             => 1,
+    documentation       =>
         q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
     predicate => 'has_commands_per_node',
     clearer   => 'clear_commands_per_node'
@@ -124,11 +125,11 @@ Slurm:
 =cut
 
 option 'nodes_count' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
-    documentation =>
+    is               => 'rw',
+    isa              => 'Int',
+    required         => 0,
+    default          => 1,
+    documentation    =>
         q{Number of nodes requested. You should only use this if submitting parallel jobs.},
     predicate => 'has_nodes_count',
     clearer   => 'clear_nodes_count'
@@ -143,11 +144,11 @@ In PBS this is called 'queue'
 =cut
 
 option 'partition' => (
-    is       => 'rw',
-    isa      => 'Str',
-    required => 0,
-    default => '',
-    documentation =>
+    is             => 'rw',
+    isa            => 'Str',
+    required       => 0,
+    default        => '',
+    documentation  =>
         q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},
     predicate => 'has_partition',
     clearer   => 'clear_partition'
@@ -205,11 +206,11 @@ Analagous to parallel --jobs i
 
 =cut
 
-option 'procs' => (
-    is       => 'rw',
-    isa      => 'Int',
-    default  => 1,
-    required => 0,
+option 'procs'    => (
+    is            => 'rw',
+    isa           => 'Int',
+    default       => 1,
+    required      => 0,
     documentation =>
         q{Total number of concurrently running jobs allowed at any time.}
 );
