@@ -119,18 +119,7 @@ sub test_001 : Tags(job_stats) {
 
     my @files = glob( $test->outdir . "/*" );
 
-    print "Files are ".join("\n", @files)."\n";
-
     is(scalar @files, 6, "Got the right number of files");
-
-    print Dumper($test->jobs->{pyfasta}->ntasks);
-
-    if($test->jobs->{pyfasta}->has_ntasks){
-        print "WE HAVE NTASKS!\n";
-    }
-
-    my $got = read_file($outdir."/001_pyfasta.sh");
-    print "GOT IS \n$got\n";
 
 }
 

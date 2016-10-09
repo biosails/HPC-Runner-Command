@@ -106,6 +106,16 @@ option 'jobname' => (
         q{Specify a job name, each job will be appended with its batch order},
 );
 
+=head3 max_array_size
+
+=cut
+
+option 'max_array_size' => (
+    is => 'rw',
+    isa => 'Int',
+    default => 500,
+);
+
 =head3 use_batches
 
 The default is to submit using job arrays.

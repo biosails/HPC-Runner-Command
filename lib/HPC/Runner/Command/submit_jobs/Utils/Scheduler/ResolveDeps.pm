@@ -97,6 +97,8 @@ sub chunk_commands {
 
         my @cmds    = @{ $self->jobs->{ $self->current_job }->cmds };
 
+        $commands_per_node = $self->resolve_max_array_size($commands_per_node, scalar @cmds);
+
         my $iter = natatime $commands_per_node, @cmds;
 
         $self->assign_batches($iter);
@@ -109,6 +111,24 @@ sub chunk_commands {
     $self->reset_job_counter;
     $self->reset_cmd_counter;
     $self->reset_batch_counter;
+}
+
+=head3 resolve_max_array_size
+
+=cut
+
+sub resolve_max_array_size{
+    my $self = shift;
+    my $commands_per_node = shift;
+    my $cmd_size = shift;
+
+    if ( ($cmd_size / $commands_per_node) <= $self->max_array_size ){
+        return $commands_per_node;
+    }
+
+    $commands_per_node++;
+
+    $self->resolve_max_array_size($commands_per_node, $cmd_size);
 }
 
 =head3 assign_batch_stats
