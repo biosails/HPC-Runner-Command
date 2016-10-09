@@ -418,6 +418,9 @@ sub test_016 : Tags(files) {
 
     my @files = glob( $test->outdir . "/*" );
 
+    #This did not work as well as expected
+    #print "PARTITION IS ";
+    #print Dumper($test->jobs->{job01}->partition);
     #TODO write tests for files
     #/tmp/hpcrunner/wwxYvxWy/logs/001_job01.sh
     #/tmp/hpcrunner/wwxYvxWy/logs/001_job01_001.in

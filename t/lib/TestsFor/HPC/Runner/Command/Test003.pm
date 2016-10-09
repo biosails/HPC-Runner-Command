@@ -25,6 +25,7 @@ sub write_test_file {
 
     open( my $fh, ">$test_dir/script/test003.1.sh" );
     print $fh <<EOF;
+#HPC partition=mypartition
 echo "hello world from job 1" && sleep 5
 
 wait
@@ -94,6 +95,7 @@ sub test_005 : Tags(submit_jobs) {
 
     $test->execute();
 
+    #print Dumper($test->jobs);
     ok(1);
 }
 
