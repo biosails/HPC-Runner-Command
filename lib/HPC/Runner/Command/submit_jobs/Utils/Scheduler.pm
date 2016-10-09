@@ -660,6 +660,8 @@ sub iterate_schedule {
     $self->clear_scheduler_ids;
     $self->app_log->info('Beginning to submit jobs to the scheduler');
 
+    $self->app_log->debug('Schedule is '.join(", ", @{$self->schedule}));
+
     foreach my $job ( $self->all_schedules ) {
         #print "Current job is $job\n";
 
