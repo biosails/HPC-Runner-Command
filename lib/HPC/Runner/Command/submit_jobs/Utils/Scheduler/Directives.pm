@@ -145,7 +145,7 @@ In PBS this is called 'queue'
 
 option 'partition' => (
     is             => 'rw',
-    isa            => 'Str|Undef',
+    isa            => 'Str',
     required       => 0,
     documentation  =>
         q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},

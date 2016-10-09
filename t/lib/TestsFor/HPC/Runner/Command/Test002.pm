@@ -25,6 +25,8 @@ sub write_test_file {
 
     open( my $fh, ">$test_dir/script/test002.1.sh" );
     print $fh <<EOF;
+#HPC partition=PARTITION
+
 #HPC jobname=job01
 #HPC cpus_per_task=12
 #HPC commands_per_node=1
@@ -413,8 +415,16 @@ sub test_016 : Tags(files) {
 
     my @files = glob( $test->outdir . "/*" );
 
-    print "SCHEDULER IDS ARE\n";
-    print Dumper($test->scheduler_ids);
+
+    #my $got1 = read_file( $test->outdir . "/001_job01.sh" );
+
+    #print "Job 01 submission\n$got1\n";
+
+    #print Dumper($test->jobs->{'job02'});
+    #my $got2 = read_file( $test->outdir . "/002_job02.sh" );
+
+    #print "Job 02 submission\n$got2\n";
+
     #This did not work as well as expected
     #print "PARTITION IS ";
     #print Dumper($test->jobs->{job01}->partition);

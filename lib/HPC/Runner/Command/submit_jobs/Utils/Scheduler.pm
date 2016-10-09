@@ -203,23 +203,23 @@ has 'template_file' => (
 #SBATCH --get-user-env
 #SBATCH --job-name=[% JOBNAME %]
 #SBATCH --output=[% OUT %]
-[% IF self.has_partition %]
-#SBATCH --partition=[% self.partition %]
+[% IF job.has_partition %]
+#SBATCH --partition=[% job.partition %]
 [% END %]
-[% IF self.has_ntasks %]
-#SBATCH --ntasks=[% self.ntasks %]
+[% IF job.has_ntasks %]
+#SBATCH --ntasks=[% job.ntasks %]
 [% END %]
-[% IF self.has_cpus_per_task %]
-#SBATCH --cpus-per-task=[% self.cpus_per_task %]
+[% IF job.has_cpus_per_task %]
+#SBATCH --cpus-per-task=[% job.cpus_per_task %]
 [% END %]
-[% IF self.has_ntasks_per_node %]
-#SBATCH --ntasks-per-node=[% self.ntasks_per_node %]
+[% IF job.has_ntasks_per_node %]
+#SBATCH --ntasks-per-node=[% job.ntasks_per_node %]
 [% END %]
-[% IF self.has_mem %]
-#SBATCH --mem=[% self.mem %]
+[% IF job.has_mem %]
+#SBATCH --mem=[% job.mem %]
 [% END %]
-[% IF self.has_walltime %]
-#SBATCH --time=[% self.walltime %]
+[% IF job.has_walltime %]
+#SBATCH --time=[% job.walltime %]
 [% END %]
 [% IF ARRAY_STR %]
 #SBATCH --array=[% ARRAY_STR %]
@@ -228,8 +228,8 @@ has 'template_file' => (
 #SBATCH --dependency=afterok:[% AFTEROK %]
 [% END %]
 
-[% IF self.has_modules %]
-[% FOR d = self.modules %]
+[% IF job.has_modules %]
+[% FOR d = job.modules %]
 module load [% d %]
 [% END %]
 [% END %]
@@ -605,12 +605,12 @@ sub check_add_to_jobs {
             = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps
             ->new(
                 mem => $self->mem,
-                partition => $self->partition,
                 walltime => $self->walltime,
                 cpus_per_task => $self->cpus_per_task,
                 nodes_count => $self->nodes_count,
                 ntasks_per_nodes => $self->ntasks_per_node,
             );
+        $self->jobs->{$self->jobname}->partition($self->partition) if $self->has_partition;
     }
     $self->graph_job_deps->{ $self->jobname } = [];
 }
@@ -933,7 +933,7 @@ sub process_batch {
             OUT       => $self->logdir
                 . "/$counter" . "_"
                 . $self->current_job . ".log",
-            self => $self,
+            job => $self->jobs->{$self->current_job},
         },
         $self->slurmfile
     ) || die $self->template->error;
