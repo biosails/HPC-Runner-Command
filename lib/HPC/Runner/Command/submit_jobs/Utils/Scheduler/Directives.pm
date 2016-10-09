@@ -197,4 +197,21 @@ option 'user' => (
         q{This defaults to your current user ID. This can only be changed if running as an admin user}
 );
 
+=head3 procs
+
+Total number of concurrent running tasks.
+
+Analagous to parallel --jobs i
+
+=cut
+
+option 'procs' => (
+    is       => 'rw',
+    isa      => 'Int',
+    default  => 1,
+    required => 0,
+    documentation =>
+        q{Total number of concurrently running jobs allowed at any time.}
+);
+
 1;

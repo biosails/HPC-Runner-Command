@@ -345,9 +345,6 @@ echo "hello again from job 3" && sleep 5
         'job01' => {
             'hpc_meta' =>
                 [ '#HPC cpus_per_task=12', '#HPC commands_per_node=1' ],
-            'scheduler_ids' => [],
-            'submitted'     => '0',
-            'deps'          => [],
             'cmds'          => [
                 '#NOTE job_tags=Sample1
     echo "hello world from job 1" && sleep 5
@@ -358,8 +355,6 @@ echo "hello again from job 3" && sleep 5
             ],
         },
         'job02' => {
-            'scheduler_ids' => [],
-            'hpc_meta'      => [],
             'submitted'     => '0',
             'deps'          => ['job01'],
             'cmds'          => [

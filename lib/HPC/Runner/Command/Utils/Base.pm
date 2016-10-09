@@ -53,6 +53,8 @@ option 'outdir' => (
     predicate     => 'has_outdir',
 );
 
+#These two should both be in execute_jobs
+
 =head3 job_scheduler_id
 
 Job Scheduler ID running the script. Passed to slurm for mail information
@@ -72,17 +74,19 @@ option 'job_scheduler_id' => (
 
 =head3 procs
 
-Total number of running children allowed at any time. Defaults to 4. The command 'wait' can be used to have a variable number of children running. It is best to wrap this script in a slurm job to not overuse resources. This isn't used within this module, but passed off to mcerunner/parallelrunner.
+Total number of concurrent running tasks.
+
+Analagous to parallel --jobs i
 
 =cut
 
 option 'procs' => (
     is       => 'rw',
     isa      => 'Int',
-    default  => 4,
+    default  => 1,
     required => 0,
     documentation =>
-        q{Total number of running jobs allowed at any time. The command 'wait' can be used to have a variable number of children running.}
+        q{Total number of concurrently running jobs allowed at any time.}
 );
 
 =head2 Attributes
