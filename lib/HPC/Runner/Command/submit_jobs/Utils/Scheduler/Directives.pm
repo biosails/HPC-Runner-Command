@@ -147,7 +147,6 @@ option 'partition' => (
     is             => 'rw',
     isa            => 'Str',
     required       => 0,
-    default        => '',
     documentation  =>
         q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},
     predicate => 'has_partition',
