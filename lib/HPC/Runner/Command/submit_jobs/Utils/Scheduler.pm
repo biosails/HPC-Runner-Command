@@ -658,12 +658,12 @@ sub iterate_schedule {
     $self->reset_batch_counter;
 
     $self->clear_scheduler_ids;
-    $self->app_log->debug('Beginning to submit jobs to the scheduler');
+    $self->app_log->info('Beginning to submit jobs to the scheduler');
 
     foreach my $job ( $self->all_schedules ) {
         #print "Current job is $job\n";
 
-        $self->app_log->debug( 'Submitting all ' . $job . ' job types' );
+        $self->app_log->info( 'Submitting all ' . $job . ' job types' );
 
         #map { $self->process_hpc_meta($_) } $self->jobs->{$job}->all_hpc_meta;
 
@@ -763,7 +763,7 @@ sub pre_process_batch {
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
     my @batches = @{ $self->jobs->{ $self->current_job }->batches };
 
-    $self->app_log->debug( 'There are '
+    $self->app_log->info( 'There are '
             . scalar @batches
             . ' batches for job type '
             . $self->current_job );
@@ -1077,7 +1077,7 @@ sub submit_to_scheduler {
                 # Finished reading from this FH because we read
                 # 0 bytes.  Remove this handle from $sel.
                 $sel->remove($fh);
-                next;
+                close($fh);
             }
             else {    # we read data alright
                 if ( $fh == $outfh ) {
@@ -1099,6 +1099,9 @@ sub submit_to_scheduler {
 
     waitpid( $cmdpid, 1 );
     my $exitcode = $?;
+
+    $sel->remove($outfh);
+    $sel->remove($infh);
 
     return ( $exitcode, $stdout, $stderr );
 }

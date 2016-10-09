@@ -1,24 +1,36 @@
 package HPC::Runner::Command::submit_jobs::Plugin::Slurm;
 
-use File::Path qw(make_path remove_tree);
-use File::Temp qw/ tempfile tempdir /;
-use IO::File;
-use IO::Select;
-use Cwd;
-use IPC::Open3;
-use Symbol;
-use Template;
-use Log::Log4perl qw(:easy);
-use DateTime;
 use Data::Dumper;
-use List::Util qw/shuffle/;
 use IPC::Cmd qw[can_run];
+use Log::Log4perl;
 
 use Moose::Role;
 
 =head1 HPC::Runner::Command::Plugin::Scheduler::Slurm;
 
 =cut
+
+##Application log
+##There is a bug in here somewhere - this be named anything ...
+has 'log' => (
+    is      => 'rw',
+    default => sub {
+        my $self = shift;
+
+        my $log_conf = q(
+log4perl.rootLogger = DEBUG, Screen
+log4perl.appender.Screen = \
+  Log::Log4perl::Appender::ScreenColoredLevels
+log4perl.appender.Screen.layout = \
+  Log::Log4perl::Layout::PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = \
+  [%d] %m %n
+      );
+        Log::Log4perl::init(\$log_conf);
+        return Log::Log4perl->get_logger();
+        }
+
+);
 
 =head2 Subroutines
 
@@ -35,27 +47,22 @@ sub submit_jobs{
 
     my($exitcode, $stdout, $stderr) = $self->submit_to_scheduler("sbatch");
 
-    if(!$exitcode){
-        $self->app_log->fatal("Job was not submitted successfully");
-        $self->app_log->warn("STDERR: ".$stderr) if $stderr;
-        $self->app_log->warn("STDOUT: ".$stdout) if $stdout;
-    }
-    else{
-        $self->app_log->info("Job was submitted successfully");
-        $self->app_log->info("STDERR: ".$stderr) if $stderr;
-        $self->app_log->info("STDOUT: ".$stderr) if $stdout;
+    if($exitcode != 0){
+        $self->log->fatal("Job was not submitted successfully");
+        $self->log->warn("STDERR: ".$stderr) if $stderr;
+        $self->log->warn("STDOUT: ".$stdout) if $stdout;
     }
 
     my($jobid) = $stdout =~ m/(\d.*)$/ if $stdout;
 
     if(!$jobid){
-        $self->app_log->warn("Submit scripts will be written, but will not be submitted to the queue.");
-        $self->app_log->warn("Please look at your submission scripts in ".$self->outdir);
-        $self->app_log->warn("And your logs in ".$self->logdir."\nfor more information");
+        $self->log->warn("Submit scripts will be written, but will not be submitted to the queue.");
+        $self->log->warn("Please look at your submission scripts in ".$self->outdir);
+        $self->log->warn("And your logs in ".$self->logdir."\nfor more information");
         $self->no_submit_to_slurm(0);
     }
     else{
-        $self->app_log->info("Submitting job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
+        $self->log->debug("Submited job ".$self->slurmfile."\n\tWith Slurm jobid $jobid");
     }
 
     return $jobid;
@@ -82,7 +89,7 @@ sub update_job_deps{
     foreach my $array_id (@{$scheduler_ids}){
         next unless $array_id;
         my $cmd =  "scontrol update job=".$self->jobs->{$self->current_job}->scheduler_ids->[0]."_".$self->batch_counter." Dependency=afterok:$array_id";
-        $self->app_log->info("Updating job with cmd $cmd");
+        $self->log->info("Updating job with cmd $cmd");
         $self->change_deps($cmd);
     }
 
@@ -97,10 +104,10 @@ sub change_deps {
             verbose => 0,
             buffer  => \$buffer )
     ) {
-        $self->app_log->info($buffer);
+        $self->log->info($buffer) if $buffer;
     }
     else{
-        $self->app_log->warn($buffer);
+        $self->log->warn($buffer) if $buffer;
     }
 }
 
