@@ -976,7 +976,7 @@ sub process_batch_command {
     }
     $command
         .= "\t--procs "
-        . $self->procs . " \\\n"
+        . $self->jobs->{$self->current_job}->procs . " \\\n"
         . "\t--outdir "
         . $self->outdir . " \\\n"
         . "\t--logname "
