@@ -93,10 +93,8 @@ sub chunk_commands {
 
         $self->reset_cmd_counter;
 
-        #map { $self->process_hpc_meta($_) }
-            #$self->jobs->{ $self->current_job }->all_hpc_meta;
+        my $commands_per_node = $self->jobs->{$self->current_job}->commands_per_node;
 
-        my $commands_per_node = $self->commands_per_node;
         my @cmds    = @{ $self->jobs->{ $self->current_job }->cmds };
 
         my $iter = natatime $commands_per_node, @cmds;

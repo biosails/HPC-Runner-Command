@@ -109,7 +109,6 @@ sub test_005 : Tags(submit_jobs) {
     my $expect1 = <<EOF;
 #
 #SBATCH --share
-#SBATCH --get-user-env
 #SBATCH --job-name=001_job01
 #SBATCH --output=$logdir/001_job01.log
 EOF
@@ -123,7 +122,7 @@ EOF
     my $expect7 = "\t--logname 001_job01";
     my $expect8 = "\t--process_table $logdir/001-process_table.md";
 
-    like( $got, qr/$expect1/, 'Template matches' );
+	like( $got, qr/$expect1/, 'Template matches' );
     like( $got, qr/$expect2/, 'Template matches' );
     like( $got, qr/$expect3/, 'Template matches' );
     like( $got, qr/$expect4/, 'Template matches' );

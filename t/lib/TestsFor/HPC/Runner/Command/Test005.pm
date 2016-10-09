@@ -51,39 +51,30 @@ sub write_test_file {
 #
 
 #NOTE job_tags=MWG01
-cd /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/fastx && \
-    rm -rf MWG01.*.fasta && \
-    pyfasta split -n 20 MWG01.fasta
-
+pyfasta split -n 20 MWG01.fasta
 
 #NOTE job_tags=MWG02
-cd /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG02/fastx && \
-    rm -rf MWG02.*.fasta && \
-    pyfasta split -n 20 MWG02.fasta
+pyfasta split -n 20 MWG02.fasta
 
 #HPC jobname=blastx_scratch
 #HPC deps=pyfasta
 #HPC module=gencore_dev gencore_metagenomics
-#HPC commands_per_node=1
+#HPC commands_per_node=2
 #HPC cpus_per_task=7
-#HPC procs=1
+#HPC procs=2
 #HPC partition=ser_std
 #HPC mem=20GB
 #HPC walltime=06:00:00
 
-#NOTE job_tags=MWG01
-mkdir -p /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/blast_env_nr && \
-blastx -db  /scratch/gencore/Databases/NCBI_env_nr/env_nr \
-    -outfmt 6 -query /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/fastx/MWG01.001.fasta \
-    -num_threads 7 \
-    -out /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/blast_env_nr/MWG01.001.blastout
+#NOTE job_tags=Sample1
+blastx -db  env_nr -query Sample1
 
-#NOTE job_tags=MWG01
-mkdir -p /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/blast_env_nr && \
-blastx -db  /scratch/gencore/Databases/NCBI_env_nr/env_nr \
-    -outfmt 6 -query /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/fastx/MWG01.002.fasta \
-    -num_threads 7 \
-    -out /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/MWG01/blast_env_nr/MWG01.002.blastout
+#NOTE job_tags=Sample2
+blastx -db  env_nr -query Sample2
+
+#NOTE job_tags=Sample3
+blastx -db  env_nr -query Sample3
+
 EOF
 
     close($fh);
@@ -121,9 +112,17 @@ sub test_001 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
+
     is_deeply( [ 'pyfasta', 'blastx_scratch' ], $test->schedule, 'Schedule passes' );
 
-    ok(1);
+    my $logdir = $test->logdir;
+    my $outdir = $test->outdir;
+
+    my @files = glob( $test->outdir . "/*" );
+
+
+    is(scalar @files, 6, "Got the right number of files");
+
 }
 
 1;
