@@ -35,9 +35,20 @@ sub submit_jobs{
 
     my($exitcode, $stdout, $stderr) = $self->submit_to_scheduler("sbatch");
 
+    if(!$exitcode){
+        $self->app_log->fatal("Job was not submitted successfully");
+        $self->app_log->warn("STDERR: ".$stderr) if $stderr;
+        $self->app_log->warn("STDOUT: ".$stderr) if $stdout;
+    }
+    else{
+        $self->app_log->info("Job was submitted successfully");
+        $self->app_log->info("STDERR: ".$stderr) if $stderr;
+        $self->app_log->info("STDOUT: ".$stderr) if $stdout;
+    }
+
     my($jobid) = $stdout =~ m/(\d.*)$/ if $stdout;
+
     if(!$jobid){
-        $self->app_log->error("No job was submitted! \nFull error is:\t$stderr\n$stdout");
         $self->app_log->warn("Submit scripts will be written, but will not be submitted to the queue.");
         $self->app_log->warn("Please look at your submission scripts in ".$self->outdir);
         $self->app_log->warn("And your logs in ".$self->logdir."\nfor more information");
