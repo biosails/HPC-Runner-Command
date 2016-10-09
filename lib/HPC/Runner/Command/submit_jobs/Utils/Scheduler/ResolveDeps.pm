@@ -4,6 +4,8 @@ use Moose::Role;
 use List::MoreUtils qw(natatime);
 use Storable qw(dclone);
 use Data::Dumper;
+use Algorithm::Dependency::Source::HoA;
+use Algorithm::Dependency::Ordered;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps;
 
@@ -50,7 +52,7 @@ sub schedule_jobs {
     my $self = shift;
 
     my $source = Algorithm::Dependency::Source::HoA->new( $self->graph_job_deps );
-    my $dep = Algorithm::Dependency->new( source => $source, selected => [] );
+    my $dep = Algorithm::Dependency::Ordered->new( source => $source, selected => [] );
 
     $self->schedule( $dep->schedule_all );
 

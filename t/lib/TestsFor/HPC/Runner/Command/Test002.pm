@@ -15,6 +15,9 @@ use Slurp;
 use File::Slurp;
 use JSON::XS;
 
+use Algorithm::Dependency::Source::HoA;
+use Algorithm::Dependency;
+
 extends 'TestMethods::Base';
 
 #Tests the template
@@ -414,7 +417,6 @@ sub test_016 : Tags(files) {
     my $outdir = $test->outdir;
 
     my @files = glob( $test->outdir . "/*" );
-
 
     #my $got1 = read_file( $test->outdir . "/001_job01.sh" );
 
