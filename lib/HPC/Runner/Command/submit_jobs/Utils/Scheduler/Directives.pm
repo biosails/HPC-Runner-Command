@@ -145,7 +145,7 @@ In PBS this is called 'queue'
 
 option 'partition' => (
     is             => 'rw',
-    isa            => 'Str',
+    isa            => 'Str|Undef',
     required       => 0,
     documentation  =>
         q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},
@@ -178,7 +178,7 @@ option 'mem' => (
     predicate     => 'has_mem',
     clearer       => 'clear_mem',
     required      => 0,
-    default       => '25GB',
+    default       => '10GB',
     documentation => q{Supply a memory limit},
 );
 
