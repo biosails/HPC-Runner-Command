@@ -61,10 +61,11 @@ We also want to write all cmds and exit codes to a table
 
 =cut
 
-option 'process_table' => (
-    isa     => 'Str',
-    is      => 'rw',
-    handles => {
+option 'process_table'        => (
+    isa                       => 'Str',
+    is                        => 'rw',
+    lazy                      => 1,
+    handles                   => {
         add_process_table     => 'append',
         prepend_process_table => 'prepend',
         clear_process_table   => 'clear',
