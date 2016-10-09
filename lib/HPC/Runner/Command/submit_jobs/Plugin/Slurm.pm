@@ -24,10 +24,9 @@ use Moose::Role;
 
 =cut
 
-=head3 submit_slurm()
+=head3 submit_jobs
 
 Submit jobs to slurm queue using sbatch.
-
 
 =cut
 
@@ -62,14 +61,17 @@ sub update_job_deps{
 
     return if $self->use_batches;
 
+    return unless exists $self->current_batch->{array_deps};
+
     my $scheduler_ids = $self->current_batch->{array_deps};
 
-    print Dumper($self->current_batch->{array_deps});
-
+    return unless $scheduler_ids;
     return unless scalar @{$scheduler_ids};
 
     foreach my $array_id (@{$scheduler_ids}){
+        next unless $array_id;
         my $cmd =  "scontrol update job=".$self->jobs->{$self->current_job}->scheduler_ids->[0]."_".$self->batch_counter." Dependency=afterok:$array_id";
+        $self->app_log->info("Updating job with cmd $cmd");
         $self->change_deps($cmd);
     }
 
