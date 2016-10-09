@@ -58,14 +58,10 @@ slurm item --ntasks defaults to 28
 =cut
 
 option 'ntasks' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    lazy     => 1,
-    default  => sub {
-        my $self = shift;
-        return $self->ntasks * $self->nodes_count;
-    },
+    is        => 'rw',
+    isa       => 'Int',
+    required  => 0,
+    default   => 1,
     predicate => 'has_ntasks',
     clearer   => 'clear_ntasks',
     documentation =>
@@ -82,10 +78,11 @@ option 'ntasks_per_node' => (
     is       => 'rw',
     isa      => 'Int',
     required => 0,
-    lazy     => 1,
-    default  => sub {
-        my $self = shift;
-        return $self->procs;
+    default  => 1,
+    trigger  => sub {
+        my $self   = shift;
+        my $ntasks = $self->ntasks_per_node * $self->nodes_count;
+        $self->ntasks($ntasks);
     },
     predicate => 'has_ntasks_per_node',
     clearer   => 'clear_ntasks_per_node',
@@ -102,11 +99,11 @@ commands to run per node
 #TODO Update this for job arrays
 
 has 'commands_per_node' => (
-    is                  => 'rw',
-    isa                 => 'Int',
-    required            => 0,
-    default             => 1,
-    documentation       =>
+    is       => 'rw',
+    isa      => 'Int',
+    required => 0,
+    default  => 1,
+    documentation =>
         q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
     predicate => 'has_commands_per_node',
     clearer   => 'clear_commands_per_node'
@@ -120,16 +117,16 @@ PBS:
 #PBS -l nodes=nodes_count:ppn=16 this
 
 Slurm:
-#SBATCH --nodes nodes_count
+#SBATCH --nodes=nodes_count
 
 =cut
 
 option 'nodes_count' => (
-    is               => 'rw',
-    isa              => 'Int',
-    required         => 0,
-    default          => 1,
-    documentation    =>
+    is       => 'rw',
+    isa      => 'Int',
+    required => 0,
+    default  => 1,
+    documentation =>
         q{Number of nodes requested. You should only use this if submitting parallel jobs.},
     predicate => 'has_nodes_count',
     clearer   => 'clear_nodes_count'
@@ -144,10 +141,10 @@ In PBS this is called 'queue'
 =cut
 
 option 'partition' => (
-    is             => 'rw',
-    isa            => 'Str',
-    required       => 0,
-    documentation  =>
+    is       => 'rw',
+    isa      => 'Str',
+    required => 0,
+    documentation =>
         q{Slurm partition to submit jobs to. Defaults to the partition with the most available nodes},
     predicate => 'has_partition',
     clearer   => 'clear_partition'
@@ -205,13 +202,17 @@ Analagous to parallel --jobs i
 
 =cut
 
-option 'procs'    => (
-    is            => 'rw',
-    isa           => 'Int',
-    default       => 1,
-    required      => 0,
+option 'procs' => (
+    is       => 'rw',
+    isa      => 'Int',
+    default  => 1,
+    required => 0,
     documentation =>
-        q{Total number of concurrently running jobs allowed at any time.}
+        q{Total number of concurrently running jobs allowed at any time.},
+    trigger => sub {
+        my $self = shift;
+        $self->ntasks_per_node( $self->procs );
+    }
 );
 
 1;

@@ -41,7 +41,7 @@ sub write_test_file {
 #HPC module=gencore_dev gencore_metagenomics_dev
 #HPC commands_per_node=1
 #HPC cpus_per_task=1
-#HPC procs=1
+#HPC procs=2
 #HPC partition=ser_std
 #HPC mem=4GB
 #HPC walltime=00:15:00
@@ -112,7 +112,6 @@ sub test_001 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
-
     is_deeply( [ 'pyfasta', 'blastx_scratch' ], $test->schedule, 'Schedule passes' );
 
     my $logdir = $test->logdir;
@@ -120,8 +119,18 @@ sub test_001 : Tags(job_stats) {
 
     my @files = glob( $test->outdir . "/*" );
 
+    print "Files are ".join("\n", @files)."\n";
 
     is(scalar @files, 6, "Got the right number of files");
+
+    print Dumper($test->jobs->{pyfasta}->ntasks);
+
+    if($test->jobs->{pyfasta}->has_ntasks){
+        print "WE HAVE NTASKS!\n";
+    }
+
+    my $got = read_file($outdir."/001_pyfasta.sh");
+    print "GOT IS \n$got\n";
 
 }
 
