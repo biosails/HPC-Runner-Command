@@ -6,6 +6,7 @@ use Storable qw(dclone);
 use Data::Dumper;
 use Algorithm::Dependency::Source::HoA;
 use Algorithm::Dependency::Ordered;
+use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps;
 
@@ -51,8 +52,12 @@ Use Algorithm::Dependency to schedule the jobs
 sub schedule_jobs {
     my $self = shift;
 
-    my $source = Algorithm::Dependency::Source::HoA->new( $self->graph_job_deps );
-    my $dep = Algorithm::Dependency::Ordered->new( source => $source, selected => [] );
+    my $source
+        = Algorithm::Dependency::Source::HoA->new( $self->graph_job_deps );
+    my $dep = Algorithm::Dependency::Ordered->new(
+        source   => $source,
+        selected => []
+    );
 
     $self->schedule( $dep->schedule_all );
 
@@ -81,31 +86,55 @@ sub chunk_commands {
 
         next unless $self->jobs->{ $self->current_job };
 
-        $self->jobs->{$self->current_job}->{batch_index_start} = $self->batch_counter;
+        $self->reset_cmd_counter;
 
-        if (!$self->jobs->{$self->current_job}->can('count_cmds')){
-            warn "You seem to be mixing and matching job dependency declaration types! Here there be dragons! We are dying now.\n";
+        my $commands_per_node
+            = $self->jobs->{ $self->current_job }->commands_per_node;
+
+        my @cmds = @{ $self->jobs->{ $self->current_job }->cmds };
+
+        $self->jobs->{ $self->current_job }->{batch_index_start}
+            = $self->batch_counter;
+
+        if ( !$self->jobs->{ $self->current_job }->can('count_cmds') ) {
+            warn
+                "You seem to be mixing and matching job dependency declaration types! Here there be dragons! We are dying now.\n";
             exit 1;
         }
         next unless $self->jobs->{ $self->current_job }->count_cmds;
 
         $DB::single = 2;
 
-        $self->reset_cmd_counter;
-
-        my $commands_per_node = $self->jobs->{$self->current_job}->commands_per_node;
-
-        my @cmds    = @{ $self->jobs->{ $self->current_job }->cmds };
-
-        $commands_per_node = $self->resolve_max_array_size($commands_per_node, scalar @cmds);
-
         my $iter = natatime $commands_per_node, @cmds;
 
         $self->assign_batches($iter);
         $self->assign_batch_stats;
 
-        $self->jobs->{$self->current_job}->{batch_index_end} = $self->batch_counter - 1;
+        $self->jobs->{ $self->current_job }->{batch_index_end}
+            = $self->batch_counter - 1;
         $self->inc_job_counter;
+
+        my $batch_index_start
+            = $self->jobs->{ $self->current_job }->{batch_index_start};
+        my $batch_index_end
+            = $self->jobs->{ $self->current_job }->{batch_index_end};
+
+        if ( !$self->use_batches ) {
+
+            my $number_of_batches
+                = $self->resolve_max_array_size( $commands_per_node,
+                scalar @cmds );
+
+            $self->jobs->{ $self->current_job }->{num_job_arrays}
+                = $number_of_batches;
+
+            $self->return_ranges( $batch_index_start, $batch_index_end,
+                $number_of_batches );
+
+            #print "Resolving max array\n"
+                #. Dumper( $self->jobs->{ $self->current_job } );
+        }
+
     }
 
     $self->reset_job_counter;
@@ -115,20 +144,58 @@ sub chunk_commands {
 
 =head3 resolve_max_array_size
 
+Arrays should not be greater than the max_array_size variable
+
+If it is they need to be chunked up into various arrays
+
 =cut
 
-sub resolve_max_array_size{
-    my $self = shift;
-    my $commands_per_node = shift;
-    my $cmd_size = shift;
+sub resolve_max_array_size {
+    my $self              = shift;
+    my $number_of_batches = shift;
+    my $cmd_size          = shift;
 
-    if ( ($cmd_size / $commands_per_node) <= $self->max_array_size ){
-        return $commands_per_node;
+    if ( ( $cmd_size / $number_of_batches ) <= ( $self->max_array_size + 1 ) )
+    {
+        return $number_of_batches;
     }
 
-    $commands_per_node++;
+    $number_of_batches++;
 
-    $self->resolve_max_array_size($commands_per_node, $cmd_size);
+    $self->resolve_max_array_size( $number_of_batches, $cmd_size );
+}
+
+sub return_ranges {
+    my $self        = shift;
+    my $batch_start = shift;
+    my $batch_end   = shift;
+
+    #walk is the ret value from resolve_max_array_size
+    my $walk = shift;
+
+    my $new_array;
+    if($walk == 1){
+        $new_array = {
+            'batch_index_start' => $batch_start,
+            'batch_index_end'   => $batch_end
+        };
+        $self->jobs->{ $self->current_job }->add_batch_indexes($new_array);
+        return;
+    }
+    elsif ( $batch_start >= $batch_end ) {
+        return;
+    }
+
+    $new_array = {
+        'batch_index_start' => $batch_start,
+        'batch_index_end'   => $batch_start + $walk - 1
+    };
+
+    $batch_start = $batch_start + $walk;
+
+    $self->jobs->{ $self->current_job }->add_batch_indexes($new_array);
+
+    $self->return_ranges( $batch_start, $batch_end, $walk );
 }
 
 =head3 assign_batch_stats
@@ -148,7 +215,6 @@ sub assign_batch_stats {
         $self->job_stats->collect_stats( $self->batch_counter,
             $self->cmd_counter, $self->current_job );
 
-        $self->prepare_batch_files;
         $self->inc_batch_counter;
         $self->reset_cmd_counter;
     }
@@ -172,14 +238,12 @@ sub assign_batches {
         my $batch_tags = $self->assign_batch_tags($batch_cmds);
 
         #TODO a batch should be its own class!
-        my $batch_ref = {
+        my $batch_ref
+            = HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch->new(
             cmds       => $batch_cmds,
             batch_tags => $batch_tags,
             job        => $self->current_job,
-            job_deps   => $self->jobs->{ $self->current_job }->{deps},
-            cmd_count  => scalar @{$batch_cmds},
-            batch_str  => join( "\n", @{$batch_cmds} ),
-        };
+            );
 
         $self->jobs->{ $self->current_job }->add_batches($batch_ref);
         $self->jobs->{ $self->current_job }->submit_by_tags(1)
@@ -190,7 +254,7 @@ sub assign_batches {
         $x++;
     }
 
-    $self->jobs->{$self->current_job}->{batch_count} = $x;
+    $self->jobs->{ $self->current_job }->{batch_count} = $x;
 
 }
 
@@ -213,9 +277,11 @@ sub assign_batch_tags {
         foreach my $line (@lines) {
 
             chomp($line);
+
+            #TODO Change this to TASK
             next unless $line =~ m/^#NOTE/;
 
-            #Job Tags
+            #TODO task_tags and task_deps
             my ( $t1, $t2 ) = $self->parse_meta($line);
 
             next unless $t2;
@@ -268,9 +334,9 @@ sub process_batch_deps {
 
     my $scheduler_index
         = $self->search_batches( $self->jobs->{ $self->current_job }->deps,
-        $batch->{batch_tags} );
+        $batch->batch_tags );
 
-    $batch->{scheduler_index} = $scheduler_index;
+    $batch->scheduler_index($scheduler_index);
 }
 
 =head3 search_batches
@@ -298,8 +364,9 @@ sub search_batches {
         foreach my $dep_batch ( @{$dep_batches} ) {
 
             #Changing this to return the index
+            ##TODO UPDATE THIS FOR MULTIPLE BATCHES WITHIN ARRAY
             push( @scheduler_index, $x )
-                if $self->search_tags( $dep_batch->{batch_tags}, $tags );
+                if $self->search_tags( $dep_batch->batch_tags, $tags );
 
             $x++;
         }

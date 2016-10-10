@@ -2,6 +2,7 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 use Moose;
 use Moose::Util::TypeConstraints;
+use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 
@@ -83,7 +84,7 @@ has scheduler_ids => (
 has batches => (
     traits  => ['Array'],
     is      => 'rw',
-    isa     => 'ArrayRef',
+    isa     => 'ArrayRef[HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch]',
     default => sub { [] },
     handles => {
         all_batches    => 'elements',
@@ -91,6 +92,20 @@ has batches => (
         has_batches    => 'count',
         count_batches  => 'count',
         has_no_batches => 'is_empty',
+    },
+);
+
+has batch_indexes => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_batch_indexes    => 'elements',
+        add_batch_indexes    => 'push',
+        has_batch_indexes    => 'count',
+        count_batch_indexes  => 'count',
+        has_no_batch_indexes => 'is_empty',
     },
 );
 

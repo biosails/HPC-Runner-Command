@@ -13,30 +13,14 @@ use Data::Dumper;
 use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
-use JSON::XS;
-use Algorithm::Dependency::Ordered;
 
 extends 'TestMethods::Base';
-
-#Tests the template
-#Tests for linear dependency tree
 
 sub write_test_file {
     my $test_dir = shift;
 
     open( my $fh, ">$test_dir/script/test002.1.sh" );
     print $fh <<EOF;
-# Starting pyfasta
-#
-
-#
-# Variables
-# Indir: /scratch/gencore/yv8/MetaGjoined-NCB-106/data/raw
-# Outdir: /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/pyfasta
-# Local Variables:
-#       create_outdir: 0
-#       before_meta:
-
 #HPC jobname=pyfasta
 #HPC module=gencore_dev gencore_metagenomics_dev
 #HPC commands_per_node=1
@@ -46,22 +30,30 @@ sub write_test_file {
 #HPC mem=4GB
 #HPC walltime=00:15:00
 
-#       outdir: /scratch/gencore/yv8/MetaGjoined-NCB-106/data/processed/pyfasta
-#       indir: /scratch/gencore/yv8/MetaGjoined-NCB-106/data/raw
-#
+#NOTE job_tags=Sample1
+pyfasta split -n 20 Sample1.fasta
 
-#NOTE job_tags=MWG01
-pyfasta split -n 20 MWG01.fasta
+#NOTE job_tags=Sample2
+pyfasta split -n 20 Sample2.fasta
 
-#NOTE job_tags=MWG02
-pyfasta split -n 20 MWG02.fasta
+#NOTE job_tags=Sample3
+pyfasta split -n 20 Sample3.fasta
+
+#NOTE job_tags=Sample4
+pyfasta split -n 20 Sample4.fasta
+
+#NOTE job_tags=Sample5
+pyfasta split -n 20 Sample4.fasta
+
+#NOTE job_tags=Sample6
+pyfasta split -n 20 Sample6.fasta
 
 #HPC jobname=blastx_scratch
 #HPC deps=pyfasta
 #HPC module=gencore_dev gencore_metagenomics
-#HPC commands_per_node=2
+#HPC commands_per_node=1
 #HPC cpus_per_task=7
-#HPC procs=2
+#HPC procs=1
 #HPC partition=ser_std
 #HPC mem=20GB
 #HPC walltime=06:00:00
@@ -74,6 +66,15 @@ blastx -db  env_nr -query Sample2
 
 #NOTE job_tags=Sample3
 blastx -db  env_nr -query Sample3
+
+#NOTE job_tags=Sample4
+blastx -db  env_nr -query Sample4
+
+#NOTE job_tags=Sample5
+blastx -db  env_nr -query Sample5
+
+#NOTE job_tags=Sample6
+blastx -db  env_nr -query Sample6
 
 EOF
 
@@ -104,10 +105,11 @@ sub construct {
 }
 
 sub test_001 : Tags(job_stats) {
-    my $self = shift;
 
     my($source, $dep);
     my $test = construct();
+
+    $test->max_array_size(2);
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
@@ -119,7 +121,21 @@ sub test_001 : Tags(job_stats) {
 
     my @files = glob( $test->outdir . "/*" );
 
-    is(scalar @files, 6, "Got the right number of files");
+    is(scalar @files, 18, "Got the right number of files");
+
+    #We have 6 different batches spread over 3 arrays
+    #Each batch corresponds to max_array_size
+    #With max_array_size=2
+    #batch 0-1 are array 1
+    #batch 2-3 are array 2
+    #batch 4-5 are array 3
+    ##TODO this info should be in the job somewhere...
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[0]->array_deps, [['1237_7', '1234_1']]);
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[1]->array_deps, [['1237_8', '1234_2']]);
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[2]->array_deps, [['1238_9', '1235_3']]);
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[3]->array_deps, [['1238_10', '1235_4']]);
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[4]->array_deps, [['1239_11', '1236_5']]);
+    is_deeply($test->jobs->{'blastx_scratch'}->batches->[5]->array_deps, [['1239_12', '1236_6']]);
 
 }
 

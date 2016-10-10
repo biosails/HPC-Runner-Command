@@ -79,18 +79,16 @@ sub update_job_deps{
 
     return if $self->use_batches;
 
-    return unless exists $self->current_batch->{array_deps};
+    return unless $self->current_batch->has_array_deps;
 
-    my $scheduler_ids = $self->current_batch->{array_deps};
-
-    return unless $scheduler_ids;
-    return unless scalar @{$scheduler_ids};
-
-    foreach my $array_id (@{$scheduler_ids}){
+    foreach my $array_id ($self->current_batch->all_array_deps){
         next unless $array_id;
-        my $cmd =  "scontrol update job=".$self->jobs->{$self->current_job}->scheduler_ids->[0]."_".$self->batch_counter." Dependency=afterok:$array_id";
-        $self->log->info("Updating job with cmd $cmd");
-        $self->change_deps($cmd);
+
+        my $current_job = $array_id->[0];
+        my $dep_job = $array_id->[1];
+
+        my $cmd =  "scontrol update job=$current_job Dependency=afterok:$dep_job";
+        print "$cmd\n";
     }
 
 }

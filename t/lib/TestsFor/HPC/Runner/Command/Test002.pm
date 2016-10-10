@@ -40,10 +40,13 @@ echo "hello world from job 1" && sleep 5
 #NOTE job_tags=Sample2
 echo "hello again from job 2" && sleep 5
 
+
 #HPC jobname=job02
 #HPC deps=job01
+
 #NOTE job_tags=Sample1
 echo "goodbye from job 3"
+
 #NOTE job_tags=Sample2
 echo "hello again from job 3" && sleep 5
 EOF
@@ -122,7 +125,7 @@ EOF
     my $expect7 = "\t--logname 001_job01";
     my $expect8 = "\t--process_table $logdir/001-process_table.md";
 
-	like( $got, qr/$expect1/, 'Template matches' );
+    like( $got, qr/$expect1/, 'Template matches' );
     like( $got, qr/$expect2/, 'Template matches' );
     like( $got, qr/$expect3/, 'Template matches' );
     like( $got, qr/$expect4/, 'Template matches' );
@@ -192,16 +195,16 @@ sub test_010 : Tags(check_note_meta) {
     is_deeply( $line, $test->cmd, 'Note meta passes' );
 }
 
-#sub test_011 : Tags(check_hpc_meta) {
-#my $self = shift;
+sub test_011 : Tags(check_hpc_meta) {
+    my $self = shift;
 
-#my $test = construct();
+    my $test = construct();
 
-#my $line = "#HPC jobname=job01\n";
-#$test->process_hpc_meta($line);
+    my $line = "#HPC jobname=job01\n";
+    $test->process_hpc_meta($line);
 
-#ok(1);
-#}
+    ok(1);
+}
 
 sub test_012 : Tags(job_stats) {
     my $self = shift;
@@ -211,40 +214,7 @@ sub test_012 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
-    #Add in job_stats tests
-    my $job_stats = {
-        'batches'        => {
-            '001_job01' => {
-                'total_jobs' => 2,
-                'jobname'  => 'job01',
-                'batch'    => '001',
-                'commands' => 1,
-            },
-            '002_job01' => {
-                'jobname'  => 'job01',
-                'batch'    => '002',
-                'commands' => 1,
-            },
-            '004_job02' => {
-                'batch'    => '004',
-                'jobname'  => 'job02',
-                'commands' => 1,
-            },
-            '003_job02' => {
-                'commands' => 1,
-                'batch'    => '003',
-                'jobname'  => 'job02',
-            }
-        },
-        'total_batches' => 4,
-        'jobnames'      => {
-            'job01' => [ '001_job01', '002_job01' ],
-            'job02' => [ '003_job02', '004_job02' ]
-        },
-        'total_processes' => 4,
-    };
-
-    #WHERE DID MY TESTS GO!!!
+    #TODO Add tests for jobstats
     is_deeply( [ 'job01', 'job02' ], $test->schedule, 'Schedule passes' );
 
     ok(1);
@@ -272,14 +242,14 @@ sub test_014 : Tags(job_stats) {
 echo "hello world from job 1" && sleep 5
 '
         ],
-        'job'        => 'job01',
-        'batch_tags' => ['Sample1'],
-        'job_deps'   => [],
-        'batch_str'  => '#NOTE job_tags=Sample1
+        'job'             => 'job01',
+        'batch_tags'      => ['Sample1'],
+        'array_deps'      => [],
+        'scheduler_index' => {},
+        'scheduler_id'    => '1234',
+        'batch_str'       => '#NOTE job_tags=Sample1
 echo "hello world from job 1" && sleep 5
 ',
-        'cmd_count'  => '1',
-        'array_deps' => [],
     };
 
     is_deeply( $test->jobs->{job01}->batches->[0],
@@ -291,14 +261,14 @@ echo "hello world from job 1" && sleep 5
 echo "hello again from job 2" && sleep 5
 '
         ],
-        'job'        => 'job01',
-        'batch_tags' => ['Sample2'],
-        'job_deps'   => [],
-        'batch_str'  => '#NOTE job_tags=Sample2
+        'batch_str' => '#NOTE job_tags=Sample2
 echo "hello again from job 2" && sleep 5
 ',
-        'cmd_count'  => '1',
-        'array_deps' => [],
+        'job'             => 'job01',
+        'batch_tags'      => ['Sample2'],
+        'array_deps'      => [],
+        'scheduler_index' => {},
+        'scheduler_id'    => '1234',
     };
 
     is_deeply( $test->jobs->{job01}->batches->[1],
@@ -310,15 +280,14 @@ echo "hello again from job 2" && sleep 5
 echo "goodbye from job 3"
 '
         ],
-        'job'        => 'job02',
-        'batch_tags' => ['Sample1'],
-        'job_deps'   => ['job01'],
-        'batch_str'  => '#NOTE job_tags=Sample1
+        'batch_str' => '#NOTE job_tags=Sample1
 echo "goodbye from job 3"
 ',
-        'cmd_count'       => '1',
-        'array_deps'      => ['1234_1'],
+        'job'        => 'job02',
+        'batch_tags' => ['Sample1'],
+        'array_deps' => [ [ '1235_3', '1234_1' ] ],
         'scheduler_index' => { 'job01' => [0] },
+        'scheduler_id'    => '1235',
     };
 
     is_deeply( $test->jobs->{job02}->batches->[0],
@@ -330,46 +299,18 @@ echo "goodbye from job 3"
 echo "hello again from job 3" && sleep 5
 '
         ],
-        'job'        => 'job02',
-        'batch_tags' => ['Sample2'],
-        'job_deps'   => ['job01'],
-        'batch_str'  => '#NOTE job_tags=Sample2
+        'batch_str' => '#NOTE job_tags=Sample2
 echo "hello again from job 3" && sleep 5
 ',
-        'cmd_count'       => '1',
-        'array_deps'      => ['1234_2'],
+        'job'        => 'job02',
+        'batch_tags' => ['Sample2'],
+        'array_deps' => [ [ '1235_4', '1234_2' ] ],
         'scheduler_index' => { 'job01' => [1] },
+        'scheduler_id'    => '1235',
     };
 
     is_deeply( $test->jobs->{job02}->batches->[1],
         $batch_job02_002, 'Job 02 Batch 002 matches' );
-
-    #Broke this test up into separate tests -> this is just here for reference
-    my $expect = {
-        'job01' => {
-            'hpc_meta' =>
-                [ '#HPC cpus_per_task=12', '#HPC commands_per_node=1' ],
-            'cmds'          => [
-                '#NOTE job_tags=Sample1
-    echo "hello world from job 1" && sleep 5
-    ',
-                '#NOTE job_tags=Sample2
-    echo "hello again from job 2" && sleep 5
-    '
-            ],
-        },
-        'job02' => {
-            'submitted'     => '0',
-            'deps'          => ['job01'],
-            'cmds'          => [
-                '#NOTE job_tags=Sample1
-    echo "goodbye from job 3"
-    ',
-                'echo "hello again from job 3" && sleep 5
-    '
-            ],
-        },
-    };
 
     is_deeply( $test->jobs->{'job01'}->hpc_meta,
         [ '#HPC cpus_per_task=12', '#HPC commands_per_node=1' ] );
@@ -386,10 +327,11 @@ echo "hello again from job 3" && sleep 5
     is( $test->jobs->{'job01'}->submitted,           1 );
     is( $test->jobs->{'job02'}->submitted,           1 );
     ok(1);
+
 }
 
 sub test_015 : Tags(submit_jobs) {
-    my $self = shift;
+    ok(1);
 
     my $test = construct();
     $test->parse_file_slurm();
@@ -417,32 +359,8 @@ sub test_016 : Tags(files) {
 
     my @files = glob( $test->outdir . "/*" );
 
-    #my $got1 = read_file( $test->outdir . "/001_job01.sh" );
-
-    #print "Job 01 submission\n$got1\n";
-
-    #print Dumper($test->jobs->{'job02'});
-    #my $got2 = read_file( $test->outdir . "/002_job02.sh" );
-
-    #print "Job 02 submission\n$got2\n";
-
-    #This did not work as well as expected
-    #print "PARTITION IS ";
-    #print Dumper($test->jobs->{job01}->partition);
-    #TODO write tests for files
-    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01.sh
-    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01_001.in
-    #/tmp/hpcrunner/wwxYvxWy/logs/001_job01_002.in
-    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02.sh
-    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02_003.in
-    #/tmp/hpcrunner/wwxYvxWy/logs/002_job02_004.in
-
-#my $ok;
-#$ok = grep/$outdir."\/001_job01.sh"/, @files;
-#ok($ok, 'Got the job01 submission file');
-#is(grep/$test->outdir."/001_job01_001.in"/, @files, 'Got the job01 batch 001 input file');
-
-    #print "Files are ".join("\n", @files)."\n";
+    #TODO add tests to make sure files say what they should
+    is( scalar @files, 6, 'number of files matches' );
     ok(1);
 }
 

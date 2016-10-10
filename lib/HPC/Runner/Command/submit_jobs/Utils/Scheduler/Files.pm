@@ -3,6 +3,7 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files;
 use Moose::Role;
 use IO::File;
 use File::Path qw(make_path remove_tree);
+use Data::Dumper;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files
 
@@ -85,6 +86,7 @@ sub prepare_counter {
     return ($batch_counter, $job_counter);
 }
 
+
 =head3 prepare_sched_files
 
 =cut
@@ -106,24 +108,61 @@ sub prepare_sched_file {
         $self->slurmfile(
             $self->outdir . "/$job_counter" . "_" . $self->current_job . ".sh" );
     }
-
 }
 
 =head3 prepare_batch_files
 
+Write out the batch files
+
+For job arrays this is 1 per array element
+
+For (legacy) batches 1 file per batch
+
 =cut
 
-sub prepare_batch_files {
+#TODO pretty sure this is breaking compatibility with --use_batches
+
+sub prepare_batch_files_array {
     my $self  = shift;
+    my $batch_index_start = shift;
+    my $batch_index_end = shift;
 
-    my($batch_counter, $job_counter) = $self->prepare_counter;
+    #Each jobtype has 1 or more batches based on max_array_size
+    my $job_start = $self->jobs->{$self->current_job}->{batch_index_start};
 
-    $self->batch($self->current_batch->{batch_str});
+    #Get batch index as array
+    #BatchIndexStart 11 BatchIndexEnd 20    (size 10)
+    #Range 0, 9                             (size 10)
+
+    my @batch_indexes = ($batch_index_start .. $batch_index_end);
+    my $len = scalar @batch_indexes;
+
+    for(my $x=0; $x<$len; $x++){
+
+        #Get the current batch/array element
+        my $real_batch_index = $batch_indexes[$x] - $job_start;
+        $self->current_batch($self->jobs->{$self->current_job}->batches->[$real_batch_index]);
+
+        $self->batch($self->current_batch->batch_str);
+
+        #Assign the counters
+        my $job_counter = sprintf( "%03d", $self->job_counter );
+        my $array_counter = sprintf( "%03d", $self->array_counter );
+
+        $self->cmdfile(
+            $self->outdir . "/$job_counter" . "_" . $self->current_job . "_".$array_counter.".in" );
+
+        #Write the files
+        $self->write_batch_file;
+
+        $self->inc_array_counter;
+    }
+}
+
+sub write_batch_file {
+    my $self = shift;
 
     make_path( $self->outdir ) unless -d $self->outdir;
-
-    $self->cmdfile(
-        $self->outdir . "/$job_counter" . "_" . $self->current_job . "_".$batch_counter.".in" );
 
     my $fh = IO::File->new( $self->cmdfile, q{>} )
         or die print "Error opening file  "
