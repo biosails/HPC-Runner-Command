@@ -116,7 +116,7 @@ option 'jobname' => (
 option 'max_array_size' => (
     is      => 'rw',
     isa     => 'Int',
-    default => 500,
+    default => 200,
 );
 
 =head3 use_batches
