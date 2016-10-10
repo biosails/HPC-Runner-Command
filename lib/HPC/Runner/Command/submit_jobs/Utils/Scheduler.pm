@@ -150,7 +150,7 @@ option 'use_batches' => (
     default  => 0,
     required => 0,
     documentation =>
-        q{Switch to use batches. The default is to use job arrays.},
+        q{Switch to use batches. The default is to use job arrays. Warning! This was the default way of submitting before 3.0, but is not well supported.},
 );
 
 =head3 afterok
