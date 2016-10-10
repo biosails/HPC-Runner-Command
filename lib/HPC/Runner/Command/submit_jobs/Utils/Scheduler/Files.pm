@@ -143,6 +143,9 @@ sub prepare_batch_files_array {
         my $real_batch_index = $batch_indexes[$x] - $job_start;
         $self->current_batch($self->jobs->{$self->current_job}->batches->[$real_batch_index]);
 
+        #TODO counters are messed up somewhere...
+        next unless $self->current_batch;
+
         $self->batch($self->current_batch->batch_str);
 
         #Assign the counters

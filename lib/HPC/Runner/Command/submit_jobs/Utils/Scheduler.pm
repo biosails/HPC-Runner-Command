@@ -799,11 +799,12 @@ sub pre_process_batch {
             . $self->current_job );
 
     foreach my $batch (@batches) {
+        next unless $batch;
         $self->current_batch($batch);
 
         if ( $self->use_batches ) {
 
-            $self->batch( $batch->{batch_str} );
+            $self->batch( $batch->batch_str );
             $self->scheduler_ids_by_batch;
 
             $self->work;
