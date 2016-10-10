@@ -7,6 +7,7 @@ use Data::Dumper;
 use Algorithm::Dependency::Source::HoA;
 use Algorithm::Dependency::Ordered;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
+use POSIX;
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps;
 
@@ -155,14 +156,19 @@ sub resolve_max_array_size {
     my $number_of_batches = shift;
     my $cmd_size          = shift;
 
+    #TODO There must be a better way of doing this
     if ( ( $cmd_size / $number_of_batches ) <= ( $self->max_array_size + 1 ) )
     {
         return $number_of_batches;
     }
 
-    $number_of_batches++;
+    $number_of_batches = $cmd_size/($self->max_array_size+1);
 
-    $self->resolve_max_array_size( $number_of_batches, $cmd_size );
+    print "Number of batches is $number_of_batches\n";
+    return POSIX::ceil($number_of_batches);
+    #$number_of_batches++;
+
+    #$self->resolve_max_array_size( $number_of_batches, $cmd_size );
 }
 
 sub return_ranges {
@@ -182,20 +188,29 @@ sub return_ranges {
         $self->jobs->{ $self->current_job }->add_batch_indexes($new_array);
         return;
     }
-    elsif ( $batch_start >= $batch_end ) {
-        return;
+
+    my $x = $batch_start;
+
+    my $array_ref = [];
+    while( $x <= $batch_end){
+        my $t_batch_end = $x + $self->max_array_size - 1;
+        if($t_batch_end < $batch_end){
+            $new_array = {
+                'batch_index_start' => $x,
+                'batch_index_end'   => $t_batch_end,
+            };
+        }
+        else{
+            $new_array = {
+                'batch_index_start' => $x,
+                'batch_index_end'   => $batch_end,
+            };
+        }
+        $x  += $self->max_array_size;
+        $self->jobs->{ $self->current_job }->add_batch_indexes($new_array);
     }
 
-    $new_array = {
-        'batch_index_start' => $batch_start,
-        'batch_index_end'   => $batch_start + $walk - 1
-    };
-
-    $batch_start = $batch_start + $walk;
-
-    $self->jobs->{ $self->current_job }->add_batch_indexes($new_array);
-
-    $self->return_ranges( $batch_start, $batch_end, $walk );
+    return;
 }
 
 =head3 assign_batch_stats

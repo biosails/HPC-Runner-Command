@@ -106,7 +106,7 @@ sub construct {
 
 sub test_001 : Tags(job_stats) {
 
-    my($source, $dep);
+    my ( $source, $dep );
     my $test = construct();
 
     $test->max_array_size(2);
@@ -114,14 +114,15 @@ sub test_001 : Tags(job_stats) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
-    is_deeply( [ 'pyfasta', 'blastx_scratch' ], $test->schedule, 'Schedule passes' );
+    is_deeply( [ 'pyfasta', 'blastx_scratch' ],
+        $test->schedule, 'Schedule passes' );
 
     my $logdir = $test->logdir;
     my $outdir = $test->outdir;
 
     my @files = glob( $test->outdir . "/*" );
 
-    is(scalar @files, 18, "Got the right number of files");
+    is( scalar @files, 18, "Got the right number of files" );
 
     #We have 6 different batches spread over 3 arrays
     #Each batch corresponds to max_array_size
@@ -129,13 +130,32 @@ sub test_001 : Tags(job_stats) {
     #batch 0-1 are array 1
     #batch 2-3 are array 2
     #batch 4-5 are array 3
-    ##TODO this info should be in the job somewhere...
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[0]->array_deps, [['1237_7', '1234_1']]);
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[1]->array_deps, [['1237_8', '1234_2']]);
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[2]->array_deps, [['1238_9', '1235_3']]);
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[3]->array_deps, [['1238_10', '1235_4']]);
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[4]->array_deps, [['1239_11', '1236_5']]);
-    is_deeply($test->jobs->{'blastx_scratch'}->batches->[5]->array_deps, [['1239_12', '1236_6']]);
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[0]->array_deps,
+        [ [ '1237_7', '1234_1' ] ] );
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[1]->array_deps,
+        [ [ '1237_8', '1234_2' ] ] );
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[2]->array_deps,
+        [ [ '1238_9', '1235_3' ] ] );
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[3]->array_deps,
+        [ [ '1238_10', '1235_4' ] ] );
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[4]->array_deps,
+        [ [ '1239_11', '1236_5' ] ] );
+    is_deeply( $test->jobs->{'blastx_scratch'}->batches->[5]->array_deps,
+        [ [ '1239_12', '1236_6' ] ] );
+
+    is_deeply(
+        $test->jobs->{'blastx_scratch'}->batch_indexes->[0],
+        { 'batch_index_start' => 7, 'batch_index_end' => 8 }
+    );
+    is_deeply(
+        $test->jobs->{'blastx_scratch'}->batch_indexes->[1],
+        { 'batch_index_start' => 9, 'batch_index_end' => 10 }
+    );
+    is_deeply(
+        $test->jobs->{'blastx_scratch'}->batch_indexes->[2],
+        { 'batch_index_start' => 11, 'batch_index_end' => 12 }
+    );
+    is($test->jobs->{'blastx_scratch'}->batch_indexes->[3], undef);
 
 }
 

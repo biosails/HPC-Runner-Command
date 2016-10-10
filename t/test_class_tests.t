@@ -9,6 +9,7 @@ use Test::Class::Moose::Runner;
 if ( !$ENV{'SCHEDULER'} ) {
     Test::Class::Moose::Runner->new(
         test_classes => [
+            'TestsFor::HPC::Runner::Command::Test006',
             'TestsFor::HPC::Runner::Command::Test005',
             'TestsFor::HPC::Runner::Command::Test002',
             'TestsFor::HPC::Runner::Command::Test001',
