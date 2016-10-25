@@ -12,7 +12,7 @@
 * [Job Submission](job_submission/job_submission.md)
     * [Scheduler Comparison](job_submission/comparison.md)
     * [Job Submission Parameters](job_submission/hpcrunner_submission_parameters.md)
-    * [Job Submission Parameters](job_submission/dependcies.md)
+    * [Job Submission Dependencies](job_submission/dependcies.md)
 * [Job Execution](job_execution/job_execution.md)
     * [Job Execution Parameters](job_execution/parameters.md)
 * [Designing your Workflows](design_workflow.md)
