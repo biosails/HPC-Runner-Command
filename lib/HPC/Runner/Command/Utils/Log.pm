@@ -72,7 +72,14 @@ option 'process_table'        => (
     },
     default => sub {
         my $self = shift;
-        return $self->logdir . "/001-process_table.md";
+        my $process_table =  $self->logdir . "/001-process_table.md";
+
+        open( my $pidtablefh, ">>" . $process_table )
+            or die $self->app_log->fatal("Couldn't open process file $!\n");
+
+        print $pidtablefh "||Version|| Scheduler Id || Jobname || Task Tags || ProcessID || ExitCode || Duration ||\n";
+        close($pidtablefh);
+        return $process_table;
     },
     lazy => 1,
 );

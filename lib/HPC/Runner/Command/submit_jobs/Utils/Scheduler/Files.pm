@@ -94,6 +94,8 @@ sub prepare_counter {
 sub prepare_sched_file {
     my $self    = shift;
 
+    $DB::single=2;
+
     my($batch_counter, $job_counter) = $self->prepare_counter;
 
     make_path( $self->outdir ) unless -d $self->outdir;
@@ -110,7 +112,7 @@ sub prepare_sched_file {
     }
 }
 
-=head3 prepare_batch_files
+=head3 prepare_batch_files_array
 
 Write out the batch files
 
@@ -120,14 +122,13 @@ For (legacy) batches 1 file per batch
 
 =cut
 
-#TODO pretty sure this is breaking compatibility with --use_batches
-
 sub prepare_batch_files_array {
     my $self  = shift;
     my $batch_index_start = shift;
     my $batch_index_end = shift;
 
     #Each jobtype has 1 or more batches based on max_array_size
+    $DB::single=2;
     my $job_start = $self->jobs->{$self->current_job}->{batch_index_start};
 
     #Get batch index as array

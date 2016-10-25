@@ -1,7 +1,9 @@
 package HPC::Runner::Command;
 
 use MooseX::App qw(Color Config);
-use HPC::Runner::Command qw(ConfigHome);
+
+#This is not working and I'm not sure why...
+#use HPC::Runner::Command qw(ConfigHome);
 
 our $VERSION = '0.01';
 
@@ -75,6 +77,7 @@ option 'hpc_plugins' => (
     documentation => 'Load hpc_plugins',
     cmd_split     => qr/,/,
     required      => 0,
+    default       => sub { return ['Slurm'] },
 );
 
 option 'hpc_plugins_opts' => (

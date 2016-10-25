@@ -763,7 +763,6 @@ sub process_jobs {
 
     my $jobref = $self->jobs->{ $self->current_job };
 
-    $DB::single = 2;
     if ( !$jobref->can('submitted') ) {
         warn
             "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
@@ -771,6 +770,7 @@ sub process_jobs {
 
     return if $jobref->submitted;
 
+    $DB::single = 2;
     if ( !$self->use_batches ) {
         $self->work;
     }
@@ -788,6 +788,7 @@ Go through the batch, add it, and see if we have any tags
 sub pre_process_batch {
     my $self = shift;
 
+    $DB::single=2;
     $self->clear_batch;
 
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
@@ -804,6 +805,7 @@ sub pre_process_batch {
 
         if ( $self->use_batches ) {
 
+            $DB::single=2;
             $self->batch( $batch->batch_str );
             $self->scheduler_ids_by_batch;
 
@@ -981,6 +983,8 @@ sub process_batch {
 
     return if $self->no_submit_to_slurm;
 
+    $DB::single=2;
+
     my $ok;
     if ( $self->has_scheduler_ids ) {
         $ok = $self->join_scheduler_ids(':');
@@ -1013,7 +1017,8 @@ sub process_batch {
                 $batch_indexes->{batch_index_end}
             );
         }
-        else{
+        else {
+            $DB::single=2;
             $self->cmdfile(
                 $self->outdir . "/$job_counter" . "_" . $self->current_job . "_".$batch_counter.".in" );
             $self->write_batch_file;

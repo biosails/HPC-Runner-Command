@@ -104,7 +104,6 @@ sub chunk_commands {
         }
         next unless $self->jobs->{ $self->current_job }->count_cmds;
 
-        $DB::single = 2;
 
         my $iter = natatime $commands_per_node, @cmds;
 
@@ -118,7 +117,9 @@ sub chunk_commands {
         my $batch_index_start
             = $self->jobs->{ $self->current_job }->{batch_index_start};
         my $batch_index_end
-            = $self->jobs->{ $self->current_job }->{batch_index_end};
+            = $self->jobs->{ $self->current_job }->{batch_index_end} || $self->jobs->{$self->current_job}->{batch_index_start};
+
+        $DB::single = 2;
 
         if ( !$self->use_batches ) {
 
@@ -134,6 +135,10 @@ sub chunk_commands {
 
             #print "Resolving max array\n"
                 #. Dumper( $self->jobs->{ $self->current_job } );
+        }
+        else{
+            $DB::single=2;
+            $self->jobs->{$self->current_job}->{batch_indexes} = [{batch_index_start => $batch_index_start, batch_index_end => $batch_index_end}];
         }
 
     }
