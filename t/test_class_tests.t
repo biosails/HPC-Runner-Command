@@ -5,15 +5,15 @@ use Test::Class::Moose::Runner;
 
 #Run the main applications tests
 
+            #'TestsFor::HPC::Runner::Command::Test006',
+            #'TestsFor::HPC::Runner::Command::Test005',
+            #'TestsFor::HPC::Runner::Command::Test001',
+            #'TestsFor::HPC::Runner::Command::Test003',
             #
 if ( !$ENV{'SCHEDULER'} ) {
     Test::Class::Moose::Runner->new(
         test_classes => [
-            'TestsFor::HPC::Runner::Command::Test006',
-            'TestsFor::HPC::Runner::Command::Test005',
             'TestsFor::HPC::Runner::Command::Test002',
-            'TestsFor::HPC::Runner::Command::Test001',
-            'TestsFor::HPC::Runner::Command::Test003',
         ],
     )->runtests;
 }

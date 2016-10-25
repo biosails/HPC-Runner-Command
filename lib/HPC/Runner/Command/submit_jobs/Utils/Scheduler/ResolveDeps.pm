@@ -238,7 +238,7 @@ sub assign_batch_stats {
 =head3 assign_batches
 
 Each jobtype has one or more batches
-iterate over the the batches to get some data and assign job_tags
+iterate over the the batches to get some data and assign s
 
 =cut
 
@@ -250,13 +250,14 @@ sub assign_batches {
     while ( my @vals = $iter->() ) {
 
         my $batch_cmds = dclone( \@vals );
-        my $batch_tags = $self->assign_batch_tags($batch_cmds);
+        my($batch_tags, $batch_deps) = $self->assign_batch_tags($batch_cmds);
 
         #TODO a batch should be its own class!
         my $batch_ref
             = HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch->new(
             cmds       => $batch_cmds,
             batch_tags => $batch_tags,
+            batch_deps => $batch_deps,
             job        => $self->current_job,
             );
 
@@ -275,7 +276,7 @@ sub assign_batches {
 
 =head3 assign_batch_tags
 
-Parse the #NOTE lines to get batch_tags
+Parse the #TASK lines to get batch_tags
 
 =cut
 
@@ -284,6 +285,7 @@ sub assign_batch_tags {
     my $batch_cmds = shift;
 
     my @batch_tags = ();
+    my @batch_deps = ();
 
     foreach my $lines ( @{$batch_cmds} ) {
 
@@ -294,7 +296,7 @@ sub assign_batch_tags {
             chomp($line);
 
             #TODO Change this to TASK
-            next unless $line =~ m/^#NOTE/;
+            next unless $line =~ m/^#TASK/;
 
             #TODO task_tags and task_deps
             my ( $t1, $t2 ) = $self->parse_meta($line);
@@ -302,15 +304,23 @@ sub assign_batch_tags {
             next unless $t2;
             my @tags = split( ",", $t2 );
 
-            foreach my $tag (@tags) {
-                next unless $tag;
-                push( @batch_tags, $tag );
+            if($t1 eq 'tags'){
+                foreach my $tag (@tags) {
+                    next unless $tag;
+                    push( @batch_tags, $tag );
+                }
+            }
+            elsif($t1 eq 'deps'){
+                foreach my $dep (@tags) {
+                    next unless $dep;
+                    push( @batch_deps, $dep );
+                }
             }
 
         }
     }
 
-    return \@batch_tags;
+    return \@batch_tags, \@batch_deps;
 }
 
 =head3 process_batch_deps
@@ -319,17 +329,17 @@ If a job has one or more job tags it may be possible to fine tune dependencies
 
 #HPC jobname=job01
 #HPC commands_per_node=1
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 gzip Sample1
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 gzip Sample2
 
 #HPC jobname=job02
 #HPC jobdeps=job01
 #HPC commands_per_node=1
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 fastqc Sample1
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 fastqc Sample2
 
 job01 - Sample1 would be submitted as schedulerid 1234
@@ -344,12 +354,22 @@ sub process_batch_deps {
     my $self  = shift;
     my $batch = shift;
 
+    my $tags;
+
     return unless $self->jobs->{ $self->current_job }->submit_by_tags;
     return unless $self->jobs->{ $self->current_job }->has_deps;
 
+
+    if($batch->has_batch_deps){
+        $tags = $batch->batch_deps;
+    }
+    else{
+        $tags = $batch->batch_tags;
+    }
+
     my $scheduler_index
         = $self->search_batches( $self->jobs->{ $self->current_job }->deps,
-        $batch->batch_tags );
+        $tags );
 
     $batch->scheduler_index($scheduler_index);
 }

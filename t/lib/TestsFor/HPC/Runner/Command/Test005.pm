@@ -30,22 +30,22 @@ sub write_test_file {
 #HPC mem=4GB
 #HPC walltime=00:15:00
 
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 pyfasta split -n 20 Sample1.fasta
 
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 pyfasta split -n 20 Sample2.fasta
 
-#NOTE job_tags=Sample3
+#TASK tags=Sample3
 pyfasta split -n 20 Sample3.fasta
 
-#NOTE job_tags=Sample4
+#TASK tags=Sample4
 pyfasta split -n 20 Sample4.fasta
 
-#NOTE job_tags=Sample5
+#TASK tags=Sample5
 pyfasta split -n 20 Sample4.fasta
 
-#NOTE job_tags=Sample6
+#TASK tags=Sample6
 pyfasta split -n 20 Sample6.fasta
 
 #HPC jobname=blastx_scratch
@@ -58,22 +58,22 @@ pyfasta split -n 20 Sample6.fasta
 #HPC mem=20GB
 #HPC walltime=06:00:00
 
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 blastx -db  env_nr -query Sample1
 
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 blastx -db  env_nr -query Sample2
 
-#NOTE job_tags=Sample3
+#TASK tags=Sample3
 blastx -db  env_nr -query Sample3
 
-#NOTE job_tags=Sample4
+#TASK tags=Sample4
 blastx -db  env_nr -query Sample4
 
-#NOTE job_tags=Sample5
+#TASK tags=Sample5
 blastx -db  env_nr -query Sample5
 
-#NOTE job_tags=Sample6
+#TASK tags=Sample6
 blastx -db  env_nr -query Sample6
 
 EOF

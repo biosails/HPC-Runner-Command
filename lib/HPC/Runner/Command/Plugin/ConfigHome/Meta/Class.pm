@@ -10,10 +10,11 @@ around 'proto_config' => sub {
     my ( $self, $command_class, $result, $errors ) = @_;
 
     unless ( defined $result->{config} ) {
+        print "There is a config!\n";
         my $home_dir = Path::Class::Dir->new( File::HomeDir->my_home );
         my $data_dir = $home_dir->subdir( '.' . $self->app_base );
         foreach my $extension ( Config::Any->extensions ) {
-            my $check_file = $data_dir->file( 'hpc-runner.' . $extension );
+            my $check_file = $data_dir->file( '.hpc-runner.' . $extension );
             if ( -e $check_file ) {
                 $result->{config} = $check_file;
                 last;

@@ -34,20 +34,20 @@ sub write_test_file {
 #HPC cpus_per_task=12
 #HPC commands_per_node=1
 
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 echo "hello world from job 1" && sleep 5
 
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 echo "hello again from job 2" && sleep 5
 
 
 #HPC jobname=job02
 #HPC deps=job01
 
-#NOTE job_tags=Sample1
+#TASK tags=Sample1
 echo "goodbye from job 3"
 
-#NOTE job_tags=Sample2
+#TASK tags=Sample2
 echo "hello again from job 3" && sleep 5
 EOF
 
@@ -189,7 +189,7 @@ sub test_010 : Tags(check_note_meta) {
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
 
-    $line = "#NOTE job_tags=SAMPLE_01\n";
+    $line = "#TASK tags=SAMPLE_01\n";
     $test->check_note_meta($line);
 
     is_deeply( $line, $test->cmd, 'Note meta passes' );
@@ -238,16 +238,17 @@ sub test_014 : Tags(job_stats) {
 
     my $batch_job01_001 = {
         'cmds' => [
-            '#NOTE job_tags=Sample1
+            '#TASK tags=Sample1
 echo "hello world from job 1" && sleep 5
 '
         ],
         'job'             => 'job01',
         'batch_tags'      => ['Sample1'],
+        'batch_deps'      => [],
         'array_deps'      => [],
         'scheduler_index' => {},
         'scheduler_id'    => '1234',
-        'batch_str'       => '#NOTE job_tags=Sample1
+        'batch_str'       => '#TASK tags=Sample1
 echo "hello world from job 1" && sleep 5
 ',
     };
@@ -257,15 +258,16 @@ echo "hello world from job 1" && sleep 5
 
     my $batch_job01_002 = {
         'cmds' => [
-            '#NOTE job_tags=Sample2
+            '#TASK tags=Sample2
 echo "hello again from job 2" && sleep 5
 '
         ],
-        'batch_str' => '#NOTE job_tags=Sample2
+        'batch_str' => '#TASK tags=Sample2
 echo "hello again from job 2" && sleep 5
 ',
         'job'             => 'job01',
         'batch_tags'      => ['Sample2'],
+        'batch_deps'      => [],
         'array_deps'      => [],
         'scheduler_index' => {},
         'scheduler_id'    => '1234',
@@ -276,15 +278,16 @@ echo "hello again from job 2" && sleep 5
 
     my $batch_job02_001 = {
         'cmds' => [
-            '#NOTE job_tags=Sample1
+            '#TASK tags=Sample1
 echo "goodbye from job 3"
 '
         ],
-        'batch_str' => '#NOTE job_tags=Sample1
+        'batch_str' => '#TASK tags=Sample1
 echo "goodbye from job 3"
 ',
         'job'        => 'job02',
         'batch_tags' => ['Sample1'],
+        'batch_deps'      => [],
         'array_deps' => [ [ '1235_3', '1234_1' ] ],
         'scheduler_index' => { 'job01' => [0] },
         'scheduler_id'    => '1235',
@@ -295,15 +298,16 @@ echo "goodbye from job 3"
 
     my $batch_job02_002 = {
         'cmds' => [
-            '#NOTE job_tags=Sample2
+            '#TASK tags=Sample2
 echo "hello again from job 3" && sleep 5
 '
         ],
-        'batch_str' => '#NOTE job_tags=Sample2
+        'batch_str' => '#TASK tags=Sample2
 echo "hello again from job 3" && sleep 5
 ',
         'job'        => 'job02',
         'batch_tags' => ['Sample2'],
+        'batch_deps'      => [],
         'array_deps' => [ [ '1235_4', '1234_2' ] ],
         'scheduler_index' => { 'job01' => [1] },
         'scheduler_id'    => '1235',

@@ -202,7 +202,7 @@ sub check_sanity {
 
 =head3 check_note_meta
 
-Check for lines starting with #NOTE - used to pass per process job_tags
+Check for lines starting with #TASK - used to pass per process job_tags
 
 =cut
 
@@ -211,7 +211,7 @@ sub check_note_meta {
     my $self = shift;
     my $line = shift;
 
-    return unless $line =~ m/^#NOTE/;
+    return unless $line =~ m/^#TASK/;
     $self->add_cmd($line);
 }
 

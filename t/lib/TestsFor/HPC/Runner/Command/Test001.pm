@@ -41,7 +41,7 @@ echo "hello again from job 2" && sleep 5
 
 echo "goodbye from job 3"
 
-#NOTE job_tags=hello,world
+#TASK tags=hello,world
 echo "hello again from job 3" && sleep 5
 
 EOF

@@ -15,22 +15,24 @@ use Moose::Util::TypeConstraints;
 #TODO batch_tags is going to be batch_tags and batch_dep_tags
 
 #Begin Example
-my $href = {
-    'cmds' => [
-        '#NOTE job_tags=Sample1
-blastx -db  env_nr -query Sample1
-'
-    ],
-    'cmd_count'  => '1',
-    'job_deps'   => ['pyfasta'],
-    'batch_tags' => ['Sample1'],
-    'batch_str'  => '#NOTE job_tags=Sample1
-blastx -db  env_nr -query Sample1
-',
-    'job'             => 'blastx_scratch',
-    'scheduler_index' => { 'pyfasta' => ['0'], },
-    'array_deps'      => [ [ '1237_7', '1234_1' ], ],
-};
+#my $href = {
+    #'cmds' => [
+        #'#TASK tags=Sample1
+##TASK deps=Sample1
+#blastx -db  env_nr -query Sample1
+#'
+    #],
+    #'cmd_count'  => '1',
+    #'job_deps'   => ['pyfasta'],
+    #'batch_tags' => ['Sample1'],
+    #'batch_str'  => '#TASK tags=Sample1
+##TASK deps=Sample1
+#blastx -db  env_nr -query Sample1
+#',
+    #'job'             => 'blastx_scratch',
+    #'scheduler_index' => { 'pyfasta' => ['0'], },
+    #'array_deps'      => [ [ '1237_7', '1234_1' ], ],
+#};
 #End Example
 
 
@@ -69,6 +71,20 @@ has batch_tags => (
         join_batch_tags  => 'join',
         has_batch_tags   => 'count',
         clear_batch_tags => 'clear',
+    },
+);
+
+has batch_deps => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_batch_deps   => 'elements',
+        add_batch_deps   => 'push',
+        join_batch_deps  => 'join',
+        has_batch_deps   => 'count',
+        clear_batch_deps => 'clear',
     },
 );
 
