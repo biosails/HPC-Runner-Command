@@ -61,23 +61,24 @@ We also want to write all cmds and exit codes to a table
 
 =cut
 
-option 'process_table'        => (
-    isa                       => 'Str',
-    is                        => 'rw',
-    lazy                      => 1,
-    handles                   => {
+option 'process_table' => (
+    isa     => 'Str',
+    is      => 'rw',
+    lazy    => 1,
+    handles => {
         add_process_table     => 'append',
         prepend_process_table => 'prepend',
         clear_process_table   => 'clear',
     },
     default => sub {
-        my $self = shift;
-        my $process_table =  $self->logdir . "/001-process_table.md";
+        my $self          = shift;
+        my $process_table = $self->logdir . "/001-process_table.md";
 
         open( my $pidtablefh, ">>" . $process_table )
             or die $self->app_log->fatal("Couldn't open process file $!\n");
 
-        print $pidtablefh "||Version|| Scheduler Id || Jobname || Task Tags || ProcessID || ExitCode || Duration ||\n";
+        print $pidtablefh
+            "||Version|| Scheduler Id || Jobname || Task Tags || ProcessID || ExitCode || Duration ||\n";
         close($pidtablefh);
         return $process_table;
     },
@@ -91,12 +92,12 @@ Submission tags
 =cut
 
 option 'tags' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef',
-    documentation      => 'Tags for the whole submission',
-    default => sub {return []},
-    cmd_split          => qr/,/,
-    required => 0,
+    is            => 'rw',
+    isa           => 'ArrayRef',
+    documentation => 'Tags for the whole submission',
+    default       => sub { return [] },
+    cmd_split     => qr/,/,
+    required      => 0,
 );
 
 =head3 metastr
@@ -248,17 +249,39 @@ sub set_logdir {
 
     #TODO Add in Version
     if ( $self->has_version && $self->has_git ) {
-        $logdir
-            = "hpc-runner/"
-            . $self->version . "/logs" . "/"
-            . $self->set_logfile . "-"
-            . $self->logname;
+        if ( $self->has_project ) {
+
+            $logdir
+                = "hpc-runner/"
+                . $self->version . "/"
+                . $self->project . "/logs" . "/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
+        else {
+            $logdir
+                = "hpc-runner/"
+                . $self->version . "/logs" . "/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
     }
     else {
-        $logdir
-            = "hpc-runner/logs" . "/"
-            . $self->set_logfile . "-"
-            . $self->logname;
+        if ( $self->has_project ) {
+
+            $logdir
+                = "hpc-runner/"
+                . $self->project . "/logs/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
+        else {
+
+            $logdir
+                = "hpc-runner/logs/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
     }
     $logdir =~ s/\.log$//;
 

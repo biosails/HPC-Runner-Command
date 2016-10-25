@@ -1019,8 +1019,10 @@ sub process_batch {
         }
         else {
             $DB::single=2;
+            my $jobname = $self->resolve_project($job_counter);
+
             $self->cmdfile(
-                $self->outdir . "/$job_counter" . "_" . $self->current_job . "_".$batch_counter.".in" );
+                $self->outdir . "/$jobname" . "_".$batch_counter.".in" );
             $self->write_batch_file;
         }
 
@@ -1047,9 +1049,11 @@ sub process_template {
 
     #TODO Rewrite this to only use self
 
+    my $jobname = $self->resolve_project($counter);
+
     $self->template->process(
         $self->template_file,
-        {   JOBNAME   => $counter . "_" . $self->current_job,
+        {   JOBNAME   => $jobname,
             USER      => $self->user,
             COMMAND   => $command,
             ARRAY_STR => $array_str,
@@ -1091,6 +1095,14 @@ sub process_batch_command {
         $subcommand = "execute_array";
     }
 
+    my $logname;
+    if($self->has_project){
+      $logname = $counter . "_" . $self->project . "_" . $self->current_job;
+    }
+    else{
+      $logname = $counter . "_" .  $self->current_job;
+    }
+
     $command = "cd " . getcwd() . "\n";
     if ( $self->has_custom_command ) {
         $command .= $self->custom_command . " \\\n";
@@ -1104,8 +1116,7 @@ sub process_batch_command {
         . "\t--outdir "
         . $self->outdir . " \\\n"
         . "\t--logname "
-        . "$counter" . "_"
-        . $self->current_job . " \\\n"
+        . $logname . " \\\n"
         . "\t--process_table "
         . $self->process_table;
 

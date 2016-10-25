@@ -44,6 +44,9 @@ HPC::Runner::App is a set of libraries for scaffolding data analysis projects, s
 
 =head2 Command Line Opts
 
+=cut
+
+
 =head3 plugins
 
 Load plugins that are used both by the submitter and executor such as logging pluggins

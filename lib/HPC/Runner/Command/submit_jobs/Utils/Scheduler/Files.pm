@@ -15,7 +15,6 @@ Take care of all file operations
 
 =cut
 
-
 =head3 cmdfile
 
 File of commands for mcerunner
@@ -53,6 +52,27 @@ has 'slurmfile' => (
 
 =cut
 
+=head3 resolve_project
+
+=cut
+
+sub resolve_project {
+    my $self    = shift;
+    my $counter = shift;
+
+    my $jobname;
+
+    if ( $self->has_project ) {
+        $jobname
+            = $self->project . "_" . $counter . "_" . $self->current_job;
+    }
+    else {
+        $jobname = $counter . "_" . $self->current_job;
+    }
+
+    return $jobname;
+}
+
 =head3 prepare_files
 
 =cut
@@ -73,7 +93,6 @@ Prepare the counter. It is 001, 002, etc instead of 1, 2 etc
 
 =cut
 
-
 sub prepare_counter {
     my $self = shift;
 
@@ -83,32 +102,32 @@ sub prepare_counter {
     my $job_counter = $self->job_counter;
     $job_counter = sprintf( "%03d", $job_counter );
 
-    return ($batch_counter, $job_counter);
+    return ( $batch_counter, $job_counter );
 }
-
 
 =head3 prepare_sched_files
 
 =cut
 
 sub prepare_sched_file {
-    my $self    = shift;
+    my $self = shift;
 
-    $DB::single=2;
+    $DB::single = 2;
 
-    my($batch_counter, $job_counter) = $self->prepare_counter;
+    my ( $batch_counter, $job_counter ) = $self->prepare_counter;
 
     make_path( $self->outdir ) unless -d $self->outdir;
 
     #If we are using job arrays there will only be one per batch
 
-    if($self->use_batches){
+    my $jobname = $self->resolve_project($job_counter);
+
+    if ( $self->use_batches ) {
         $self->slurmfile(
-            $self->outdir . "/$job_counter" . "_" . $self->current_job ."_".$batch_counter.".sh" );
+            $self->outdir . "/$jobname" . "_" . $batch_counter . ".sh" );
     }
-    else{
-        $self->slurmfile(
-            $self->outdir . "/$job_counter" . "_" . $self->current_job . ".sh" );
+    else {
+        $self->slurmfile( $self->outdir . "/$jobname" . ".sh" );
     }
 }
 
@@ -123,38 +142,43 @@ For (legacy) batches 1 file per batch
 =cut
 
 sub prepare_batch_files_array {
-    my $self  = shift;
+    my $self              = shift;
     my $batch_index_start = shift;
-    my $batch_index_end = shift;
+    my $batch_index_end   = shift;
 
     #Each jobtype has 1 or more batches based on max_array_size
-    $DB::single=2;
-    my $job_start = $self->jobs->{$self->current_job}->{batch_index_start};
+    $DB::single = 2;
+    my $job_start = $self->jobs->{ $self->current_job }->{batch_index_start};
 
     #Get batch index as array
     #BatchIndexStart 11 BatchIndexEnd 20    (size 10)
     #Range 0, 9                             (size 10)
 
-    my @batch_indexes = ($batch_index_start .. $batch_index_end);
-    my $len = scalar @batch_indexes;
+    my @batch_indexes = ( $batch_index_start .. $batch_index_end );
+    my $len           = scalar @batch_indexes;
 
-    for(my $x=0; $x<$len; $x++){
+    for ( my $x = 0; $x < $len; $x++ ) {
 
         #Get the current batch/array element
         my $real_batch_index = $batch_indexes[$x] - $job_start;
-        $self->current_batch($self->jobs->{$self->current_job}->batches->[$real_batch_index]);
+        $self->current_batch(
+            $self->jobs->{ $self->current_job }->batches->[$real_batch_index]
+        );
 
         #TODO counters are messed up somewhere...
         next unless $self->current_batch;
 
-        $self->batch($self->current_batch->batch_str);
+        $self->batch( $self->current_batch->batch_str );
 
         #Assign the counters
-        my $job_counter = sprintf( "%03d", $self->job_counter );
+        my $job_counter   = sprintf( "%03d", $self->job_counter );
         my $array_counter = sprintf( "%03d", $self->array_counter );
 
+        #TODO Make this a function
+        my $jobname = $self->resolve_project($job_counter);
+
         $self->cmdfile(
-            $self->outdir . "/$job_counter" . "_" . $self->current_job . "_".$array_counter.".in" );
+            $self->outdir . "/$jobname" . "_" . $array_counter . ".in" );
 
         #Write the files
         $self->write_batch_file;

@@ -123,10 +123,20 @@ sub set_outdir {
     my $outdir;
 
     if ( $self->has_version && $self->has_git ) {
-        $outdir = "hpc-runner/" . $self->version . "/scratch";
+        if($self->has_project){
+            $outdir = "hpc-runner/" . $self->version . "/scratch";
+        }
+        else{
+            $outdir = "hpc-runner/". $self->project. "/". $self->version . "/scratch";
+        }
     }
     else {
-        $outdir = "hpc-runner/scratch";
+        if($self->has_project){
+            $outdir = "hpc-runner/" . $self->project . "/scratch";
+        }
+        else{
+            $outdir = "hpc-runner/". "scratch";
+        }
     }
 
     $self->_make_the_dirs($outdir);
