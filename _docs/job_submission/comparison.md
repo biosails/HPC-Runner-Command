@@ -1,6 +1,7 @@
 Side by side comparison of submission parameters by scheduler type
 
-|| Variable Name   || HPC Runner Variable                              || Torque/PBS                                   || SLURM                                ||
+| Variable Name    | HPC Runner Variable                               | Torque/PBS                                    | SLURM                                  |
+| --               | --                                                | --                                            | --                                     |
 | Job Name         | #HPC jobname=$JOBNAME                             | #PBS -N $JOBNAME                              | #SBATCH --job-name=$JOBNAME            |
 | Job Dependencies | #HPC deps=$JOBNAME                                | #PBS -W depend=afterok=$JOBID                 | #SBATCH --dependency=afterok=$JOBID    |
 | CPUS             | #HPC cpus_per_task=$CPUS_PER_TASK                 | #PBS -l nodes=$NODES_COUNT:ppn=$CPUS_PER_TASK | #SBATCH --cpus-per-task=$CPUS_PER_TASK |
