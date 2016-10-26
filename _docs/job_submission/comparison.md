@@ -13,5 +13,7 @@ Side by side comparison of submission parameters by scheduler type
 ### Resources
 
 http://www.sdsc.edu/~hocks/FG/PBS.slurm.html
+
 http://slurm.schedmd.com/sbatch.html - Simple Linux Utility for Resource Management
+
 https://wiki.hpcc.msu.edu/display/hpccdocs/Advanced+Scripting+Using+PBS+Environment+Variables Advanced Scripting Using PBS Environment Variables - HPCC Documentation and User Manual - HPCC Wiki
