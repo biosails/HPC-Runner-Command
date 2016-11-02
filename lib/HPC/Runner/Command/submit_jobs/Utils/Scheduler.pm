@@ -655,6 +655,7 @@ sub increase_jobname {
 
     $self->inc_job_counter;
     my $counter = $self->job_counter;
+
     #TODO Change this to 4
     $counter = sprintf( "%03d", $counter );
 
@@ -696,7 +697,6 @@ sub iterate_schedule {
     foreach my $job ( $self->all_schedules ) {
 
         $self->app_log->info( 'Submitting all ' . $job . ' job types' );
-
 
         $self->current_job($job);
 
@@ -788,7 +788,7 @@ Go through the batch, add it, and see if we have any tags
 sub pre_process_batch {
     my $self = shift;
 
-    $DB::single=2;
+    $DB::single = 2;
     $self->clear_batch;
 
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
@@ -805,7 +805,7 @@ sub pre_process_batch {
 
         if ( $self->use_batches ) {
 
-            $DB::single=2;
+            $DB::single = 2;
             $self->batch( $batch->batch_str );
             $self->scheduler_ids_by_batch;
 
@@ -861,18 +861,33 @@ sub scheduler_ids_by_array {
     return unless $scheduler_index;
 
     my $current_batch_index = $self->batch_counter - 1;
-    my $x = $self->index_in_batch( $self->current_job, $current_batch_index );
 
-    #This should always be defined...
-    return unless defined $x;
+    my $index_in_batch
+        = $self->index_in_batch( $self->current_job, $current_batch_index );
 
-    my $batch_scheduler_id = $self->jobs->{$self->current_job}->scheduler_ids->[$x] if defined $x;
-    $self->current_batch->scheduler_id($batch_scheduler_id) if defined $x;
+    if ( !defined $index_in_batch ) {
+        print "Top There is no index in batch!\n";
+        $self->app_log->warn( "Job "
+                . $self->current_job
+                . " does not have an appropriate index. If you think are reaching this in error please report the issue to github.\n"
+        );
+
+        return;
+    }
+
+    $DB::single = 2;
+
+    my $batch_scheduler_id
+        = $self->jobs->{ $self->current_job }
+        ->scheduler_ids->[$index_in_batch];
+
+    $self->current_batch->scheduler_id($batch_scheduler_id);
 
     my @jobs = keys %{$scheduler_index};
 
     foreach my $job (@jobs) {
 
+        next unless $job;
         my $batch_index = $scheduler_index->{$job};
 
         my $job_start = $self->jobs->{$job}->{batch_index_start};
@@ -882,21 +897,28 @@ sub scheduler_ids_by_array {
 
         foreach my $index ( @{$batch_index} ) {
 
-            my $x = $self->index_in_batch( $job, $index );
+            my $x = $self->index_in_batch_deps( $job, $index );
+            #print "My job is $job Index is $index\n";
+            #print "Batch indexes in search job are "
+                #. Dumper( $self->jobs->{$job}->all_batch_indexes );
 
             #we should give a warning here
             if ( !defined $x ) {
+                print "Internal There is no index in batch!\n";
                 $self->app_log->warn(
                     "Job name $job does not have an appropriate index for "
                         . $self->current_job
-                        . " array index $x" );
+                        . " array index $index" );
                 next;
             }
             my $dep_scheduler_id = $self->jobs->{$job}->scheduler_ids->[$x];
 
             next unless $dep_scheduler_id;
 
-            my $array_dep = [$batch_scheduler_id . '_' . $self->batch_counter,  $dep_scheduler_id . '_' . $job_array[$index]];
+            my $array_dep = [
+                $batch_scheduler_id . '_' . $self->batch_counter,
+                $dep_scheduler_id . '_' . $job_array[$index]
+            ];
             $self->current_batch->add_array_deps($array_dep);
         }
 
@@ -935,10 +957,35 @@ sub index_in_batch {
         my $batch_start = $batch_index->{batch_index_start} - 1;
         my $batch_end   = $batch_index->{batch_index_end} - 1;
 
-
         if ( $index >= $batch_start && $index <= $batch_end ) {
             return $x;
         }
+        $x++;
+    }
+
+    return undef;
+}
+
+sub index_in_batch_deps {
+    my $self  = shift;
+    my $job   = shift;
+    my $index = shift;
+
+    my $x = 0;
+
+    my $len = $self->jobs->{$job}->batch_index_end - $self->jobs->{$job}->batch_index_start;
+    my @search_indexes = ($self->jobs->{$job}->batch_index_start .. $self->jobs->{$job}->batch_index_end);
+
+    my $search_index = $search_indexes[$index];
+
+    foreach my $batch_index ( $self->jobs->{$job}->all_batch_indexes ) {
+        my $batch_start = $batch_index->{batch_index_start};
+        my $batch_end   = $batch_index->{batch_index_end};
+
+        if ( $search_index >= $batch_start && $search_index <= $batch_end ) {
+            return $x;
+        }
+
         $x++;
     }
 
@@ -983,7 +1030,7 @@ sub process_batch {
 
     return if $self->no_submit_to_slurm;
 
-    $DB::single=2;
+    $DB::single = 2;
 
     my $ok;
     if ( $self->has_scheduler_ids ) {
@@ -1018,11 +1065,11 @@ sub process_batch {
             );
         }
         else {
-            $DB::single=2;
+            $DB::single = 2;
             my $jobname = $self->resolve_project($job_counter);
 
             $self->cmdfile(
-                $self->outdir . "/$jobname" . "_".$batch_counter.".in" );
+                $self->outdir . "/$jobname" . "_" . $batch_counter . ".in" );
             $self->write_batch_file;
         }
 
@@ -1096,11 +1143,11 @@ sub process_batch_command {
     }
 
     my $logname;
-    if($self->has_project){
-      $logname = $counter . "_" . $self->project . "_" . $self->current_job;
+    if ( $self->has_project ) {
+        $logname = $counter . "_" . $self->project . "_" . $self->current_job;
     }
-    else{
-      $logname = $counter . "_" .  $self->current_job;
+    else {
+        $logname = $counter . "_" . $self->current_job;
     }
 
     $command = "cd " . getcwd() . "\n";

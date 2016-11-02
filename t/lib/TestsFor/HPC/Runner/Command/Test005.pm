@@ -131,29 +131,29 @@ sub test_001 : Tags(job_stats) {
     #batch 2-3 are array 2
     #batch 4-5 are array 3
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[0]->array_deps,
-        [ [ '1237_7', '1234_1' ] ] );
+	[ [ '1237_7', '1234_1' ] ] );
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[1]->array_deps,
-        [ [ '1237_8', '1234_2' ] ] );
+	[ [ '1237_8', '1234_2' ] ] );
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[2]->array_deps,
-        [ [ '1238_9', '1235_3' ] ] );
+	[ [ '1238_9', '1235_3' ] ] );
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[3]->array_deps,
-        [ [ '1238_10', '1235_4' ] ] );
+	[ [ '1238_10', '1235_4' ] ] );
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[4]->array_deps,
-        [ [ '1239_11', '1236_5' ] ] );
+	[ [ '1239_11', '1236_5' ] ] );
     is_deeply( $test->jobs->{'blastx_scratch'}->batches->[5]->array_deps,
-        [ [ '1239_12', '1236_6' ] ] );
+	[ [ '1239_12', '1236_6' ] ] );
 
     is_deeply(
-        $test->jobs->{'blastx_scratch'}->batch_indexes->[0],
-        { 'batch_index_start' => 7, 'batch_index_end' => 8 }
+	$test->jobs->{'blastx_scratch'}->batch_indexes->[0],
+	{ 'batch_index_start' => 7, 'batch_index_end' => 8 }
     );
     is_deeply(
-        $test->jobs->{'blastx_scratch'}->batch_indexes->[1],
-        { 'batch_index_start' => 9, 'batch_index_end' => 10 }
+	$test->jobs->{'blastx_scratch'}->batch_indexes->[1],
+	{ 'batch_index_start' => 9, 'batch_index_end' => 10 }
     );
     is_deeply(
-        $test->jobs->{'blastx_scratch'}->batch_indexes->[2],
-        { 'batch_index_start' => 11, 'batch_index_end' => 12 }
+	$test->jobs->{'blastx_scratch'}->batch_indexes->[2],
+	{ 'batch_index_start' => 11, 'batch_index_end' => 12 }
     );
     is($test->jobs->{'blastx_scratch'}->batch_indexes->[3], undef);
 

@@ -169,11 +169,7 @@ sub resolve_max_array_size {
 
     $number_of_batches = $cmd_size/($self->max_array_size+1);
 
-    print "Number of batches is $number_of_batches\n";
     return POSIX::ceil($number_of_batches);
-    #$number_of_batches++;
-
-    #$self->resolve_max_array_size( $number_of_batches, $cmd_size );
 }
 
 sub return_ranges {

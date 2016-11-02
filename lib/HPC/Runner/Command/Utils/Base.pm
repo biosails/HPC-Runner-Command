@@ -124,10 +124,10 @@ sub set_outdir {
 
     if ( $self->has_version && $self->has_git ) {
         if($self->has_project){
-            $outdir = "hpc-runner/" . $self->version . "/scratch";
+            $outdir = "hpc-runner/". $self->project. "/". $self->version . "/scratch";
         }
         else{
-            $outdir = "hpc-runner/". $self->project. "/". $self->version . "/scratch";
+            $outdir = "hpc-runner/" . $self->version . "/scratch";
         }
     }
     else {
