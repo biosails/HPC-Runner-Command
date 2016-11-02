@@ -587,7 +587,7 @@ sub pop_note_meta {
                 my @tmp = split( ",", $t2 );
                 map { push( @ts, $_ ) } @tmp;
             }
-            if ( $t1 eq "deps" ) {
+            elsif ( $t1 eq "deps" ) {
                 my @tmp = split( ",", $t2 );
                 map { push( @ts, $_ ) } @tmp;
             }
@@ -597,7 +597,7 @@ sub pop_note_meta {
                 $self->log_main_messages( 'debug',
                           "Command:\n\t"
                         . $self->cmd
-                        . "\nHas invalid #NOTE attribute. Should be #TASK tags=thing1,thing2 or #TASK deps=thing1,thing2"
+                        . "\nHas invalid #TASK attribute. Should be #TASK tags=thing1,thing2 or #TASK deps=thing1,thing2"
                 );
             }
         }
