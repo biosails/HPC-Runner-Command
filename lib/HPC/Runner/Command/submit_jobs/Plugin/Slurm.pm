@@ -88,7 +88,8 @@ sub update_job_deps{
         my $dep_job = $array_id->[1];
 
         my $cmd =  "scontrol update job=$current_job Dependency=afterok:$dep_job";
-        print "$cmd\n";
+        $self->log->debug("Updating dependencies ".$cmd."\n");
+	$self->change_deps($cmd);
     }
 
 }
