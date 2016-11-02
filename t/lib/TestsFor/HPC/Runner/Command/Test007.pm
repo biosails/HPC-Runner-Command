@@ -132,7 +132,18 @@ sub test_001 : Tags(job_stats) {
 
     my @files = glob( $test->outdir . "/*" );
 
-    #diag Dumper($test->jobs->{'raw_fastqc'}->module);
+    #print "Files are ".join("\n", @files)."\n";
+
+    my $submit_file = $outdir."/001_raw_fastqc.sh";
+    my $text = read_file($submit_file ) ;
+
+    #print "Submit file is \n$text\n";
+    #diag "MOdules are ".Dumper($test->jobs->{'raw_fastqc'}->module);
+
+    #foreach my $module (@{$test->jobs->{raw_fastqc}->module}){
+	#diag("Module is ".Dumper($module));
+    #}
+
     #is( scalar @files, 18, "Got the right number of files" );
 
     #diag(Dumper($test->jobs->{'blastx_scratch'}));

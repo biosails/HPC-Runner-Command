@@ -243,10 +243,12 @@ has 'template_file' => (
 #SBATCH --dependency=afterok:[% AFTEROK %]
 [% END %]
 
-[% IF job.has_module %]
-[% FOR d = job.module %]
-module load [% d %]
-[% END %]
+
+[% SET modules = job.module %]
+[% FOR moduleRef = job.module %]
+	[% FOR module = moduleRef %]
+module load [% module.0 %]
+	[% END %]
 [% END %]
 
 [% COMMAND %]
