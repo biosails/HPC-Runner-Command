@@ -7,7 +7,7 @@ When designing a workflow you should keep several key components in mind.
 3. Tasks should be broken down to their smallest components.
 4. Job dependencies must be verbosely stated.
 
-The reasoning behind this is that each job group will have similar computation requirements.
+The reasoning behind this is that each job type will have similar computation requirements.
 
 ```
 #HPC jobname=qc

@@ -73,7 +73,8 @@ For instance, the job type align_reads depends upon all trim_reads completing.
 
 We drew our dependency tree but mapping our input and outputs. This is always a very helpful and informative exercise!
 
-|| Job Type Name || Variable || INPUT || OUTPUT ||
+| Job Type Name | Variable | INPUT | OUTPUT |
+| --            | --       | --    | --     |
 | QC Raw Reads | qc_raw_reads | Sample1.raw_read1.fastq, Sample1.raw_read2.fastq | raw_fastqc_folder |
 | Trim Raw Reads | trim_raw_reads | Sample1.raw_read1.fastq, Sample1.raw_read2.fastq | Sample1.trim_read1.fastq, Sample1.trim_read2.fastq |
 | QC Trimmed Reads | qc_trim_reads | Sample1.raw_read1.fastq, Sample1.raw_read2.fastq | trimmomatic_fastqc_folder |
