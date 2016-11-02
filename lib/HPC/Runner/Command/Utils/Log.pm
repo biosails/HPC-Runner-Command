@@ -433,7 +433,7 @@ sub log_table {
     #or die print "Couldn't open process file $!\n";
 
     if ( $self->can('task_tags') ) {
-        my $aref = $self->get_task_tag($cmdpid) // [];
+        my $aref = $self->get_task_tag($cmdpid) || [];
         $task_tags = join( ", ", @{$aref} ) || "";
 
         $self->set_table_data( task_tags => $task_tags );
