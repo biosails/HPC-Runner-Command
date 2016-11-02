@@ -243,8 +243,8 @@ has 'template_file' => (
 #SBATCH --dependency=afterok:[% AFTEROK %]
 [% END %]
 
-[% IF job.has_modules %]
-[% FOR d = job.modules %]
+[% IF job.has_module %]
+[% FOR d = job.module %]
 module load [% d %]
 [% END %]
 [% END %]

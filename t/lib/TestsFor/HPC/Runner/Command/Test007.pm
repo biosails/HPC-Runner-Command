@@ -26,11 +26,11 @@ sub write_test_file {
 #
 
 #
+#HPC jobname=raw_fastqc
 #HPC module=gencore/1 gencore_dev gencore_qc
 #HPC ntasks=1
 #HPC procs=1
 #HPC commands_per_node=1
-#HPC jobname=raw_fastqc
 
 #TASK tags=Sample_1
 raw_fastqc sample1
@@ -51,8 +51,8 @@ raw_fastqc sample5
 raw_fastqc sample5
 
 #
-#HPC module=gencore/1 gencore_dev gencore_qc
 #HPC jobname=trimmomatic
+#HPC module=gencore/1 gencore_dev gencore_qc
 #
 
 #TASK tags=Sample_1
@@ -65,8 +65,8 @@ trimmomatic sample2
 trimmomatic sample5
 
 #
-#HPC module=gencore/1 gencore_dev gencore_qc
 #HPC jobname=trimmomatic_fastqc
+#HPC module=gencore/1 gencore_dev gencore_qc
 #HPC deps=trimmomatic
 
 #TASK tags=Sample_1
@@ -132,6 +132,7 @@ sub test_001 : Tags(job_stats) {
 
     my @files = glob( $test->outdir . "/*" );
 
+    #diag Dumper($test->jobs->{'raw_fastqc'}->module);
     #is( scalar @files, 18, "Got the right number of files" );
 
     #diag(Dumper($test->jobs->{'blastx_scratch'}));
