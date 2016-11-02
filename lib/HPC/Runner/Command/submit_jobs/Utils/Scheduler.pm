@@ -1157,6 +1157,11 @@ sub process_batch_command {
     else {
         $command .= "hpcrunner.pl $subcommand \\\n";
     }
+
+    if($self->has_project){
+    	$command .= "\t--project ".$self->project." \\\n";
+    }
+
     $command
         .= "\t--procs "
         . $self->jobs->{ $self->current_job }->procs . " \\\n"

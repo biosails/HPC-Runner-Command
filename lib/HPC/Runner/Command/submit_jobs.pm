@@ -22,21 +22,6 @@ more templates to submit to the scheduler of your choice (SLURM, PBS, etc)';
 
 =head2 Attributes
 
-=head3 project
-
-When submitting jobs we will prepend the jobname with the project name
-
-=cut
-
-option 'project' => (
-    is            => 'rw',
-    isa           => 'Str',
-    documentation => 'Give your jobnames an additional project name. #HPC jobname=gzip will be submitted as 001_project_gzip',
-    required      => 0,
-    predicate => 'has_project',
-);
-
-
 =head2 Subroutines
 
 =cut
