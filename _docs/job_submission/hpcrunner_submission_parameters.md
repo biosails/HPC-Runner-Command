@@ -1,4 +1,8 @@
 ```
+hpcrunner.pl submit_jobs --help
+```
+
+```
 	--afterok             afterok switch in slurm. --afterok 123,134 will
                           tell slurm to start this job after 123,134 have
                           exited successfully [Multiple; Split by ","]
