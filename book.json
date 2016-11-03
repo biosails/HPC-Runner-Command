@@ -1,4 +1,4 @@
 {
     "root": "./_docs",
-    plugins: ['gitbook-plugin-responsive-iframes']
+    "plugins": ["gitbook-plugin-responsive-iframes"]
 }
