@@ -32,7 +32,7 @@ option 'module' => (
     documentation => q{List of modules to load ex. R2, samtools, etc},
     default       => sub { [] },
     cmd_split     => qr/,/,
-    handles       => { has_modules => 'count', },
+    handles       => { has_modules => 'count', all_modules => 'elements', join_modules   => 'join', },
 );
 
 =head3 cpus_per_task

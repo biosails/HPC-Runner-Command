@@ -261,6 +261,7 @@ sub process_hpc_meta {
 
     if($jobname eq 'hpcjob_001'){
         $self->apply_global_directives($t1, $t2);
+        $self->apply_job_directives($t1, $t2);
     }
     else{
         $self->apply_job_directives($t1, $t2);

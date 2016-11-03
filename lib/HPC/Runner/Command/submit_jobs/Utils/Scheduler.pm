@@ -243,15 +243,12 @@ has 'template_file' => (
 #SBATCH --dependency=afterok:[% AFTEROK %]
 [% END %]
 
-
-[% SET modules = job.module %]
-[% FOR moduleRef = job.module %]
-	[% FOR module = moduleRef %]
-module load [% module.0 %]
-	[% END %]
+[% IF MODULES %]
+module load [% MODULES %]
 [% END %]
 
 [% COMMAND %]
+
 EOF
 
         print $fh $tt;
@@ -1107,6 +1104,7 @@ sub process_template {
             COMMAND   => $command,
             ARRAY_STR => $array_str,
             AFTEROK   => $ok,
+	    MODULES => $self->jobs->{$self->current_job}->join_modules(' '),
             OUT       => $self->logdir
                 . "/$counter" . "_"
                 . $self->current_job . ".log",
@@ -1191,7 +1189,7 @@ sub process_batch_command {
     my $version_str = $self->create_version_str;
     $command .= $version_str if $version_str;
 
-    $command .= "\n";
+    $command .= "\n\n";
     return $command;
 }
 
