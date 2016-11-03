@@ -1,6 +1,6 @@
 # Example 01 - Simple
 
-The simplest example is one job type, where each task has a single thread. 
+The simplest example is one job type, where each task has a single thread.
 
 ```
 #Filename - preprocess.sh
