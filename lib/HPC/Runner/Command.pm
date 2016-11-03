@@ -2,6 +2,9 @@ package HPC::Runner::Command;
 
 use MooseX::App qw(Color Config);
 
+#This is not working and I'm not sure why...
+#use HPC::Runner::Command qw(ConfigHome);
+
 our $VERSION = '0.01';
 
 use IPC::Cmd;
@@ -41,6 +44,9 @@ HPC::Runner::App is a set of libraries for scaffolding data analysis projects, s
 
 =head2 Command Line Opts
 
+=cut
+
+
 =head3 plugins
 
 Load plugins that are used both by the submitter and executor such as logging pluggins
@@ -74,6 +80,7 @@ option 'hpc_plugins' => (
     documentation => 'Load hpc_plugins',
     cmd_split     => qr/,/,
     required      => 0,
+    default       => sub { return ['Slurm'] },
 );
 
 option 'hpc_plugins_opts' => (
@@ -102,6 +109,20 @@ option 'job_plugins_opts' => (
     isa           => 'HashRef',
     documentation => 'Options for job_plugins',
     required      => 0,
+);
+
+=head3 project
+
+When submitting jobs we will prepend the jobname with the project name
+
+=cut
+
+option 'project' => (
+    is            => 'rw',
+    isa           => 'Str',
+    documentation => 'Give your jobnames an additional project name. #HPC jobname=gzip will be submitted as 001_project_gzip',
+    required      => 0,
+    predicate => 'has_project',
 );
 
 =head2 Subroutines

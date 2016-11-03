@@ -64,14 +64,23 @@ We also want to write all cmds and exit codes to a table
 option 'process_table' => (
     isa     => 'Str',
     is      => 'rw',
+    lazy    => 1,
     handles => {
         add_process_table     => 'append',
         prepend_process_table => 'prepend',
         clear_process_table   => 'clear',
     },
     default => sub {
-        my $self = shift;
-        return $self->logdir . "/001-process_table.md";
+        my $self          = shift;
+        my $process_table = $self->logdir . "/001-process_table.md";
+
+        open( my $pidtablefh, ">>" . $process_table )
+            or die $self->app_log->fatal("Couldn't open process file $!\n");
+
+        print $pidtablefh
+            "||Version|| Scheduler Id || Jobname || Task Tags || ProcessID || ExitCode || Duration ||\n";
+        close($pidtablefh);
+        return $process_table;
     },
     lazy => 1,
 );
@@ -83,13 +92,14 @@ Submission tags
 =cut
 
 option 'tags' => (
-    is                 => 'rw',
-    isa                => 'ArrayRef',
-    documentation      => 'Tags for the whole submission',
-    default => sub {return []},
-    cmd_split          => qr/,/,
-    required => 0,
+    is            => 'rw',
+    isa           => 'ArrayRef',
+    documentation => 'Tags for the whole submission',
+    default       => sub { return [] },
+    cmd_split     => qr/,/,
+    required      => 0,
 );
+
 =head3 metastr
 
 JSON string passed from HPC::Runner::App::Scheduler. It describes the total number of jobs, processes, and job batches.
@@ -166,18 +176,39 @@ has 'logfile' => (
     }
 );
 
-has 'job_tags' => (
+#TODO This should be changed to execute_jobs Logging
+#We also have task_tags as an ArrayRef for JobDeps
+
+has 'task_tags' => (
     traits  => ['Hash'],
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { {} },
     handles => {
-        set_job_tag     => 'set',
-        get_job_tag     => 'get',
-        has_no_job_tags => 'is_empty',
-        num_job_tags    => 'count',
-        delete_job_tag  => 'delete',
-        job_tag_pairs   => 'kv',
+        set_task_tag     => 'set',
+        get_task_tag     => 'get',
+        has_no_task_tags => 'is_empty',
+        num_task_tags    => 'count',
+        delete_task_tag  => 'delete',
+        task_tag_pairs   => 'kv',
+    },
+);
+
+#TODO This should be changed to execute_jobs Logging
+#We also have task_tags as an ArrayRef for JobDeps
+
+has 'task_deps' => (
+    traits  => ['Hash'],
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub { {} },
+    handles => {
+        set_task_dep     => 'set',
+        get_task_dep     => 'get',
+        has_no_task_deps => 'is_empty',
+        num_task_deps    => 'count',
+        delete_task_dep  => 'delete',
+        task_dep_pairs   => 'kv',
     },
 );
 
@@ -218,17 +249,39 @@ sub set_logdir {
 
     #TODO Add in Version
     if ( $self->has_version && $self->has_git ) {
-        $logdir
-            = "hpc-runner/"
-            . $self->version . "/logs" . "/"
-            . $self->set_logfile . "-"
-            . $self->logname;
+        if ( $self->has_project ) {
+
+            $logdir
+                = "hpc-runner/"
+                . $self->version . "/"
+                . $self->project . "/logs" . "/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
+        else {
+            $logdir
+                = "hpc-runner/"
+                . $self->version . "/logs" . "/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
     }
     else {
-        $logdir
-            = "hpc-runner/logs" . "/"
-            . $self->set_logfile . "-"
-            . $self->logname;
+        if ( $self->has_project ) {
+
+            $logdir
+                = "hpc-runner/"
+                . $self->project . "/logs/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
+        else {
+
+            $logdir
+                = "hpc-runner/logs/"
+                . $self->set_logfile . "-"
+                . $self->logname;
+        }
     }
     $logdir =~ s/\.log$//;
 
@@ -311,7 +364,7 @@ sub _log_commands {
     $self->set_table_data( start_time => "$ymd $hms" );
 
     my $meta = $self->pop_note_meta;
-    $self->set_job_tag( cmdpid => $meta ) if $meta;
+    $self->set_task_tag( cmdpid => $meta ) if $meta;
 
     $self->log_cmd_messages( "info",
         "Finishing job " . $self->counter . " with ExitCode $exitcode",
@@ -350,7 +403,7 @@ sub name_log {
     $counter = sprintf( "%03d", $counter );
     $self->append_logfile( "-CMD_" . $counter . "-PID_$cmdpid.md" );
 
-    $self->set_job_tag( "$counter" => $cmdpid );
+    $self->set_task_tag( "$counter" => $cmdpid );
 }
 
 #TODO move to execute_jobs
@@ -370,7 +423,7 @@ sub log_table {
     $self->set_table_data( duration  => $duration );
 
     my $version = $self->version || "0.0";
-    my $job_tags = "";
+    my $task_tags = "";
 
     my $logfile = $self->logdir . "/" . $self->logfile;
 
@@ -379,11 +432,11 @@ sub log_table {
 
     #or die print "Couldn't open process file $!\n";
 
-    if ( $self->can('job_tags') ) {
-        my $aref = $self->get_job_tag($cmdpid) // [];
-        $job_tags = join( ", ", @{$aref} ) || "";
+    if ( $self->can('task_tags') ) {
+        my $aref = $self->get_task_tag($cmdpid) || [];
+        $task_tags = join( ", ", @{$aref} ) || "";
 
-        $self->set_table_data( job_tags => $job_tags );
+        $self->set_table_data( task_tags => $task_tags );
     }
 
     if ( $self->can('version') && $self->has_version ) {
@@ -395,7 +448,7 @@ sub log_table {
         my $schedulerid = $self->job_scheduler_id || '';
         my $jobname     = $self->jobname          || '';
         print $pidtablefh <<EOF;
-|$version|$schedulerid|$jobname|$job_tags|$cmdpid|$exitcode|$duration|
+|$version|$schedulerid|$jobname|$task_tags|$cmdpid|$exitcode|$duration|
 EOF
 
         $self->set_table_data( schedulerid => $schedulerid );
@@ -522,15 +575,19 @@ sub pop_note_meta {
 
     foreach my $line (@lines) {
         next unless $line;
-        next unless $line =~ m/^#NOTE/;
+        next unless $line =~ m/^#TASK/;
 
         my ( @match, $t1, $t2 );
-        @match = $line =~ m/NOTE (\w+)=(.+)$/;
+        @match = $line =~ m/TASK (\w+)=(.+)$/;
         ( $t1, $t2 ) = ( $match[0], $match[1] );
 
         $DB::single = 2;
         if ($t1) {
-            if ( $t1 eq "job_tags" ) {
+            if ( $t1 eq "tags" ) {
+                my @tmp = split( ",", $t2 );
+                map { push( @ts, $_ ) } @tmp;
+            }
+            elsif ( $t1 eq "deps" ) {
                 my @tmp = split( ",", $t2 );
                 map { push( @ts, $_ ) } @tmp;
             }
@@ -540,7 +597,7 @@ sub pop_note_meta {
                 $self->log_main_messages( 'debug',
                           "Command:\n\t"
                         . $self->cmd
-                        . "\nHas invalid #NOTE attribute. Should be #NOTE job_tags=thing1,thing2"
+                        . "\nHas invalid #TASK attribute. Should be #TASK tags=thing1,thing2 or #TASK deps=thing1,thing2"
                 );
             }
         }

@@ -194,7 +194,7 @@ sub process_lines{
     my $self = shift;
     my $line = shift;
 
-    if($line =~ m/^#NOTE/){
+    if($line =~ m/^#TASK/){
         $self->add_cmd($line);
     }
 

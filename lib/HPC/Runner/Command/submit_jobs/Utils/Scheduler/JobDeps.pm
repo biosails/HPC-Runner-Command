@@ -1,16 +1,12 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 use Moose;
+use Moose::Util::TypeConstraints;
+use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
 
-#$self->jobs->{ $self->jobname } = {
-#deps      => [],
-#cmds      => [],
-#hpc_meta => [],
-#scheduler_ids => [],
-#submitted => 0,
-#};
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 
-=head1 HPC::Runner::App::Scheduler::JobDeps
+=head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 
 =cut
 
@@ -19,10 +15,10 @@ use Moose;
 =cut
 
 has deps => (
+    default => sub { [] },
     traits  => ['Array'],
     is      => 'rw',
     isa     => 'ArrayRef',
-    default => sub { [] },
     handles => {
         all_deps    => 'elements',
         add_deps    => 'push',
@@ -78,9 +74,55 @@ has scheduler_ids => (
         all_scheduler_ids    => 'elements',
         add_scheduler_ids    => 'push',
         has_scheduler_ids    => 'count',
-        count_scheduler_ids    => 'count',
+        count_scheduler_ids  => 'count',
         has_no_scheduler_ids => 'is_empty',
     },
+);
+
+#TODO Add object class for this
+
+has batches => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef[HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch]',
+    default => sub { [] },
+    handles => {
+        all_batches    => 'elements',
+        add_batches    => 'push',
+        has_batches    => 'count',
+        count_batches  => 'count',
+        has_no_batches => 'is_empty',
+    },
+);
+
+has batch_indexes => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_batch_indexes    => 'elements',
+        add_batch_indexes    => 'push',
+        has_batch_indexes    => 'count',
+        count_batch_indexes  => 'count',
+        has_no_batch_indexes => 'is_empty',
+    },
+);
+
+has 'batch_index_start' => (
+    isa => 'Int',
+    is => 'rw',
+);
+
+has 'batch_index_end' => (
+    isa => 'Int',
+    is => 'rw',
+);
+
+has 'submit_by_tags' => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 has 'submitted' => (

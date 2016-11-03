@@ -2,4 +2,4 @@
 
 Documentation for the HPC-Runner-Command libraries.
 
-Version 1.0
+While the code is mostly stable, the documentation is still under heavy development.

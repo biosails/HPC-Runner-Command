@@ -93,6 +93,7 @@
          "requires" : {
             "Capture::Tiny" : "0",
             "File::Slurp" : "0",
+            "File::Spec::Functions" : "0",
             "FindBin" : "0",
             "Slurp" : "0",
             "Test::Class::Moose" : "0",
@@ -116,6 +117,9 @@
       }
    },
    "version" : "0.01",
+   "x_contributors" : [
+      "Travis CI <nobody@nobody.org>"
+   ],
    "x_serialization_backend" : "Cpanel::JSON::XS version 3.0217"
 }
 

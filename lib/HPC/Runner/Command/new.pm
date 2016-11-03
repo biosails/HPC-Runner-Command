@@ -7,8 +7,6 @@ use File::Basename;
 use Cwd;
 use File::Path qw(make_path remove_tree);
 use YAML::XS;
-#use String::CamelCase qw(camelize decamelize wordsplit);
-#use String::Escape qw( quote  );
 
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
