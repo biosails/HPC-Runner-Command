@@ -1,3 +1,8 @@
-![Example 01-1](./images/HPC_Runner_Diagrams_-_-Example_01-1.jpg)
 
-![Example 01-2](./images/HPC_Runner_Diagrams_-_-Example_01-2.jpg)
+
+# Example 01 - Simple
+
+![](/_docs/images/HPC_Runner_Diagrams_-_Example_01-1.jpg)
+
+![](/_docs/images/HPC_Runner_Diagrams_-_Example_01-2.jpg)
+
