@@ -19,6 +19,4 @@ Here is a birds eye view of a simple example.
 
 ![Example 01-2](../images/HPC_Runner_Diagrams_-_Example_01-2.jpg)
 
-<div class="intrinsic-container">
-  <iframe src="https://jerowe.gitbooks.io/hpc-runner-command-docs/content/examples/example_01_jupyterhub.html" allowfullscreen></iframe>
-</div>
+<iframe src="https://jerowe.gitbooks.io/hpc-runner-command-docs/content/examples/example_01_jupyterhub.html"></iframe>
