@@ -72,7 +72,7 @@ option 'process_table' => (
     },
     default => sub {
         my $self          = shift;
-        my $process_table = $self->logdir . "/001-process_table.md";
+        my $process_table = $self->logdir . "/001-task_table.md";
 
         open( my $pidtablefh, ">>" . $process_table )
             or die $self->app_log->fatal("Couldn't open process file $!\n");
@@ -364,7 +364,7 @@ sub _log_commands {
     $self->set_table_data( start_time => "$ymd $hms" );
 
     my $meta = $self->pop_note_meta;
-    $self->set_task_tag( cmdpid => $meta ) if $meta;
+    $self->set_task_tag( $pid => $meta ) if $meta;
 
     $self->log_cmd_messages( "info",
         "Finishing job " . $self->counter . " with ExitCode $exitcode",
@@ -433,6 +433,8 @@ sub log_table {
     #or die print "Couldn't open process file $!\n";
 
     if ( $self->can('task_tags') ) {
+	print "Task tags are ".Dumper($self->task_tags);
+	print "CMD PID is $cmdpid\n";
         my $aref = $self->get_task_tag($cmdpid) || [];
         $task_tags = join( ", ", @{$aref} ) || "";
 
@@ -467,6 +469,7 @@ sub log_cmd_messages {
     my ( $self, $level, $message, $cmdpid ) = @_;
 
     return unless $message;
+    return unless $level;
 
     if ( $self->show_processid && $cmdpid ) {
         $self->command_log->$level("PID: $cmdpid\t$message");

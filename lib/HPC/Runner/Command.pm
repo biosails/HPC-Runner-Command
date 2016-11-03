@@ -185,7 +185,7 @@ sub app_load_plugins {
             $self->load_plugin($plugin);
         }
         catch {
-            $self->app_log->warn("Could not load plugin $plugin!");
+            $self->app_log->warn("Could not load plugin $plugin!\n$_");
         }
     }
 

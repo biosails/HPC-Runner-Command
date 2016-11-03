@@ -47,6 +47,10 @@ sub BUILD {
     }
 
     $self->git_things;
+
+    $self->get_infile;
+    $self->counter($self->task_id);
+
     $self->gen_load_plugins;
     $self->job_load_plugins;
 }
@@ -54,8 +58,9 @@ sub BUILD {
 sub execute {
     my $self = shift;
 
-    $self->get_infile;
-    $self->counter($self->task_id);
+    #$self->get_infile;
+    #$self->counter($self->task_id);
+
     $self->run_mce;
 }
 
