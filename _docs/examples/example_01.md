@@ -12,7 +12,7 @@ Here is a birds eye view of a simple example.
 
 ### Submission and output directory structure
 
-![Example 01-1](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/images/HPC_Runner_Diagrams_-_Example_01-1.jpg)
+![Example 01-1](../images/HPC_Runner_Diagrams_-_Example_01-1.jpg)
 
 
 ### Job execution
