@@ -14,7 +14,6 @@
     * [Job Submission Parameters](job_submission/hpcrunner_submission_parameters.md)
     * [Job Submission Dependencies](job_submission/dependencies.md)
 * [Job Execution](job_execution/job_execution.md)
-    * [Job Execution Parameters](job_execution/parameters.md)
 * [Designing your Workflows](design_workflow.md)
 * [Examples](examples/examples.md)
     * [Example 01 - Simple](examples/example_01.md)
