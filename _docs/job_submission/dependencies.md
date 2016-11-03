@@ -2,9 +2,7 @@
 
 An analysis can be thought of as a series of inputs and outputs, and can be mapped like so.
 
-#TODO Add in dependency image
-
-When considering a resequencing pipeline, the first portion of our analysis would like this:
+![Dependency Tree](../images/dependency.jpg)
 
 ```
 #INPUT <- OUTPUT
