@@ -18,3 +18,7 @@ Here is a birds eye view of a simple example.
 ### Job execution
 
 ![Example 01-2](../images/HPC_Runner_Diagrams_-_Example_01-2.jpg)
+
+<div class="intrinsic-container">
+  <iframe src="example_01_jupyterhub.html" allowfullscreen></iframe>
+</div>
