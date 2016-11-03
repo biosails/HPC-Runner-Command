@@ -1,6 +1,7 @@
 # Example 04 - Non Linear Dependencies
 
-An example of non linear dependencies would be to have 3 job types, where two of those jobtypes depend upon the same job.
+An example of non linear dependencies would be to have 3 job types, where two
+of those jobtypes depend upon the same job.
 
 ```
 #HPC jobname=preprocess
