@@ -238,8 +238,14 @@ sub test_001 : Tags(execute_array) {
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
-    diag(Dumper($test->graph_job_deps));
-    diag(Dumper($test->schedule));
+    #diag(Dumper($test->graph_job_deps));
+    #diag(Dumper($test->schedule));
+
+    #diag(Dumper($test->jobs->{'gatk_indel_realigner'}->batches->[0]));
+
+    #TODO
+    #Create a table
+    #JobType Batch# SubmitID DepJobType DepBatch
 
     ok(1);
 

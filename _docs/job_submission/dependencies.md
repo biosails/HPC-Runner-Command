@@ -165,11 +165,11 @@ Each task (when commands_per_node=1) is an element in the array.
 
 | JobName     | SchedulerID | Task Tag | Scheduler Array ID | Scheduler Array Dependencies |
 | --          | --          | --       | --                 | --                           |
-| trim_reads  | 1234        | Sample 1 | 1234_1             |                              |
-| trim_reads  | 1234        | Sample 2 | 1234_2             |                              |
-| trim_reads  | 1234        | Sample 3 | 1234_3             |                              |
-| trim_reads  | 1234        | Sample 4 | 1234_4             |                              |
-| align_reads | 2345        | Sample 1 | 2345_1             | 1234_1                       |
-| align_reads | 2345        | Sample 2 | 2345_2             | 1234_2                       |
-| align_reads | 2345        | Sample 3 | 2345_3             | 1234_3                       |
-| align_reads | 2345        | Sample 4 | 2345_4             | 1234_4                       |
+| trim_reads  | 1234        | Sample1 | 1234_1             |                              |
+| trim_reads  | 1234        | Sample2 | 1234_2             |                              |
+| trim_reads  | 1234        | Sample3 | 1234_3             |                              |
+| trim_reads  | 1234        | Sample4 | 1234_4             |                              |
+| align_reads | 2345        | Sample1 | 2345_1             | 1234_1                       |
+| align_reads | 2345        | Sample2 | 2345_2             | 1234_2                       |
+| align_reads | 2345        | Sample3 | 2345_3             | 1234_3                       |
+| align_reads | 2345        | Sample4 | 2345_4             | 1234_4                       |
