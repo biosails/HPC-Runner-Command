@@ -1,10 +1,5 @@
 # Summary
 
- create mode 100644 _docs/job_submission/comparison.md
- create mode 100644 _docs/job_submission/dependencies.md
- create mode 100644 _docs/job_submission/hpcrunner_submission_parameters.md
-
-
 * [Overview](overview.md)
 * [Why use HPC::Runner::Command](why.md)
 * [Changes](changes.md)
@@ -21,3 +16,4 @@
     * [Example 03 - Linear Workflow](examples/example_03.md)
     * [Example 04 - Nested Workflow](examples/example_04.md)
     * [Example 04 - Task Dependencies](examples/example_05.md)
+* [Acknowledgements](acknowledgements.md)
