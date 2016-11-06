@@ -1,7 +1,5 @@
 # HPC-Runner-Command
 
-<p><img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" /></p>
-
 Create composable bioinformatics hpc analyses.
 
 While the code is mostly stable, the documentation is still under heavy development.
