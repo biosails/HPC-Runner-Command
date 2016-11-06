@@ -2,17 +2,13 @@ package HPC::Runner::Command;
 
 use MooseX::App qw(Color Config);
 
+with 'HPC::Runner::Command::Utils::Plugin';
+
 #This is not working and I'm not sure why...
 #use HPC::Runner::Command qw(ConfigHome);
 
 our $VERSION = '0.01';
 
-use IPC::Cmd;
-use Data::Dumper;
-use Cwd qw(getcwd);
-use Try::Tiny;
-
-with 'MooseX::Object::Pluggable';
 
 app_strict 0;
 
@@ -20,7 +16,7 @@ app_strict 0;
 
 =head1 NAME
 
-HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
+HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
 =head1 SYNOPSIS
 
@@ -38,174 +34,142 @@ To run jobs on an interactive queue or workstation
 
 =head1 DESCRIPTION
 
-HPC::Runner::App is a set of libraries for scaffolding data analysis projects, submitting and executing jobs on an HPC cluster or workstation, and obsessively logging results.
+HPC::Runner::Command is a set of libraries for scaffolding data analysis projects,
+submitting and executing jobs on an HPC cluster or workstation, and obsessively
+logging results.
 
-=head1 HPC::Runner::Command In Line Code Documentation
+Please see the complete documentation at L<< https://jerowe.gitbooks.io/hpc-runner-command-docs/content/ >>
 
-=head2 Command Line Opts
+=head1 Quick Start - Create a New Project
 
-=cut
+You can create a new project, with a sane directory structure by using
 
+	hpcrunner.pl new MyNewProject
 
-=head3 plugins
+=head1 Quick Start - Submit Workflows
 
-Load plugins that are used both by the submitter and executor such as logging pluggins
+=head2 Simple Example
 
-=cut
+Our simplest example is a single job type with no dependencies - each task is independent of all other tasks.
 
-option 'plugins' => (
-    is            => 'rw',
-    isa           => 'ArrayRef[Str]',
-    documentation => 'Load aplication plugins',
-    cmd_split     => qr/,/,
-    required      => 0,
-);
+=head3 Workflow file
 
-option 'plugins_opts' => (
-    is            => 'rw',
-    isa           => 'HashRef',
-    documentation => 'Options for application plugins',
-    required      => 0,
-);
+	#preprocess.sh
+	
+	echo "preprocess" && sleep 10;
+	echo "preprocess" && sleep 10;
+	echo "preprocess" && sleep 10;
 
-=head3 hpc_plugins
+=head3 Submit to the scheduler
 
-Load hpc_plugins. PBS, Slurm, Web, etc.
+	hpcrunner.pl submit_jobs --infile preprocess.sh
 
-=cut
+=head3 Look at results!
 
-option 'hpc_plugins' => (
-    is            => 'rw',
-    isa           => 'ArrayRef[Str]',
-    documentation => 'Load hpc_plugins',
-    cmd_split     => qr/,/,
-    required      => 0,
-    default       => sub { return ['Slurm'] },
-);
+	tree hpc-runner
 
-option 'hpc_plugins_opts' => (
-    is            => 'rw',
-    isa           => 'HashRef',
-    documentation => 'Options for hpc_plugins',
-    required      => 0,
-);
+=head2 Job Type Dependencency Declaration 
 
-=head3 job_plugins
+Most of the time we have jobs that depend upon other jobs.
 
-Load job execution plugins
+=head3 Workflow file
 
-=cut
+	#blastx.sh
+	
+	#HPC jobname=unzip
+	unzip Sample1.zip
+	unzip Sample2.zip
+	unzip Sample3.zip
 
-option 'job_plugins' => (
-    is            => 'rw',
-    isa           => 'ArrayRef[Str]',
-    documentation => 'Load job execution plugins',
-    cmd_split     => qr/,/,
-    required      => 0,
-);
+	#HPC jobname=blastx
+	#HPC deps=unzip
+	blastx --db env_nr --sample Sample1.fasta
+	blastx --db env_nr --sample Sample2.fasta
+	blastx --db env_nr --sample Sample3.fasta
 
-option 'job_plugins_opts' => (
-    is            => 'rw',
-    isa           => 'HashRef',
-    documentation => 'Options for job_plugins',
-    required      => 0,
-);
+=head3 Submit to the scheduler
 
-=head3 project
+	hpcrunner.pl submit_jobs --infile preprocess.sh
 
-When submitting jobs we will prepend the jobname with the project name
+=head3 Look at results!
 
-=cut
+	tree hpc-runner
 
-option 'project' => (
-    is            => 'rw',
-    isa           => 'Str',
-    documentation => 'Give your jobnames an additional project name. #HPC jobname=gzip will be submitted as 001_project_gzip',
-    required      => 0,
-    predicate => 'has_project',
-);
+=head2 Task Dependencency Declaration 
 
-=head2 Subroutines
+Within a job type we can declare dependencies on particular tasks.
 
-=cut
+=head3 Workflow file
 
-=head3 gen_load_plugins
+	#blastx.sh
+	
+	#HPC jobname=unzip
+	#TASK tags=Sample1
+	unzip Sample1.zip
+	#TASK tags=Sample2
+	unzip Sample2.zip
+	#TASK tags=Sample3
+	unzip Sample3.zip
 
-=cut
+	#HPC jobname=blastx
+	#HPC deps=unzip
+	#TASK tags=Sample1
+	blastx --db env_nr --sample Sample1.fasta
+	#TASK tags=Sample2
+	blastx --db env_nr --sample Sample2.fasta
+	#TASK tags=Sample3
+	blastx --db env_nr --sample Sample3.fasta
 
-sub gen_load_plugins {
-    my $self = shift;
+=head3 Submit to the scheduler
 
-    return unless $self->plugins;
+	hpcrunner.pl submit_jobs --infile preprocess.sh
 
-    $self->app_load_plugins( $self->plugins );
-    $self->parse_plugin_opts( $self->plugins_opts );
-}
+=head3 Look at results!
 
-=head3 hpc_load_plugins
+	tree hpc-runner
 
 =cut
 
-sub hpc_load_plugins {
-    my $self = shift;
+=head2 Declare Scheduler Variables
 
-    return unless $self->hpc_plugins;
+Each scheduler has its own set of variables. HPC::Runner::Command has a set of
+generalized variables for declaring types across templates. For more
+information please see L<< Job Scheduler Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >> 
 
-    $self->app_load_plugins( $self->hpc_plugins );
-    $self->parse_plugin_opts( $self->hpc_plugins_opts );
-}
+Additionally, for workflows with a large number of tasks, please see L<< Considerations for Workflows with a Large Number of Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks >> for information on how to group tasks together.
 
-=head2 Subroutines
+=head3 Workflow file
 
-=head3 hpc_load_plugins
+	#blastx.sh
+	
+	#HPC jobname=unzip
+	#HPC cpus_per_task=1
+	#HPC partition=serial
+	#HPC commands_per_node=1
+	#TASK tags=Sample1
+	unzip Sample1.zip
+	#TASK tags=Sample2
+	unzip Sample2.zip
+	#TASK tags=Sample3
+	unzip Sample3.zip
 
-=cut
+	#HPC jobname=blastx
+	#HPC cpus_per_task=6
+	#HPC deps=unzip
+	#TASK tags=Sample1
+	blastx --threads 6 --db env_nr --sample Sample1.fasta
+	#TASK tags=Sample2
+	blastx --threads 6 --db env_nr --sample Sample2.fasta
+	#TASK tags=Sample3
+	blastx --threads 6 --db env_nr --sample Sample3.fasta
 
-sub job_load_plugins {
-    my $self = shift;
+=head3 Submit to the scheduler
 
-    return unless $self->job_plugins;
+	hpcrunner.pl submit_jobs --infile preprocess.sh
 
-    $self->app_load_plugins( $self->job_plugins );
-    $self->parse_plugin_opts( $self->job_plugins_opts );
-}
+=head3 Look at results!
 
-=head3 app_load_plugin
-
-=cut
-
-sub app_load_plugins {
-    my $self    = shift;
-    my $plugins = shift;
-
-    return unless $plugins;
-
-    foreach my $plugin ( @{$plugins} ) {
-        try {
-            $self->load_plugin($plugin);
-        }
-        catch {
-            $self->app_log->warn("Could not load plugin $plugin!\n$_");
-        }
-    }
-
-}
-
-=head3 parse_plugin_opts
-
-parse the opts from --plugin_opts
-
-=cut
-
-sub parse_plugin_opts {
-    my $self     = shift;
-    my $opt_href = shift;
-
-    return unless $opt_href;
-    while ( my ( $k, $v ) = each %{$opt_href} ) {
-        $self->$k($v) if $self->can($k);
-    }
-}
+	tree hpc-runner
 
 1;
 

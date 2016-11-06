@@ -33,7 +33,6 @@ with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
-with 'HPC::Runner::Command::Utils::Plugin';
 
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
