@@ -16,7 +16,7 @@ app_strict 0;
 
 =head1 NAME
 
-<p><img src="http://gphat.github.com/chart-clicker/static/images/examples/line.pn://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" /></p>
+<p><img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" /></p>
 
 HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
