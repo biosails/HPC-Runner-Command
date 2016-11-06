@@ -1,4 +1,4 @@
 {
-    "root": "./_docs",
-    "plugins": ["theme-faq"]
+
+    "root": "./_docs"
 }
