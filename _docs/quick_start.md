@@ -1,5 +1,7 @@
 # Quick Start
 
+<!-- toc -->
+
 # Create a New Project
 
 You can create a new project, with a sane directory structure by using

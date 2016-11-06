@@ -1,4 +1,5 @@
 {
 
     "root": "./_docs"
+    "plugins": ["plugin-toc"]
 }
