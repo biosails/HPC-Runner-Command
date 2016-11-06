@@ -1,5 +1,7 @@
 # HPC-Runner-Command
 
+![HPC::Runner::Command](images/rabbit.jpeg)
+
 Create composable bioinformatics hpc analyses.
 
 While the code is mostly stable, the documentation is still under heavy development.
