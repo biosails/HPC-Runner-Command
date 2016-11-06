@@ -247,8 +247,7 @@ sub set_logdir {
 
     my $logdir;
 
-    #TODO Add in Version
-    if ( $self->has_version && $self->has_git ) {
+    if ( $self->has_version ) {
         if ( $self->has_project ) {
 
             $logdir
