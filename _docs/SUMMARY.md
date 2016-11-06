@@ -1,6 +1,7 @@
 # Summary
 
 * [Overview](overview.md)
+* [Quick Start](quick_start.md)
 * [Why use HPC::Runner::Command](why.md)
 * [Changes](changes.md)
 * [Glossary of Terms](glossary.md)
