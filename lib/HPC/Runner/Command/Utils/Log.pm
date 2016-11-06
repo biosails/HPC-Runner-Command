@@ -283,6 +283,7 @@ sub set_logdir {
                 . $self->logname;
         }
     }
+
     $logdir =~ s/\.log$//;
 
     $self->_make_the_dirs($logdir);
