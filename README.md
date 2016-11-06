@@ -1,12 +1,12 @@
 # NAME
 
-HPC::Runner::Command - A complete rewrite of the HPC::Runner libraries to incorporate project creation, DAG inspection, and job execution.
+HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
 # SYNOPSIS
 
 To create a new project
 
-    hpcrunner.pl new
+    hpcrunner.pl new MyNewProject
 
 To submit jobs to a cluster
 
@@ -18,39 +18,140 @@ To run jobs on an interactive queue or workstation
 
 # DESCRIPTION
 
-HPC::Runner::App is a set of libraries for scaffolding data analysis projects, submitting and executing jobs on an HPC cluster or workstation, and obsessively logging results.
+HPC::Runner::Command is a set of libraries for scaffolding data analysis projects,
+submitting and executing jobs on an HPC cluster or workstation, and obsessively
+logging results.
 
-# HPC::Runner::Command In Line Code Documentation
+Please see the complete documentation at [https://jerowe.gitbooks.io/hpc-runner-command-docs/content/](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/)
 
-## Command Line Opts
+# Quick Start - Create a New Project
 
-### plugins
+You can create a new project, with a sane directory structure by using
 
-Load plugins that are used both by the submitter and executor such as logging pluggins
+        hpcrunner.pl new MyNewProject
 
-### hpc\_plugins
+# Quick Start - Submit Workflows
 
-Load hpc\_plugins. PBS, Slurm, Web, etc.
+## Simple Example
 
-### job\_plugins
+Our simplest example is a single job type with no dependencies - each task is independent of all other tasks.
 
-Load job execution plugins
+### Workflow file
 
-## Subroutines
+        #preprocess.sh
+        
+        echo "preprocess" && sleep 10;
+        echo "preprocess" && sleep 10;
+        echo "preprocess" && sleep 10;
 
-### gen\_load\_plugins
+### Submit to the scheduler
 
-### hpc\_load\_plugins
+        hpcrunner.pl submit_jobs --infile preprocess.sh
 
-## Subroutines
+### Look at results!
 
-### hpc\_load\_plugins
+        tree hpc-runner
 
-### app\_load\_plugin
+## Job Type Dependencency Declaration 
 
-### parse\_plugin\_opts
+Most of the time we have jobs that depend upon other jobs.
 
-parse the opts from --plugin\_opts
+### Workflow file
+
+        #blastx.sh
+        
+        #HPC jobname=unzip
+        unzip Sample1.zip
+        unzip Sample2.zip
+        unzip Sample3.zip
+
+        #HPC jobname=blastx
+        #HPC deps=unzip
+        blastx --db env_nr --sample Sample1.fasta
+        blastx --db env_nr --sample Sample2.fasta
+        blastx --db env_nr --sample Sample3.fasta
+
+### Submit to the scheduler
+
+        hpcrunner.pl submit_jobs --infile preprocess.sh
+
+### Look at results!
+
+        tree hpc-runner
+
+## Task Dependencency Declaration 
+
+Within a job type we can declare dependencies on particular tasks.
+
+### Workflow file
+
+        #blastx.sh
+        
+        #HPC jobname=unzip
+        #TASK tags=Sample1
+        unzip Sample1.zip
+        #TASK tags=Sample2
+        unzip Sample2.zip
+        #TASK tags=Sample3
+        unzip Sample3.zip
+
+        #HPC jobname=blastx
+        #HPC deps=unzip
+        #TASK tags=Sample1
+        blastx --db env_nr --sample Sample1.fasta
+        #TASK tags=Sample2
+        blastx --db env_nr --sample Sample2.fasta
+        #TASK tags=Sample3
+        blastx --db env_nr --sample Sample3.fasta
+
+### Submit to the scheduler
+
+        hpcrunner.pl submit_jobs --infile preprocess.sh
+
+### Look at results!
+
+        tree hpc-runner
+
+## Declare Scheduler Variables
+
+Each scheduler has its own set of variables. HPC::Runner::Command has a set of
+generalized variables for declaring types across templates. For more
+information please see [Job Scheduler Comparison](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html) 
+
+Additionally, for workflows with a large number of tasks, please see [Considerations for Workflows with a Large Number of Tasks](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks) for information on how to group tasks together.
+
+### Workflow file
+
+        #blastx.sh
+        
+        #HPC jobname=unzip
+        #HPC cpus_per_task=1
+        #HPC partition=serial
+        #HPC commands_per_node=1
+        #TASK tags=Sample1
+        unzip Sample1.zip
+        #TASK tags=Sample2
+        unzip Sample2.zip
+        #TASK tags=Sample3
+        unzip Sample3.zip
+
+        #HPC jobname=blastx
+        #HPC cpus_per_task=6
+        #HPC deps=unzip
+        #TASK tags=Sample1
+        blastx --threads 6 --db env_nr --sample Sample1.fasta
+        #TASK tags=Sample2
+        blastx --threads 6 --db env_nr --sample Sample2.fasta
+        #TASK tags=Sample3
+        blastx --threads 6 --db env_nr --sample Sample3.fasta
+
+### Submit to the scheduler
+
+        hpcrunner.pl submit_jobs --infile preprocess.sh
+
+### Look at results!
+
+        tree hpc-runner
 
 # AUTHOR
 

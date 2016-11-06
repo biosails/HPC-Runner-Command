@@ -22,7 +22,7 @@ HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
 To create a new project
 
-    hpcrunner.pl new
+    hpcrunner.pl new MyNewProject
 
 To submit jobs to a cluster
 
@@ -170,6 +170,8 @@ Additionally, for workflows with a large number of tasks, please see L<< Conside
 =head3 Look at results!
 
 	tree hpc-runner
+
+=cut
 
 1;
 
