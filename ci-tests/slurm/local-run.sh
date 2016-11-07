@@ -18,4 +18,4 @@ docker run -h docker.example.com -p 10022:22 \
     -e HPC_SQLITE_BRANCH \
     -i -t -v `pwd`:/hpc-runner-command:Z \
     --entrypoint /bin/bash \
-    jerowe/nyuad-cgsb-slurm
+    quay.io/nyuad_cgsb/hpc-slurm

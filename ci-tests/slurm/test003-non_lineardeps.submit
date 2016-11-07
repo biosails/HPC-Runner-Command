@@ -10,7 +10,7 @@ echo "hello again from job_001 task 2" && sleep 5
 
 echo "goodbye from job_001 task 3"
 
-#NOTE job_tags=hello1,world1
+#TASK tags=hello1,world1
 echo "hello again from job_001 task 4" && sleep 5
 
 #HPC jobname=job_002
@@ -22,7 +22,7 @@ echo "hello again from job_002 task 2" && sleep 5
 
 echo "goodbye from job_002 task 3"
 
-#NOTE job_tags=hello2,world2
+#TASK tags=hello2,world2
 echo "hello again from job_002 task 4" && sleep 5
 
 #HPC jobname=job_003
@@ -34,5 +34,5 @@ echo "hello again from job_003 task 2" && sleep 5
 
 echo "goodbye from job_003 task 3"
 
-#NOTE job_tags=hello2,world2
+#TASK tags=hello2,world2
 echo "hello again from job_003 task 4" && sleep 5

@@ -1,5 +1,7 @@
 # NAME
 
+&lt;p>&lt;img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/\_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" />&lt;/p>
+
 HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
 # SYNOPSIS

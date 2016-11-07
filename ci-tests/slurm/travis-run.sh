@@ -14,7 +14,7 @@ then
         -e HPC_SQLITE_BRANCH \
         -i -t -v `pwd`:/hpc-runner-command:Z \
         --entrypoint /hpc-runner-command/ci-tests/slurm/run-slurm-tests.sh \
-        jerowe/nyuad-cgsb-slurm
+	quay.io/nyuad_cgsb/hpc-slurm
 
 else
     exit 0
