@@ -1,4 +1,5 @@
 {
+
     "root": "./_docs",
-    "plugins": ["gitbook-plugin-responsive-iframes"]
+    "plugins": ["plugin-toc"]
 }

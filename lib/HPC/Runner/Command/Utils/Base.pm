@@ -20,6 +20,20 @@ This is a Moose Role. To use in any another applications or plugins call as
 
 =head2 Command Line Options
 
+=head3 project
+
+When submitting jobs we will prepend the jobname with the project name
+
+=cut
+
+option 'project' => (
+    is            => 'rw',
+    isa           => 'Str',
+    documentation => 'Give your jobnames an additional project name. #HPC jobname=gzip will be submitted as 001_project_gzip',
+    required      => 0,
+    predicate => 'has_project',
+);
+
 =head3 infile
 
 File of commands separated by newline. The command 'wait' indicates all previous commands should finish before starting the next one.

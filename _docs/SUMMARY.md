@@ -1,11 +1,7 @@
 # Summary
 
- create mode 100644 _docs/job_submission/comparison.md
- create mode 100644 _docs/job_submission/dependencies.md
- create mode 100644 _docs/job_submission/hpcrunner_submission_parameters.md
-
-
 * [Overview](overview.md)
+* [Quick Start](quick_start.md)
 * [Why use HPC::Runner::Command](why.md)
 * [Changes](changes.md)
 * [Glossary of Terms](glossary.md)
@@ -14,9 +10,11 @@
     * [Job Submission Parameters](job_submission/hpcrunner_submission_parameters.md)
     * [Job Submission Dependencies](job_submission/dependencies.md)
 * [Job Execution](job_execution/job_execution.md)
-    * [Job Execution Parameters](job_execution/parameters.md)
 * [Designing your Workflows](design_workflow.md)
 * [Examples](examples/examples.md)
     * [Example 01 - Simple](examples/example_01.md)
-    * [Example 03 - Linear Workflow](examples/example_02.md)
-    * [Example 04 - Nested Workflow](examples/example_03.md)
+    * [Example 02 - Multiple Nodes](examples/example_02.md)
+    * [Example 03 - Linear Workflow](examples/example_03.md)
+    * [Example 04 - Nested Workflow](examples/example_04.md)
+    * [Example 04 - Task Dependencies](examples/example_05.md)
+* [Acknowledgements](acknowledgements.md)

@@ -1,38 +1,14 @@
-# NAME
+# Quick Start
 
-&lt;p>&lt;img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/\_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" />&lt;/p>
+<!-- toc -->
 
-HPC::Runner::Command - Create composable bioinformatics hpc analyses.
-
-# SYNOPSIS
-
-To create a new project
-
-    hpcrunner.pl new MyNewProject
-
-To submit jobs to a cluster
-
-    hpcrunner.pl submit_jobs
-
-To run jobs on an interactive queue or workstation
-
-    hpcrunner.pl execute_job
-
-# DESCRIPTION
-
-HPC::Runner::Command is a set of libraries for scaffolding data analysis projects,
-submitting and executing jobs on an HPC cluster or workstation, and obsessively
-logging results.
-
-Please see the complete documentation at [https://jerowe.gitbooks.io/hpc-runner-command-docs/content/](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/)
-
-# Quick Start - Create a New Project
+# Create a New Project
 
 You can create a new project, with a sane directory structure by using
 
         hpcrunner.pl new MyNewProject
 
-# Quick Start - Submit Workflows
+# Submit Workflows
 
 ## Simple Example
 
@@ -155,17 +131,3 @@ Additionally, for workflows with a large number of tasks, please see [Considerat
 
         tree hpc-runner
 
-# AUTHOR
-
-Jillian Rowe <jillian.e.rowe@gmail.com>
-
-# COPYRIGHT
-
-Copyright 2016- Jillian Rowe
-
-# LICENSE
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-# SEE ALSO

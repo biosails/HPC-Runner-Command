@@ -13,12 +13,10 @@ jobs is submitted to the the scheduler using that scheduler's standard
 template. Each job is then executed, with one or more processes running in
 parallel based on availability of resources.
 
-hpcrunner.pl submit_jobs --infile my_submission_script.sh
+	hpcrunner.pl submit_jobs --infile my_submission_script.sh
 
 Chunks and submits your jobs.
 
-hpcrunner.pl execute_jobs --infile 001_batch_my_submission_script.sh --procs N
+	hpcrunner.pl execute_jobs --infile 001_batch_my_submission_script.sh --procs N
 
 Executes your job on a given node with N processes running in parallel.
-
-![](images/host.jpg "http://www.alphaelite.com.sg/sitev2/images/stories/webhostdemo.jpg")
