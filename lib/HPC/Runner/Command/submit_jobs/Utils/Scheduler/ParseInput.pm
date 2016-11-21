@@ -40,8 +40,8 @@ sub parse_file_slurm {
     #HPC afterok=thing1,thing2 -> Not supported
 
     if ( $self->has_afterok ) {
-        $self->jobs->{ $self->jobname }->{submitted}     = 1;
-        $self->jobs->{ $self->jobname }->{scheduler_ids} = $self->afterok;
+        $self->jobs->{ $self->jobname }->submitted     = 1;
+        $self->jobs->{ $self->jobname }->scheduler_ids = $self->afterok;
 
         my $oldjob = $self->jobname;
         $self->increase_jobname();
@@ -68,6 +68,9 @@ sub post_process_file_slurm {
     my $self = shift;
 
     $self->check_for_commands;
+    if(! $self->sanity_check_schedule){
+      return;
+    }
     $self->schedule_jobs;
     $self->chunk_commands;
 }

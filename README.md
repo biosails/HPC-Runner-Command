@@ -41,7 +41,7 @@ Our simplest example is a single job type with no dependencies - each task is in
 ### Workflow file
 
         #preprocess.sh
-        
+
         echo "preprocess" && sleep 10;
         echo "preprocess" && sleep 10;
         echo "preprocess" && sleep 10;
@@ -54,14 +54,14 @@ Our simplest example is a single job type with no dependencies - each task is in
 
         tree hpc-runner
 
-## Job Type Dependencency Declaration 
+## Job Type Dependencency Declaration
 
 Most of the time we have jobs that depend upon other jobs.
 
 ### Workflow file
 
         #blastx.sh
-        
+
         #HPC jobname=unzip
         unzip Sample1.zip
         unzip Sample2.zip
@@ -81,14 +81,14 @@ Most of the time we have jobs that depend upon other jobs.
 
         tree hpc-runner
 
-## Task Dependencency Declaration 
+## Task Dependencency Declaration
 
 Within a job type we can declare dependencies on particular tasks.
 
 ### Workflow file
 
         #blastx.sh
-        
+
         #HPC jobname=unzip
         #TASK tags=Sample1
         unzip Sample1.zip
@@ -118,14 +118,14 @@ Within a job type we can declare dependencies on particular tasks.
 
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
 generalized variables for declaring types across templates. For more
-information please see [Job Scheduler Comparison](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html) 
+information please see [Job Scheduler Comparison](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html)
 
 Additionally, for workflows with a large number of tasks, please see [Considerations for Workflows with a Large Number of Tasks](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks) for information on how to group tasks together.
 
 ### Workflow file
 
         #blastx.sh
-        
+
         #HPC jobname=unzip
         #HPC cpus_per_task=1
         #HPC partition=serial

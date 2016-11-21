@@ -11,3 +11,4 @@ MYMETA.*
 hpc-runner*.db
 hpcrunner*.db
 inotify-hookable.sh
+.tags

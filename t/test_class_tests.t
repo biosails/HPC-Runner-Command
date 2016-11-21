@@ -15,7 +15,8 @@ if ( !$ENV{'SCHEDULER'} ) {
 	    #'TestsFor::HPC::Runner::Command::Test005',
 	    #'TestsFor::HPC::Runner::Command::Test003',
 	    #'TestsFor::HPC::Runner::Command::Test007',
-	    'TestsFor::HPC::Runner::Command::Test008',
+	    #'TestsFor::HPC::Runner::Command::Test008',
+	    'TestsFor::HPC::Runner::Command::Test009',
         ],
     )->runtests;
 }
