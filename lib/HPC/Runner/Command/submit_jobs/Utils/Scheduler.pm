@@ -348,7 +348,7 @@ has 'deps' => (
     traits    => ['Array'],
     is        => 'rw',
     isa       => ArrayRefOfStrs,
-    coerce    => 1,
+    'coerce'    => 1,
     predicate => 'has_deps',
     clearer   => 'clear_deps',
     required  => 0,
@@ -1149,7 +1149,8 @@ sub process_batch_command {
         $logname = $counter . "_" . $self->current_job;
     }
 
-    $command = "cd " . getcwd() . "\n";
+    $command = "sleep 20 && \\\n";
+    $command .= "cd " . getcwd() . "\n";
     if ( $self->has_custom_command ) {
         $command .= $self->custom_command . " \\\n";
     }
@@ -1290,6 +1291,7 @@ sub submit_to_scheduler {
     $sel->remove($outfh);
     $sel->remove($infh);
 
+    sleep(5);
     return ( $exitcode, $stdout, $stderr );
 }
 

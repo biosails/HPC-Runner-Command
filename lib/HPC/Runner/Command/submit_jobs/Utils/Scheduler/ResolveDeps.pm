@@ -135,12 +135,12 @@ sub sanity_check_schedule {
       map { $t->addRow($_) } @rows;
       $self->app_log->fatal(
       'There were one or more problems with your job schedule.');
-      $self->app_log->warn("Here is your tabular schedule (this is not necessary the submission order)");
+      $self->app_log->warn("Here is your tabular dependency list in alphabetical order");
     }
     else{
       $t->setCols(["JobName", "Deps"]);
       map { $t->addRow($_) } @rows;
-      $self->app_log->info("Here is your tabular schedule");
+      $self->app_log->info("Here is your tabular dependency list in alphabetical order");
     }
 
     say $t;
