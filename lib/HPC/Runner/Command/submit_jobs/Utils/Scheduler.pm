@@ -214,7 +214,10 @@ has 'template_file' => (
 #SBATCH --share
 #SBATCH --job-name=[% JOBNAME %]
 #SBATCH --output=[% OUT %]
-[% IF job.has_partition %]
+[% IF job.has_account %]
+#SBATCH --account=[% job.account %]
+[% END %]
+[% IF job.has_account %]
 #SBATCH --partition=[% job.partition %]
 [% END %]
 [% IF job.has_nodes_count %]
@@ -1103,7 +1106,7 @@ sub process_template {
             COMMAND   => $command,
             ARRAY_STR => $array_str,
             AFTEROK   => $ok,
-	    MODULES => $self->jobs->{$self->current_job}->join_modules(' '),
+      	    MODULES => $self->jobs->{$self->current_job}->join_modules(' '),
             OUT       => $self->logdir
                 . "/$counter" . "_"
                 . $self->current_job . ".log",
@@ -1114,11 +1117,14 @@ sub process_template {
 
     chmod 0777, $self->slurmfile;
 
-    my $scheduler_id = $self->submit_jobs;
-
-    #print "Returned scheduler id $scheduler_id\n";
-
-    $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
+    try {
+      my $scheduler_id = $self->submit_jobs;
+      $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
+    }
+    catch {
+      $self->app_log->fatal('Not all jobs were submitted successfully. Exiting.');
+      exit 1;
+    }
 
 }
 

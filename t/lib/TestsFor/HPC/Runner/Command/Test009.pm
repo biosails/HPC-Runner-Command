@@ -31,12 +31,13 @@ sub write_test_file {
 
 #HPC jobname=raw_fastqc
 #HPC module=gencore/1 gencore_dev gencore_qc
+#HPC ntasks=12
 
 #TASK tags=Sample_KO-H3K4Me3_1_R1
 fastqc Sample_KO-H3K4Me3_1_R1 Sample_KO-H3K4Me3_1_R1
 
 #HPC jobname=remove_tmp
-#HPC deps=raw_fastc
+#HPC deps=raw_fastq
 
 #TASK tags=Sample_KO-H3K4Me3_1
 remove_tmp Sample_KO-H3K4Me3_2_R1
@@ -77,8 +78,15 @@ sub test_001 : Tags(execute_array) {
     $test->parse_file_slurm();
     # $test->iterate_schedule();
 
-    diag(Dumper($test->graph_job_deps));
-    diag(Dumper($test->schedule));
+    # # opendir DIR, $test->outdir or die "cannot open dir: $!";
+    # # my @file= readdir DIR;
+    # # diag(Dumper(\@file));
+    # # closedir DIR;
+    #
+    # my $file =  read_file($test->outdir."/001_raw_fastqc.sh");
+    #
+    # diag($file);
+    is_deeply($test->jobs->{raw_fastqc}->ntasks, 12);
 
     ok(1);
 }

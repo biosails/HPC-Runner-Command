@@ -53,7 +53,7 @@ option 'cpus_per_task' => (
 
 =head3 ntasks
 
-slurm item --ntasks defaults to 28
+slurm item --ntasks defaults to 1
 
 =cut
 
@@ -68,7 +68,23 @@ option 'ntasks' => (
         '--ntasks switch in slurm. This is equal to the number of concurrent tasks on each node * the number of nodes, not the total number of tasks'
 );
 
-=head3 ntasks-per-node
+=head3 account
+
+slurm item --account defaults to 1
+
+=cut
+
+option 'account' => (
+    is        => 'rw',
+    isa       => 'Str',
+    required  => 0,
+    predicate => 'has_account',
+    clearer   => 'clear_account',
+    documentation =>
+        '--account switch in slurm. '
+);
+
+=head3 account-per-node
 
 slurm item --ntasks-per-node defaults to 28
 
