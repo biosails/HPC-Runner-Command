@@ -1117,14 +1117,20 @@ sub process_template {
 
     chmod 0777, $self->slurmfile;
 
+    my $scheduler_id = $self->submit_jobs;
+
     try {
-      my $scheduler_id = $self->submit_jobs;
       $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
     }
     catch {
-      $self->app_log->fatal('Not all jobs were submitted successfully. Exiting.');
-      exit 1;
-    }
+        if(defined $_){
+          $self->app_log->fatal('Not all jobs were submitted successfully. Exiting. Error follows.');
+          exit 1;
+        }
+        else{
+          return;
+        }
+    };
 
 }
 
@@ -1149,7 +1155,7 @@ sub process_batch_command {
 
     my $logname;
     if ( $self->has_project ) {
-        $logname = $counter . "_" . $self->project . "_" . $self->current_job;
+        $logname =  $self->project .  "_" . $counter  ."_" . $self->current_job;
     }
     else {
         $logname = $counter . "_" . $self->current_job;

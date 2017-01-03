@@ -3,6 +3,7 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
 use Moose;
 use Moose::Util::TypeConstraints;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
+use HPC::Runner::Command::Utils::Traits qw(ArrayRefOfStrs);
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 
@@ -18,7 +19,8 @@ has deps => (
     default => sub { [] },
     traits  => ['Array'],
     is      => 'rw',
-    isa     => 'ArrayRef',
+    # isa     => 'ArrayRef',
+    isa           => ArrayRefOfStrs,
     handles => {
         all_deps    => 'elements',
         add_deps    => 'push',

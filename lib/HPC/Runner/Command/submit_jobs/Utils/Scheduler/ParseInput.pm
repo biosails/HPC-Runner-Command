@@ -263,6 +263,7 @@ sub process_hpc_meta {
     }
 
     if($jobname eq 'hpcjob_001'){
+        $self->app_log->warn('You have not defined a job name. It is best practice to defined jobnames, but we will define hpcjob_001 for you.');
         $self->apply_global_directives($t1, $t2);
         $self->apply_job_directives($t1, $t2);
     }

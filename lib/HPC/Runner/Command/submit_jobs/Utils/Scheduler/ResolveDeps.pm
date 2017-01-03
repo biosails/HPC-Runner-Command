@@ -96,12 +96,12 @@ sub sanity_check_schedule {
         push(@$row, $job);
 
         my $y = 0;
+        my $depstring;
+        #TODO This should be a proper error
         foreach my $r (@$ref) {
 
             if ( !exists $self->graph_job_deps->{$r} ) {
                 $ref->[$y] = "**$r**";
-                my $depstring = join(", ", @{$ref});
-                push(@$row, $depstring);
 
                 $self->app_log->fatal("Job dep $r is not in joblist.");
                 $search = 0;
@@ -118,13 +118,13 @@ sub sanity_check_schedule {
                         "No potential matches were found for dependency $r");
                 }
             }
-            else{
-                my $depstring = join(", ", @{$ref});
-                push(@$row, $depstring);
-            }
 
             $y++;
         }
+
+        $depstring = join(", ", @{$ref});
+        push(@$row, $depstring);
+
         push(@rows, $row);
         $x++;
     }
