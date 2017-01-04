@@ -231,9 +231,6 @@ sub chunk_commands {
 
             $self->return_ranges( $batch_index_start, $batch_index_end,
                 $number_of_batches );
-
-            #print "Resolving max array\n"
-            #. Dumper( $self->jobs->{ $self->current_job } );
         }
         else {
             $DB::single = 2;
@@ -257,6 +254,8 @@ sub chunk_commands {
 Arrays should not be greater than the max_array_size variable
 
 If it is they need to be chunked up into various arrays
+
+Each array becomes its own 'batch'
 
 =cut
 
