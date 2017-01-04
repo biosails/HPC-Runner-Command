@@ -197,7 +197,7 @@ sub check_sanity {
     my $line = shift;
 
     #Do a sanity check for nohup
-    if ( $line =~ m/^nohup/ ) {
+    if ( $line =~ m/^nohup / ) {
         die print
             "You cannot submit jobs to the queue using nohup! Please remove nohup and try again.\n";
     }
@@ -209,7 +209,6 @@ Check for lines starting with #TASK - used to pass per process job_tags
 
 =cut
 
-#TODO Change this to HPC
 sub check_note_meta {
     my $self = shift;
     my $line = shift;
@@ -263,7 +262,8 @@ sub process_hpc_meta {
     }
 
     if($jobname eq 'hpcjob_001'){
-        $self->app_log->warn('You have not defined a job name. It is best practice to defined jobnames, but we will define hpcjob_001 for you.');
+        # Could also just be using global defs...
+        # $self->app_log->warn('You have not defined a job name. It is best practice to defined jobnames, but we will define hpcjob_001 for you.');
         $self->apply_global_directives($t1, $t2);
         $self->apply_job_directives($t1, $t2);
     }

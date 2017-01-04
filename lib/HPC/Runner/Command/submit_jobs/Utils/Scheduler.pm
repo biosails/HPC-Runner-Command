@@ -580,10 +580,6 @@ iterate_schedule
 
 =cut
 
-=head3 BUILD
-
-=cut
-
 =head3 run
 
 =cut
@@ -769,9 +765,11 @@ sub process_jobs {
             "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
     }
 
+    #TODO This should give a warning
     return if $jobref->submitted;
 
     $DB::single = 2;
+    #If using arrays
     if ( !$self->use_batches ) {
         $self->work;
     }
