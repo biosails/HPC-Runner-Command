@@ -123,7 +123,7 @@ EOF
     my $expect5 = "\t--infile $outdir/001_job01.in";
     my $expect6 = "\t--outdir $outdir";
     my $expect7 = "\t--logname 001_job01";
-    my $expect8 = "\t--process_table $logdir/001-process_table.md";
+    my $expect8 = "\t--process_table $logdir/001-task_table.md";
 
     like( $got, qr/$expect1/, 'Template matches' );
     like( $got, qr/$expect2/, 'Template matches' );
