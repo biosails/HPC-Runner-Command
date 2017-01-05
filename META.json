@@ -126,7 +126,7 @@
          "web" : "https://github.com/jerowe/HPC-Runner-Command"
       }
    },
-   "version" : "0.01",
+   "version" : "3.0.0",
    "x_contributors" : [
       "Travis CI <nobody@nobody.org>"
    ],
