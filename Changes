@@ -1,4 +1,6 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+
+3.0.0  2017-01-05 12:26:17 GST
         - This is the beta release of HPC::Runner::Command 
