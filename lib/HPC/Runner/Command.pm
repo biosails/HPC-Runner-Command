@@ -7,7 +7,7 @@ with 'HPC::Runner::Command::Utils::Plugin';
 #This is not working and I'm not sure why...
 #use HPC::Runner::Command qw(ConfigHome);
 
-our $VERSION = '3.0.0';
+our $VERSION = '3.0.1';
 
 app_strict 0;
 
