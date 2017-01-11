@@ -232,8 +232,11 @@ sub construct {
 
 sub test_001 : Tags(execute_array) {
 
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
+
     my ( $source, $dep );
-    my $test = construct();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
@@ -249,6 +252,8 @@ sub test_001 : Tags(execute_array) {
 
     ok(1);
 
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 1;

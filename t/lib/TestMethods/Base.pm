@@ -7,20 +7,14 @@ use Test::Class::Moose;
 use FindBin qw($Bin);
 use File::Path qw(make_path remove_tree);
 use IPC::Cmd qw[can_run];
+use File::Temp;
+use File::Spec;
 
 sub make_test_dir{
 
-    my $test_dir;
-
-    my @chars = ('a'..'z', 'A'..'Z', 0..9);
-    my $string = join '', map { @chars[rand @chars]  } 1 .. 8;
-
-    if(exists $ENV{'TMP'}){
-        $test_dir = $ENV{TMP}."/hpcrunner/$string";
-    }
-    else{
-        $test_dir = "/tmp/hpcrunner/$string";
-    }
+    my $tmpdir = File::Spec->tmpdir();
+    my $tmp = File::Temp->newdir(UNLINK =>0, CLEANUP => 0, TEMPLATE => $tmpdir.'/hpcrunnerXXXXXXX');
+    my $test_dir = $tmp->dirname;
 
     remove_tree($test_dir);
     make_path($test_dir);
@@ -35,16 +29,12 @@ sub make_test_dir{
     return $test_dir;
 }
 
+# Tests were failing if they were running asyncronously.
+# We will just use File::Spec to clean up tmpdir
 sub test_shutdown {
 
     chdir("$Bin");
-
-    if ( exists $ENV{'TMP'} ) {
-        remove_tree( $ENV{TMP} . "/hpcrunner" );
-    }
-    else {
-        remove_tree("/tmp/hpcrunner");
-    }
+    
 }
 
 sub print_diff {

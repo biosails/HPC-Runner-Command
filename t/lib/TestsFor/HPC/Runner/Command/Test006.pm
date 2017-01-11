@@ -59,7 +59,9 @@ sub construct {
 }
 
 sub test_001 : Tags(job_stats) {
-    my $test = construct();
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
 
     $test->max_array_size(3);
 
@@ -69,6 +71,9 @@ sub test_001 : Tags(job_stats) {
     is($test->jobs->{'pyfasta'}->{num_job_arrays}, 4);
 
     ok(1);
+    
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 1;

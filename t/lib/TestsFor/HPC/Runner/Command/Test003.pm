@@ -51,8 +51,6 @@ sub construct {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    my $cwd = getcwd();
-
     my $t = "$test_dir/script/test003.1.sh";
 
     MooseX::App::ParsedArgv->new(
@@ -67,36 +65,45 @@ sub construct {
 }
 
 sub test_003 : Tags(construct) {
-    my $self = shift;
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
     is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
         $test->schedule, 'Schedule passes' );
-    ok(1);
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_004 : Tags(submit_jobs) {
-    my $self = shift;
-
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
 
     ok(1);
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_005 : Tags(submit_jobs) {
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     $test->execute();
 
-    #print Dumper($test->jobs);
     ok(1);
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 1;

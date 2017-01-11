@@ -59,7 +59,9 @@ sub construct {
 
 sub test_001 : Tags(submit_jobs) {
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     my ( $stdout, $stderr ) = capture { $test->execute() };
 
@@ -73,6 +75,9 @@ sub test_001 : Tags(submit_jobs) {
         #ok(0);
     #}
     ok(1);
+
+    chdir($cwd);
+    remove_tree($test_dir);
 
 }
 

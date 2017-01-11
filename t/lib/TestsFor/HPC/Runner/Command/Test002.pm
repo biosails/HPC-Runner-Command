@@ -79,6 +79,7 @@ sub construct {
 
 sub test_003 : Tags(construction) {
 
+    my $cur_dir = getcwd();
     my $test     = construct();
     my $test_dir = getcwd();
 
@@ -91,9 +92,9 @@ sub test_003 : Tags(construction) {
 sub test_005 : Tags(submit_jobs) {
     my $self = shift;
 
-    my $test_dir = $self->make_test_dir;
-    my $test     = construct();
     my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
@@ -117,7 +118,7 @@ sub test_005 : Tags(submit_jobs) {
 EOF
 
 ##SBATCH --cpus-per-task=1
-    my $expect2 = "cd $cwd";
+    my $expect2 = "cd $test_dir";
     my $expect3 = "hpcrunner.pl execute_array";
     my $expect4 = "\t--procs 1";
     my $expect5 = "\t--infile $outdir/001_job01.in";
@@ -135,12 +136,15 @@ EOF
     like( $got, qr/$expect7/, 'Template matches' );
     like( $got, qr/$expect8/, 'Template matches' );
 
-    ok(1);
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_007 : Tags(check_hpc_meta) {
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     $test->jobname('job01');
 
@@ -152,12 +156,17 @@ sub test_007 : Tags(check_hpc_meta) {
         $test->jobs->{ $test->jobname }->module,
         'Modules pass'
     );
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_008 : Tags(check_hpc_meta) {
     my $self = shift;
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     my $line = "#HPC jobname=job03\n";
     $test->process_hpc_meta($line);
@@ -168,23 +177,33 @@ sub test_008 : Tags(check_hpc_meta) {
     is_deeply( [ 'job01', 'job02' ], $test->deps, 'Deps pass' );
     is_deeply( { job03 => [ 'job01', 'job02' ] },
         $test->graph_job_deps, 'Job Deps Pass' );
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_009 : Tags(check_hpc_meta) {
     my $self = shift;
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
 
     is_deeply( 'job01', $test->jobname, 'Jobname pass' );
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_010 : Tags(check_note_meta) {
     my $self = shift;
 
+    my $cwd      = getcwd();
     my $test = construct();
+    my $test_dir = getcwd();
 
     my $line = "#HPC jobname=job01\n";
     $test->process_hpc_meta($line);
@@ -193,6 +212,9 @@ sub test_010 : Tags(check_note_meta) {
     $test->check_note_meta($line);
 
     is_deeply( $line, $test->cmd, 'Note meta passes' );
+
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 sub test_011 : Tags(check_hpc_meta) {
