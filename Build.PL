@@ -4,4 +4,37 @@ use warnings;
 
 use 5.010;
 use Module::Build::Tiny 0.034;
+use File::Find;
+
+our @files = ();
+find( \&wanted, ".");
+
+sub wanted {
+	my $file = $_;
+
+	return unless $file;
+	return unless -e $file;
+
+	#print "File $file\n";
+	if($file =~ m/.*\.pl$/){
+		push(@files, $file);
+	}
+}
+
+foreach my $file (@files){
+    my $tfile = "$file.t";
+    #    print STDERR "Change shebang line to #!perl $file\n";
+    open my $in,  "<$file" or die $!;
+    open my $out, ">$tfile" or die $!;
+    while (<$in>) {
+        s|^#!/usr/bin/perl -w|#!perl|;    # so MakeMaker can fix it
+        s|^#!/usr/bin/env perl|#!perl|;    # so MakeMaker can fix it
+        s|^#!/usr/bin/perl|#!perl|;    # so MakeMaker can fix it
+        print $out $_;
+    }
+    close($in);
+    close($out);
+    system("mv $tfile $file");
+}
+
 Build_PL();

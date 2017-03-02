@@ -1,11 +1,8 @@
 package HPC::Runner::Command;
 
-use MooseX::App qw(Color Config);
+use MooseX::App qw(Color);
 
 with 'HPC::Runner::Command::Utils::Plugin';
-
-#This is not working and I'm not sure why...
-#use HPC::Runner::Command qw(ConfigHome);
 
 our $VERSION = '3.0.1';
 

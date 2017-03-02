@@ -26,8 +26,20 @@ more templates to submit to the scheduler of your choice (SLURM, PBS, etc)';
 
 =cut
 
+option 'dry_run' => (
+    is            => 'rw',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => 'Do a dry run - do not submit to the scheduler.'
+);
+
 sub BUILD {
     my $self = shift;
+
+    if ( $self->dry_run ) {
+        $self->hpc_plugins(['Dummy']);
+        $self->plugins(['Dummy']);
+    }
 
     $self->git_things;
     $self->gen_load_plugins;

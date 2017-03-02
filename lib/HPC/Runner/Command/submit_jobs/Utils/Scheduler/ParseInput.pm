@@ -205,7 +205,7 @@ sub check_sanity {
 
 =head3 check_note_meta
 
-Check for lines starting with #TASK - used to pass per process job_tags
+Check for lines starting with #TASK - used to pass per process task_tags
 
 =cut
 

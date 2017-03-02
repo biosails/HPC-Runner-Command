@@ -1,22 +1,4 @@
-#!perl
-#===============================================================================
-#
-#         FILE: notebook.pl
-#
-#        USAGE: ./notebook.pl
-#
-#  DESCRIPTION:
-#
-#      OPTIONS: ---
-# REQUIREMENTS: ---
-#         BUGS: ---
-#        NOTES: ---
-#       AUTHOR: YOUR NAME (),
-# ORGANIZATION:
-#      VERSION: 1.0
-#      CREATED: 06/29/2015 10:41:53 AM
-#     REVISION: ---
-#===============================================================================
+#!/usr/bin/env perl
 
 use utf8;
 package Main;
