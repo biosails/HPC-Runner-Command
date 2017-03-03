@@ -74,20 +74,6 @@ has batch_tags => (
     },
 );
 
-has batch_deps => (
-    traits  => ['Array'],
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
-    handles => {
-        all_batch_deps   => 'elements',
-        add_batch_deps   => 'push',
-        join_batch_deps  => 'join',
-        has_batch_deps   => 'count',
-        clear_batch_deps => 'clear',
-    },
-);
-
 has batch_str => (
     isa     => 'Str',
     is      => 'rw',

@@ -9,8 +9,6 @@ Call the hpcrunner.pl submit_jobs command
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
 
-#use HPC::Runner::Command qw(ConfigHome);
-
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';
@@ -38,7 +36,6 @@ sub BUILD {
 
     if ( $self->dry_run ) {
         $self->hpc_plugins(['Dummy']);
-        $self->plugins(['Dummy']);
     }
 
     $self->git_things;

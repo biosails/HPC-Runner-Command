@@ -76,8 +76,9 @@ sub schedule_jobs {
         $self->schedule( $dep->schedule_all );
     }
     catch {
-      $self->app_log->fatal('There was a problem creating your schedule. Aborting mission!');
-      exit 1;
+        $self->app_log->fatal(
+            'There was a problem creating your schedule. Aborting mission!');
+        exit 1;
     }
 
 }
@@ -419,8 +420,11 @@ sub assign_batch_tags {
                     push( @batch_deps, $dep );
                 }
             }
-            else{
-              $self->app_log->warn('You are using an unknown directive with #TASK '."\n$line\nDirectives should be one of 'tags' or 'deps'");
+            else {
+                $self->app_log->warn(
+                        'You are using an unknown directive with #TASK '
+                      . "\n$line\nDirectives should be one of 'tags' or 'deps'"
+                );
             }
         }
     }
@@ -459,17 +463,10 @@ sub process_batch_deps {
     my $self  = shift;
     my $batch = shift;
 
-    my $tags;
-
     return unless $self->jobs->{ $self->current_job }->submit_by_tags;
     return unless $self->jobs->{ $self->current_job }->has_deps;
 
-    if ( $batch->has_batch_deps ) {
-        $tags = $batch->batch_deps;
-    }
-    else {
-        $tags = $batch->batch_tags;
-    }
+    my $tags = $batch->batch_tags;
 
     my $scheduler_index =
       $self->search_batches( $self->jobs->{ $self->current_job }->deps, $tags );
@@ -501,7 +498,6 @@ sub search_batches {
         foreach my $dep_batch ( @{$dep_batches} ) {
 
             #Changing this to return the index
-            ##TODO UPDATE THIS FOR MULTIPLE BATCHES WITHIN ARRAY
             push( @scheduler_index, $x )
               if $self->search_tags( $dep_batch->batch_tags, $tags );
 

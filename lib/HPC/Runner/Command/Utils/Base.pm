@@ -69,22 +69,6 @@ option 'outdir' => (
 
 #These two should both be in execute_jobs
 
-=head3 job_scheduler_id
-
-Job Scheduler ID running the script. Passed to slurm for mail information
-
-=cut
-
-option 'job_scheduler_id' => (
-    is       => 'rw',
-    isa      => 'Str|Undef',
-    default  => sub { return $ENV{SBATCH_JOB_ID} || $ENV{PBS_JOBID} || ''; },
-    required => 1,
-    documentation =>
-        q{This defaults to your current Job Scheduler ID. Ignore this if running on a single node},
-    predicate => 'has_job_scheduler_id',
-    clearer   => 'clear_job_scheduler_id',
-);
 
 =head3 procs
 

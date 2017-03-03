@@ -19,7 +19,6 @@ has deps => (
     default => sub { [] },
     traits  => ['Array'],
     is      => 'rw',
-    # isa     => 'ArrayRef',
     isa           => ArrayRefOfStrs,
     handles => {
         all_deps    => 'elements',

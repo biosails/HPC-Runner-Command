@@ -37,7 +37,9 @@ has 'task_id' => (
     required => 0,
 );
 
-sub BUILD {
+sub BUILD {}
+
+after 'BUILD' => sub {
     my $self = shift;
 
     if ( !$self->task_id && !$self->infile ) {
@@ -54,7 +56,7 @@ sub BUILD {
 
     $self->gen_load_plugins;
     $self->job_load_plugins;
-}
+};
 
 sub execute {
     my $self = shift;
