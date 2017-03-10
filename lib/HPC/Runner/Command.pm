@@ -1,14 +1,10 @@
 package HPC::Runner::Command;
 
-use MooseX::App qw(Color Config);
+use MooseX::App qw(Color);
 
 with 'HPC::Runner::Command::Utils::Plugin';
 
-#This is not working and I'm not sure why...
-#use HPC::Runner::Command qw(ConfigHome);
-
-our $VERSION = '0.01';
-
+our $VERSION = '3.0.1';
 
 app_strict 0;
 
@@ -16,7 +12,11 @@ app_strict 0;
 
 =head1 NAME
 
+=begin HTML
+
 <p><img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" /></p>
+
+=end HTML
 
 HPC::Runner::Command - Create composable bioinformatics hpc analyses.
 
@@ -40,7 +40,9 @@ HPC::Runner::Command is a set of libraries for scaffolding data analysis project
 submitting and executing jobs on an HPC cluster or workstation, and obsessively
 logging results.
 
-Please see the complete documentation at L<< https://jerowe.gitbooks.io/hpc-runner-command-docs/content/ >>
+Please see the complete documentation at L<HPC::Runner::Command GitBooks | https://jerowe.gitbooks.io/hpc-runner-command-docs/content/>
+
+This is a beta release of the HPC::Runner::Command libraries. The codebase is stable, but we will be adding more error handling, bug fixes, etc before the official 3.1.0 release.
 
 =head1 Quick Start - Create a New Project
 
@@ -57,7 +59,7 @@ Our simplest example is a single job type with no dependencies - each task is in
 =head3 Workflow file
 
 	#preprocess.sh
-	
+
 	echo "preprocess" && sleep 10;
 	echo "preprocess" && sleep 10;
 	echo "preprocess" && sleep 10;
@@ -70,14 +72,14 @@ Our simplest example is a single job type with no dependencies - each task is in
 
 	tree hpc-runner
 
-=head2 Job Type Dependencency Declaration 
+=head2 Job Type Dependencency Declaration
 
 Most of the time we have jobs that depend upon other jobs.
 
 =head3 Workflow file
 
 	#blastx.sh
-	
+
 	#HPC jobname=unzip
 	unzip Sample1.zip
 	unzip Sample2.zip
@@ -97,14 +99,14 @@ Most of the time we have jobs that depend upon other jobs.
 
 	tree hpc-runner
 
-=head2 Task Dependencency Declaration 
+=head2 Task Dependencency Declaration
 
 Within a job type we can declare dependencies on particular tasks.
 
 =head3 Workflow file
 
 	#blastx.sh
-	
+
 	#HPC jobname=unzip
 	#TASK tags=Sample1
 	unzip Sample1.zip
@@ -136,14 +138,14 @@ Within a job type we can declare dependencies on particular tasks.
 
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
 generalized variables for declaring types across templates. For more
-information please see L<< Job Scheduler Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >> 
+information please see L<< Job Scheduler Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >>
 
 Additionally, for workflows with a large number of tasks, please see L<< Considerations for Workflows with a Large Number of Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks >> for information on how to group tasks together.
 
 =head3 Workflow file
 
 	#blastx.sh
-	
+
 	#HPC jobname=unzip
 	#HPC cpus_per_task=1
 	#HPC partition=serial
@@ -182,6 +184,20 @@ __END__
 =head1 AUTHOR
 
 Jillian Rowe E<lt>jillian.e.rowe@gmail.comE<gt>
+
+=head1 Previous Release
+
+This software was previously released under L<HPC::Runner>. L<HPC::Runner::Command> is a complete rewrite of the existing library. While it is meant to have much of the same functionality, it is not backwords compatible.
+
+=head1 Acknowledgements
+
+Before Version 2.41
+
+This module was originally developed at and for Weill Cornell Medical College in Qatar within ITS Advanced Computing Team. With approval from WCMC-Q, this information was generalized and put on github, for which the authors would like to express their gratitude.
+
+As of Version 2.41:
+
+This modules continuing development is supported by NYU Abu Dhabi in the Center for Genomics and Systems Biology. With approval from NYUAD, this information was generalized and put on bitbucket, for which the authors would like to express their gratitude.
 
 =head1 COPYRIGHT
 

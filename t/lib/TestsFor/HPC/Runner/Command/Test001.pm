@@ -24,8 +24,11 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::Utils::Log');
     require_ok('HPC::Runner::Command::Utils::Git');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
+    require_ok('HPC::Runner::Command::submit_jobs::Utils::Log');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::Slurm');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::Dummy');
+    require_ok('HPC::Runner::Command::execute_job::Utils::Log');
+    require_ok('HPC::Runner::Command::execute_job');
     ok(1);
 }
 
@@ -55,17 +58,14 @@ sub test_001 : Tags(new) {
     my $test = HPC::Runner::Command->new_with_command();
     isa_ok( $test, 'HPC::Runner::Command' );
 
-    ok(1);
 }
 
 sub test_002 : Tags(construction) {
-   my $self = shift;
+    my $cwd      = getcwd();
 
     my $test_methods = TestMethods::Base->new();
     my $test_dir = $test_methods->make_test_dir();
     write_test_file($test_dir);
-
-    my $cwd      = getcwd();
 
     my $t = "$test_dir/script/test001.1.sh";
 
@@ -79,16 +79,15 @@ sub test_002 : Tags(construction) {
     is( $test->infile, "$t",             "Infile is ok" );
     isa_ok( $test, 'HPC::Runner::Command' );
 
+    chdir($cwd);
     remove_tree($test_dir);
 }
 
 sub test_003 : Tags(construction) {
-
+    my $cwd      = getcwd();
     my $test_methods = TestMethods::Base->new();
     my $test_dir = $test_methods->make_test_dir();
     write_test_file($test_dir);
-
-    my $cwd      = getcwd();
 
     my $t = "$test_dir/script/test001.1.sh";
     MooseX::App::ParsedArgv->new( argv =>
@@ -100,7 +99,7 @@ sub test_003 : Tags(construction) {
     is( $test->infile, "$t",             "Infile is ok" );
     isa_ok( $test, 'HPC::Runner::Command' );
 
-    chdir('/tmp');
+    chdir($cwd);
     remove_tree($test_dir);
 }
 

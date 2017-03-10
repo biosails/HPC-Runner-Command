@@ -35,12 +35,20 @@ This is a dummy for testing - just return a value as a placeholder in job_stats
 
 =cut
 
-sub submit_jobs{
+sub submit_jobs {
     my $self = shift;
 
     my $jobid = $self->sched_counter;
 
-    $self->app_log->warn("SUBMITTING DUMMY JOB ".$self->slurmfile."\n\tWith dummy jobid $jobid");
+    $self->app_log->warn( "SUBMITTING DUMMY JOB "
+          . $self->slurmfile
+          . "\n\tWith dummy jobid $jobid" );
+    $self->app_log->warn( 'With array indices '
+          . $self->jobs->{ $self->current_job }->batch_index_start . ' - '
+          . $self->jobs->{ $self->current_job }->batch_index_end );
+    # use Data::Dumper;
+    # print Dumper( $self->jobs->{ $self->current_job } );
+    $self->app_log->warn("Shceduler count! ".$self->sched_counter);
 
     $self->inc_sched_counter;
 
@@ -53,21 +61,22 @@ Update the job dependencies if using job_array (not batches)
 
 =cut
 
-sub update_job_deps{
+sub update_job_deps {
     my $self = shift;
 
     return if $self->use_batches;
 
     return unless $self->current_batch->has_array_deps;
 
-    foreach my $array_id ($self->current_batch->all_array_deps){
+    foreach my $array_id ( $self->current_batch->all_array_deps ) {
         next unless $array_id;
 
         my $current_job = $array_id->[0];
-        my $dep_job = $array_id->[1];
+        my $dep_job     = $array_id->[1];
 
-        my $cmd =  "scontrol update job=$current_job Dependency=afterok:$dep_job";
-        print "$cmd\n";
+        my $cmd =
+          "scontrol update job=$current_job Dependency=afterok:$dep_job";
+        $self->app_log->warn($cmd);
     }
 }
 

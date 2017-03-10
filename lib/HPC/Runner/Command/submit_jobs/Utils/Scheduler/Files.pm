@@ -2,6 +2,8 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files;
 
 use Moose::Role;
 use IO::File;
+#Travis test fails without this
+use IO::Interactive;
 use File::Path qw(make_path remove_tree);
 use Data::Dumper;
 

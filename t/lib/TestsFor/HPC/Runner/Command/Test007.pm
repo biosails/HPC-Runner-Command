@@ -118,8 +118,11 @@ sub construct {
 
 sub test_001 : Tags(job_stats) {
 
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
+
     my ( $source, $dep );
-    my $test = construct();
 
     $test->parse_file_slurm();
     $test->iterate_schedule();
@@ -154,6 +157,8 @@ sub test_001 : Tags(job_stats) {
     #diag(Dumper($test->jobs->{'blastx_scratch'}->batches->[0]->array_deps));
 
     diag('Ending Test007');
+    chdir($cwd);
+    remove_tree($test_dir);
 }
 
 1;

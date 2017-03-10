@@ -1,4 +1,9 @@
-Revision history for HPC-Runner-App
+Revision history for HPC-Runner-Command
 
 {{$NEXT}}
-        - Initial release
+
+3.0.1  2017-01-11 10:54:34 GST
+	- Bug fixes for cpan tests
+
+3.0.0  2017-01-05 12:26:17 GST
+        - This is the beta release of HPC::Runner::Command 

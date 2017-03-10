@@ -2,7 +2,8 @@ package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;
 
 #use Moose::Role;
 use Moose;
-use Data::Dumper;
+use JSON;
+use List::MoreUtils qw(firstidx);
 
 =head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats
 
@@ -179,9 +180,8 @@ sub do_stats {
         my $lenjobs = $#job_batches + 1;
         $self->batches->{$batch}->{job_batches} = $index . "/" . $lenjobs;
 
-        #Why do I have a print statement here??
-        print "Job batches are "
-            . $self->batches->{$batch}->{job_batches} . "\n";
+        # print "Job batches are "
+        #     . $self->batches->{$batch}->{job_batches} . "\n";
 
         $self->batches->{total_processes} = $self->total_processes;
         $self->batches->{total_batches}   = $self->total_batches;

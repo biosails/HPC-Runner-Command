@@ -9,8 +9,6 @@ Call the hpcrunner.pl submit_jobs command
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
 
-#use HPC::Runner::Command qw(ConfigHome);
-
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';
@@ -26,8 +24,19 @@ more templates to submit to the scheduler of your choice (SLURM, PBS, etc)';
 
 =cut
 
+option 'dry_run' => (
+    is            => 'rw',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => 'Do a dry run - do not submit to the scheduler.'
+);
+
 sub BUILD {
     my $self = shift;
+
+    if ( $self->dry_run ) {
+        $self->hpc_plugins(['Dummy']);
+    }
 
     $self->git_things;
     $self->gen_load_plugins;

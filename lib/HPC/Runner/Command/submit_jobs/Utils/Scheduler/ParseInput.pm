@@ -40,8 +40,8 @@ sub parse_file_slurm {
     #HPC afterok=thing1,thing2 -> Not supported
 
     if ( $self->has_afterok ) {
-        $self->jobs->{ $self->jobname }->{submitted}     = 1;
-        $self->jobs->{ $self->jobname }->{scheduler_ids} = $self->afterok;
+        $self->jobs->{ $self->jobname }->submitted     = 1;
+        $self->jobs->{ $self->jobname }->scheduler_ids = $self->afterok;
 
         my $oldjob = $self->jobname;
         $self->increase_jobname();
@@ -68,6 +68,9 @@ sub post_process_file_slurm {
     my $self = shift;
 
     $self->check_for_commands;
+    if(! $self->sanity_check_schedule){
+      return;
+    }
     $self->schedule_jobs;
     $self->chunk_commands;
 }
@@ -194,7 +197,7 @@ sub check_sanity {
     my $line = shift;
 
     #Do a sanity check for nohup
-    if ( $line =~ m/^nohup/ ) {
+    if ( $line =~ m/^nohup / ) {
         die print
             "You cannot submit jobs to the queue using nohup! Please remove nohup and try again.\n";
     }
@@ -202,11 +205,10 @@ sub check_sanity {
 
 =head3 check_note_meta
 
-Check for lines starting with #TASK - used to pass per process job_tags
+Check for lines starting with #TASK - used to pass per process task_tags
 
 =cut
 
-#TODO Change this to HPC
 sub check_note_meta {
     my $self = shift;
     my $line = shift;
@@ -260,6 +262,8 @@ sub process_hpc_meta {
     }
 
     if($jobname eq 'hpcjob_001'){
+        # Could also just be using global defs...
+        # $self->app_log->warn('You have not defined a job name. It is best practice to defined jobnames, but we will define hpcjob_001 for you.');
         $self->apply_global_directives($t1, $t2);
         $self->apply_job_directives($t1, $t2);
     }

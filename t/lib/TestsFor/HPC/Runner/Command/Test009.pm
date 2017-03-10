@@ -1,4 +1,4 @@
-package TestsFor::HPC::Runner::Command::Test006;
+package TestsFor::HPC::Runner::Command::Test009;
 
 use strict;
 use warnings;
@@ -16,21 +16,33 @@ use File::Slurp;
 
 extends 'TestMethods::Base';
 
-#Test for cases where we have a number of commnads not evenly divisable by the
-#max_array_size
+=head2 Purpose
+
+Test for failing schedule
+
+=cut
 
 sub write_test_file {
-    my $test_dir = shift;
+  my $test_dir = shift;
 
-    open( my $fh, ">$test_dir/script/test002.1.sh" );
-    print $fh <<EOF;
-#HPC jobname=pyfasta
-#HPC procs=1
+  my $t = "$test_dir/script/test002.1.sh";
+  open( my $fh, ">$t" );
+  print $fh <<EOF;
+
+#HPC jobname=raw_fastqc
+#HPC module=gencore/1 gencore_dev gencore_qc
+#HPC ntasks=12
+
+#TASK tags=Sample_KO-H3K4Me3_1_R1
+fastqc Sample_KO-H3K4Me3_1_R1 Sample_KO-H3K4Me3_1_R1
+
+#HPC jobname=remove_tmp
+#HPC deps=raw_fastq
+
+#TASK tags=Sample_KO-H3K4Me3_1
+remove_tmp Sample_KO-H3K4Me3_2_R1
+
 EOF
-
-    for(my $x=1; $x<=13; $x++){
-        print $fh "pyfasta split -n 20 Sample$x.fasta\n";
-    }
 
     close($fh);
 }
@@ -58,20 +70,27 @@ sub construct {
     return $test;
 }
 
-sub test_001 : Tags(job_stats) {
+sub test_001 : Tags(execute_array) {
+
     my $cwd      = getcwd();
     my $test     = construct();
     my $test_dir = getcwd();
 
-    $test->max_array_size(3);
+    my ( $source, $dep );
 
     $test->parse_file_slurm();
-    $test->iterate_schedule();
+    # $test->iterate_schedule();
 
-    is($test->jobs->{'pyfasta'}->{num_job_arrays}, 4);
+    # # opendir DIR, $test->outdir or die "cannot open dir: $!";
+    # # my @file= readdir DIR;
+    # # diag(Dumper(\@file));
+    # # closedir DIR;
+    #
+    # my $file =  read_file($test->outdir."/001_raw_fastqc.sh");
+    #
+    # diag($file);
+    is_deeply($test->jobs->{raw_fastqc}->ntasks, 12);
 
-    ok(1);
-    
     chdir($cwd);
     remove_tree($test_dir);
 }
