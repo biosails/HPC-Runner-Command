@@ -133,12 +133,17 @@ sub sanity_check_schedule {
                         "No potential matches were found for dependency $r");
                 }
             }
+            else{
+            }
 
             $y++;
         }
 
         $depstring = join( ", ", @{$ref} );
         push( @$row, $depstring );
+
+        my $count_cmd = $self->jobs->{ $job }->count_cmds;
+        push(@$row, $count_cmd);
 
         push( @rows, $row );
         $x++;
@@ -154,7 +159,7 @@ sub sanity_check_schedule {
             "Here is your tabular dependency list in alphabetical order");
     }
     else {
-        $t->setCols( [ "JobName", "Deps" ] );
+        $t->setCols( [ "JobName", "Deps", "Task Count" ] );
         map { $t->addRow($_) } @rows;
         $self->app_log->info(
             "Here is your tabular dependency list in alphabetical order");
@@ -250,6 +255,8 @@ sub chunk_commands {
     $self->reset_batch_counter;
 }
 
+#TODO put arrays in oen place, batches in another
+
 =head3 resolve_max_array_size
 
 Arrays should not be greater than the max_array_size variable
@@ -265,7 +272,6 @@ sub resolve_max_array_size {
     my $number_of_batches = shift;
     my $cmd_size          = shift;
 
-    #TODO There must be a better way of doing this
     if ( ( $cmd_size / $number_of_batches ) <= ( $self->max_array_size + 1 ) ) {
         return $number_of_batches;
     }

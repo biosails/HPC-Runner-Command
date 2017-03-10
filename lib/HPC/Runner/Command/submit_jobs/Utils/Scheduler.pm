@@ -101,7 +101,7 @@ option 'jobname' => (
         $self->check_add_to_jobs();
     },
     documentation =>
-        q{Specify a job name, each job will be appended with its batch order},
+      q{Specify a job name, each job will be appended with its batch order},
 );
 
 =head3 max_array_size
@@ -145,7 +145,7 @@ option 'use_batches' => (
     default  => 0,
     required => 0,
     documentation =>
-        q{Switch to use batches. The default is to use job arrays. Warning! This was the default way of submitting before 3.0, but is not well supported.},
+q{Switch to use batches. The default is to use job arrays. Warning! This was the default way of submitting before 3.0, but is not well supported.},
 );
 
 =head3 afterok
@@ -160,7 +160,7 @@ option afterok => (
     required => 0,
     isa      => ArrayRefOfStrs,
     documentation =>
-        'afterok switch in slurm. --afterok 123,134 will tell slurm to start this job after 123,134 have exited successfully',
+'afterok switch in slurm. --afterok 123,134 will tell slurm to start this job after 123,134 have exited successfully',
     default   => sub { [] },
     cmd_split => qr/,/,
     handles   => {
@@ -185,7 +185,7 @@ option 'no_submit_to_slurm' => (
     default  => 0,
     required => 0,
     documentation =>
-        q{Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.},
+q{Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.},
 );
 
 =head3 template_file
@@ -255,7 +255,7 @@ EOF
     predicate => 'has_template_file',
     clearer   => 'clear_template_file',
     documentation =>
-        q{Path to Slurm template file if you do not wish to use the default}
+      q{Path to Slurm template file if you do not wish to use the default}
 );
 
 =head3 serial
@@ -270,7 +270,7 @@ option serial => (
     isa     => 'Bool',
     default => 0,
     documentation =>
-        q{Use this if you wish to run each job run one after another, with each job starting only after the previous has completed successfully},
+q{Use this if you wish to run each job run one after another, with each job starting only after the previous has completed successfully},
     predicate => 'has_serial',
     clearer   => 'clear_serial'
 );
@@ -327,11 +327,11 @@ Object describing the number of jobs, number of batches per job, etc
 =cut
 
 has 'job_stats' => (
-    is  => 'rw',
-    isa => 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats',
+    is      => 'rw',
+    isa     => 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats',
     default => sub {
         return HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats
-            ->new();
+          ->new();
     }
 );
 
@@ -347,7 +347,7 @@ has 'deps' => (
     traits    => ['Array'],
     is        => 'rw',
     isa       => ArrayRefOfStrs,
-    'coerce'    => 1,
+    'coerce'  => 1,
     predicate => 'has_deps',
     clearer   => 'clear_deps',
     required  => 0,
@@ -622,17 +622,16 @@ sub check_add_to_jobs {
     my $self = shift;
 
     if ( !exists $self->jobs->{ $self->jobname } ) {
-        $self->jobs->{ $self->jobname }
-            = HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps
-            ->new(
+        $self->jobs->{ $self->jobname } =
+          HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps->new(
             mem              => $self->mem,
             walltime         => $self->walltime,
             cpus_per_task    => $self->cpus_per_task,
             nodes_count      => $self->nodes_count,
             ntasks_per_nodes => $self->ntasks_per_node,
-            );
+          );
         $self->jobs->{ $self->jobname }->partition( $self->partition )
-            if $self->has_partition;
+          if $self->has_partition;
     }
     $self->graph_job_deps->{ $self->jobname } = [];
 }
@@ -728,7 +727,7 @@ sub iterate_deps {
         }
         else {
             map { $self->add_scheduler_id($_) }
-                $self->jobs->{$dep}->all_scheduler_ids;
+              $self->jobs->{$dep}->all_scheduler_ids;
         }
     }
 }
@@ -758,13 +757,14 @@ sub process_jobs {
 
     if ( !$jobref->can('submitted') ) {
         warn
-            "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
+"You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
     }
 
     #TODO This should give a warning
     return if $jobref->submitted;
 
     $DB::single = 2;
+
     #If using arrays
     if ( !$self->use_batches ) {
         $self->work;
@@ -787,12 +787,15 @@ sub pre_process_batch {
     $self->clear_batch;
 
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
-    my @batches = @{ $self->jobs->{ $self->current_job }->batches };
+    my @batches            = @{ $self->jobs->{ $self->current_job }->batches };
 
+    my $desc = "batches";
+    $desc = "tasks" unless $self->use_batches;
     $self->app_log->info( 'There are '
-            . scalar @batches
-            . ' batches for job type '
-            . $self->current_job );
+          . scalar @batches . ' '
+          . $desc
+          . ' for job type '
+          . $self->current_job );
 
     foreach my $batch (@batches) {
         next unless $batch;
@@ -852,19 +855,19 @@ sub scheduler_ids_by_batch {
 sub scheduler_ids_by_array {
     my $self = shift;
 
+
     my $scheduler_index = $self->current_batch->scheduler_index;
     return unless $scheduler_index;
 
     my $current_batch_index = $self->batch_counter - 1;
 
-    my $index_in_batch
-        = $self->index_in_batch( $self->current_job, $current_batch_index );
+    my $index_in_batch =
+      $self->index_in_batch( $self->current_job, $current_batch_index );
 
     if ( !defined $index_in_batch ) {
-        print "Top There is no index in batch!\n";
         $self->app_log->warn( "Job "
-                . $self->current_job
-                . " does not have an appropriate index. If you think are reaching this in error please report the issue to github.\n"
+              . $self->current_job
+              . " does not have an appropriate index. If you think are reaching this in error please report the issue to github.\n"
         );
 
         return;
@@ -872,9 +875,8 @@ sub scheduler_ids_by_array {
 
     $DB::single = 2;
 
-    my $batch_scheduler_id
-        = $self->jobs->{ $self->current_job }
-        ->scheduler_ids->[$index_in_batch];
+    my $batch_scheduler_id =
+      $self->jobs->{ $self->current_job }->scheduler_ids->[$index_in_batch];
 
     $self->current_batch->scheduler_id($batch_scheduler_id);
 
@@ -893,17 +895,14 @@ sub scheduler_ids_by_array {
         foreach my $index ( @{$batch_index} ) {
 
             my $x = $self->index_in_batch_deps( $job, $index );
-            #print "My job is $job Index is $index\n";
-            #print "Batch indexes in search job are "
-                #. Dumper( $self->jobs->{$job}->all_batch_indexes );
 
             #we should give a warning here
             if ( !defined $x ) {
                 print "Internal There is no index in batch!\n";
                 $self->app_log->warn(
-                    "Job name $job does not have an appropriate index for "
-                        . $self->current_job
-                        . " array index $index" );
+                        "Job name $job does not have an appropriate index for "
+                      . $self->current_job
+                      . " array index $index" );
                 next;
             }
             my $dep_scheduler_id = $self->jobs->{$job}->scheduler_ids->[$x];
@@ -968,8 +967,12 @@ sub index_in_batch_deps {
 
     my $x = 0;
 
-    my $len = $self->jobs->{$job}->batch_index_end - $self->jobs->{$job}->batch_index_start;
-    my @search_indexes = ($self->jobs->{$job}->batch_index_start .. $self->jobs->{$job}->batch_index_end);
+    my $len =
+      $self->jobs->{$job}->batch_index_end -
+      $self->jobs->{$job}->batch_index_start;
+    my @search_indexes =
+      ( $self->jobs->{$job}->batch_index_start .. $self->jobs->{$job}
+          ->batch_index_end );
 
     my $search_index = $search_indexes[$index];
 
@@ -1052,7 +1055,7 @@ sub process_batch {
         if ( !$self->use_batches ) {
 
             $array_str = $batch_indexes->{batch_index_start} . "-"
-                . $batch_indexes->{batch_index_end};
+              . $batch_indexes->{batch_index_end};
 
             $self->prepare_batch_files_array(
                 $batch_indexes->{batch_index_start},
@@ -1095,15 +1098,16 @@ sub process_template {
 
     $self->template->process(
         $self->template_file,
-        {   JOBNAME   => $jobname,
+        {
+            JOBNAME   => $jobname,
             USER      => $self->user,
             COMMAND   => $command,
             ARRAY_STR => $array_str,
             AFTEROK   => $ok,
-      	    MODULES => $self->jobs->{$self->current_job}->join_modules(' '),
+            MODULES   => $self->jobs->{ $self->current_job }->join_modules(' '),
             OUT       => $self->logdir
-                . "/$counter" . "_"
-                . $self->current_job . ".log",
+              . "/$counter" . "_"
+              . $self->current_job . ".log",
             job => $self->jobs->{ $self->current_job },
         },
         $self->slurmfile
@@ -1114,15 +1118,17 @@ sub process_template {
     my $scheduler_id = $self->submit_jobs;
 
     try {
-      $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
+        $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
     }
     catch {
-        if(defined $_){
-          $self->app_log->fatal('Not all jobs were submitted successfully. Exiting. Error follows.');
-          exit 1;
+        if ( defined $_ ) {
+            $self->app_log->fatal(
+'Not all jobs were submitted successfully. Exiting. Error follows.'
+            );
+            exit 1;
         }
-        else{
-          return;
+        else {
+            return;
         }
     };
 
@@ -1149,7 +1155,7 @@ sub process_batch_command {
 
     my $logname;
     if ( $self->has_project ) {
-        $logname =  $self->project .  "_" . $counter  ."_" . $self->current_job;
+        $logname = $self->project . "_" . $counter . "_" . $self->current_job;
     }
     else {
         $logname = $counter . "_" . $self->current_job;
@@ -1164,25 +1170,25 @@ sub process_batch_command {
         $command .= "hpcrunner.pl $subcommand \\\n";
     }
 
-    if($self->has_project){
-    	$command .= "\t--project ".$self->project." \\\n";
+    if ( $self->has_project ) {
+        $command .= "\t--project " . $self->project . " \\\n";
     }
 
-    $command
-        .= "\t--procs "
-        . $self->jobs->{ $self->current_job }->procs . " \\\n"
-        . "\t--outdir "
-        . $self->outdir . " \\\n"
-        . "\t--logname "
-        . $logname . " \\\n"
-        . "\t--process_table "
-        . $self->process_table;
+    $command .=
+        "\t--procs "
+      . $self->jobs->{ $self->current_job }->procs . " \\\n"
+      . "\t--outdir "
+      . $self->outdir . " \\\n"
+      . "\t--logname "
+      . $logname . " \\\n"
+      . "\t--process_table "
+      . $self->process_table;
 
     $command .= "\\\n\t--infile " . $self->cmdfile if $self->use_batches;
 
     #TODO Update metastring to give array index
-    my $metastr
-        = $self->job_stats->create_meta_str( $counter, $self->batch_counter,
+    my $metastr =
+      $self->job_stats->create_meta_str( $counter, $self->batch_counter,
         $self->current_job, $self->use_batches,
         $self->jobs->{ $self->current_job } );
 
@@ -1245,9 +1251,8 @@ sub submit_to_scheduler {
                           # line.
     my $cmdpid;
     eval {
-        $cmdpid
-            = open3( $infh, $outfh, $errfh,
-            "$submit_command " . $self->slurmfile );
+        $cmdpid =
+          open3( $infh, $outfh, $errfh, "$submit_command " . $self->slurmfile );
     };
     die $@ if $@;
 

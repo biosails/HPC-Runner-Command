@@ -324,6 +324,13 @@ sub init_log {
     return $log;
 }
 
+sub log_main_messages {
+    my ( $self, $level, $message ) = @_;
+
+    return unless $message;
+    $level = 'info' unless $level;
+    $self->log->$level($message);
+}
 # #TODO Move this to App/execute_job/Log ... something to mark that this logs the
 # #individual processes that are executed
 #

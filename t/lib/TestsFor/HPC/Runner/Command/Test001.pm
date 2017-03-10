@@ -24,8 +24,11 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::Utils::Log');
     require_ok('HPC::Runner::Command::Utils::Git');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
+    require_ok('HPC::Runner::Command::submit_jobs::Utils::Log');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::Slurm');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::Dummy');
+    require_ok('HPC::Runner::Command::execute_job::Utils::Log');
+    require_ok('HPC::Runner::Command::execute_job');
     ok(1);
 }
 

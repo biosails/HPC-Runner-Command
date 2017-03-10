@@ -114,7 +114,7 @@ commands to run per node
 
 #TODO Update this for job arrays
 
-has 'commands_per_node' => (
+option 'commands_per_node' => (
     is       => 'rw',
     isa      => 'Int',
     required => 0,

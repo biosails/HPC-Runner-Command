@@ -230,13 +230,6 @@ sub log_cmd_messages {
     }
 }
 
-sub log_main_messages {
-    my ( $self, $level, $message ) = @_;
-
-    return unless $message;
-    $level = 'info' unless $level;
-    $self->log->$level($message);
-}
 
 #TODO move to execute_jobs
 sub log_job {
