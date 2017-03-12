@@ -10,7 +10,7 @@
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : "2"
+      "version" : 2
    },
    "name" : "HPC-Runner-Command",
    "no_index" : {
@@ -57,6 +57,7 @@
             "Git::Wrapper::Plus::Branches" : "0",
             "Git::Wrapper::Plus::Ref::Tag" : "0",
             "Git::Wrapper::Plus::Tags" : "0",
+            "HPC::Runner::Command::Utils::ManyConfigs" : "0",
             "IO::File" : "0",
             "IO::Interactive" : "0",
             "IO::Select" : "0",
@@ -87,7 +88,6 @@
             "String::Approx" : "0",
             "Symbol" : "0",
             "Template" : "0",
-            "Text::ANSITable" : "0",
             "Text::ASCIITable" : "0",
             "Try::Tiny" : "0",
             "Version::Next" : "0",
@@ -101,6 +101,7 @@
       },
       "test" : {
          "requires" : {
+            "Algorithm::Dependency" : "0",
             "Capture::Tiny" : "0",
             "File::Slurp" : "0",
             "File::Spec::Functions" : "0",
@@ -117,19 +118,19 @@
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/jerowe/HPC-Runner-Command/issues"
+         "web" : "https://github.com/biosails/HPC-Runner-Command/issues"
       },
-      "homepage" : "https://github.com/jerowe/HPC-Runner-Command",
+      "homepage" : "https://github.com/biosails/HPC-Runner-Command",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/jerowe/HPC-Runner-Command.git",
-         "web" : "https://github.com/jerowe/HPC-Runner-Command"
+         "url" : "https://github.com/biosails/HPC-Runner-Command.git",
+         "web" : "https://github.com/biosails/HPC-Runner-Command"
       }
    },
    "version" : "3.0.1",
    "x_contributors" : [
       "Travis CI <nobody@nobody.org>"
    ],
-   "x_serialization_backend" : "JSON::XS version 3.02"
+   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0225"
 }
 

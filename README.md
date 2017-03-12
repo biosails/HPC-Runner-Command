@@ -24,8 +24,6 @@ logging results.
 
 Please see the complete documentation at [HPC::Runner::Command GitBooks ](https://metacpan.org/pod/&#x20;https:#jerowe.gitbooks.io-hpc-runner-command-docs-content)
 
-This is a beta release of the HPC::Runner::Command libraries. The codebase is stable, but we will be adding more error handling, bug fixes, etc before the official 3.1.0 release.
-
 # Quick Start - Create a New Project
 
 You can create a new project, with a sane directory structure by using
@@ -165,13 +163,13 @@ This software was previously released under [HPC::Runner](https://metacpan.org/p
 
 # Acknowledgements
 
-Before Version 2.41
-
-This module was originally developed at and for Weill Cornell Medical College in Qatar within ITS Advanced Computing Team. With approval from WCMC-Q, this information was generalized and put on github, for which the authors would like to express their gratitude.
-
 As of Version 2.41:
 
 This modules continuing development is supported by NYU Abu Dhabi in the Center for Genomics and Systems Biology. With approval from NYUAD, this information was generalized and put on bitbucket, for which the authors would like to express their gratitude.
+
+Before Version 2.41
+
+This module was originally developed at and for Weill Cornell Medical College in Qatar within ITS Advanced Computing Team. With approval from WCMC-Q, this information was generalized and put on github, for which the authors would like to express their gratitude.
 
 # COPYRIGHT
 
