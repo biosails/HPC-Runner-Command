@@ -3,6 +3,7 @@ package HPC::Runner::Command;
 use MooseX::App qw(Color);
 
 with 'HPC::Runner::Command::Utils::Plugin';
+with 'HPC::Runner::Command::Utils::ManyConfigs';
 
 our $VERSION = '3.0.1';
 
@@ -41,8 +42,6 @@ submitting and executing jobs on an HPC cluster or workstation, and obsessively
 logging results.
 
 Please see the complete documentation at L<HPC::Runner::Command GitBooks | https://jerowe.gitbooks.io/hpc-runner-command-docs/content/>
-
-This is a beta release of the HPC::Runner::Command libraries. The codebase is stable, but we will be adding more error handling, bug fixes, etc before the official 3.1.0 release.
 
 =head1 Quick Start - Create a New Project
 
@@ -191,13 +190,13 @@ This software was previously released under L<HPC::Runner>. L<HPC::Runner::Comma
 
 =head1 Acknowledgements
 
-Before Version 2.41
-
-This module was originally developed at and for Weill Cornell Medical College in Qatar within ITS Advanced Computing Team. With approval from WCMC-Q, this information was generalized and put on github, for which the authors would like to express their gratitude.
-
 As of Version 2.41:
 
 This modules continuing development is supported by NYU Abu Dhabi in the Center for Genomics and Systems Biology. With approval from NYUAD, this information was generalized and put on bitbucket, for which the authors would like to express their gratitude.
+
+Before Version 2.41
+
+This module was originally developed at and for Weill Cornell Medical College in Qatar within ITS Advanced Computing Team. With approval from WCMC-Q, this information was generalized and put on github, for which the authors would like to express their gratitude.
 
 =head1 COPYRIGHT
 

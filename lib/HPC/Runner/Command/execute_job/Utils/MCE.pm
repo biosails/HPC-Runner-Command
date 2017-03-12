@@ -249,4 +249,11 @@ sub run_command_mce {
     return;
 }
 
+=head1 AUTHOR
+
+Jillian Rowe E<lt>jillian.e.rowe@gmail.comE<gt>
+Mario Roy E<lt>marioeroy@gmail.comE<gt>
+
+=cut
+
 1;

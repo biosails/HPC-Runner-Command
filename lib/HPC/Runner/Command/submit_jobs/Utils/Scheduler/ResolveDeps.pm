@@ -10,7 +10,6 @@ use Algorithm::Dependency::Ordered;
 use HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;
 use POSIX;
 use String::Approx qw(amatch);
-use Text::ANSITable;
 use Text::ASCIITable;
 use Try::Tiny;
 
@@ -165,7 +164,7 @@ sub sanity_check_schedule {
             "Here is your tabular dependency list in alphabetical order");
     }
 
-    say $t;
+    $self->app_log->info("\n\n".$t);
 
     return $search;
 }

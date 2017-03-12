@@ -43,12 +43,6 @@ sub submit_jobs {
     $self->app_log->warn( "SUBMITTING DUMMY JOB "
           . $self->slurmfile
           . "\n\tWith dummy jobid $jobid" );
-    $self->app_log->warn( 'With array indices '
-          . $self->jobs->{ $self->current_job }->batch_index_start . ' - '
-          . $self->jobs->{ $self->current_job }->batch_index_end );
-    # use Data::Dumper;
-    # print Dumper( $self->jobs->{ $self->current_job } );
-    $self->app_log->warn("Shceduler count! ".$self->sched_counter);
 
     $self->inc_sched_counter;
 
