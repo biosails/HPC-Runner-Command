@@ -1,6 +1,8 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+
+3.1.1  2017-03-12 14:44:10 GST
 	- Bug fix for ManyConfigs
 
 3.1.0  2017-03-12 11:16:13 GST
