@@ -1,0 +1,741 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+$VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
+-- Acknowledgements	_docs/Usage.pod	/^=head2 Acknowledgements$/;"	d
+-- Attributes	lib/HPC/Runner/Command/Utils/Base.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/Utils/Git.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/submit_jobs.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head2 Attributes$/;"	d
+-- Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head2 Attributes$/;"	d
+-- Authors and Contributors	_docs/Usage.pod	/^=head2 Authors and Contributors$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/Utils/Base.pm	/^=head2 Command Line Options$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/Utils/Log.pm	/^=head2 Command Line Options$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head2 Command Line Options$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/new.pm	/^=head2 Command Line Options$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 Command Line Options$/;"	d
+-- Command Line Options	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head2 Command Line Options$/;"	d
+-- Customizing HPC::Runner::Slurm Input	_docs/Usage.pod	/^=head2 Customizing HPC::Runner::Slurm Input$/;"	d
+-- Declare Scheduler Variables	lib/HPC/Runner/Command.pm	/^=head2 Declare Scheduler Variables$/;"	d
+-- Example for Runner::Threads and Runner::MCE	_docs/Usage.pod	/^=head2 Example for Runner::Threads and Runner::MCE$/;"	d
+-- HPC::Runner::Slurm Example	_docs/Usage.pod	/^=head2 HPC::Runner::Slurm Example$/;"	d
+-- Internal Attributes	lib/HPC/Runner/Command/Utils/Log.pm	/^=head2 Internal Attributes$/;"	d
+-- Internal Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 Internal Attributes$/;"	d
+-- Job Type Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Job Type Dependencency Declaration $/;"	d
+-- MultiNode Job Submission	_docs/Usage.pod	/^=head2 MultiNode Job Submission$/;"	d
+-- Overview	_docs/Usage.pod	/^=head2 Overview$/;"	d
+-- Purpose	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^=head2 Purpose$/;"	d
+-- Simple Example	lib/HPC/Runner/Command.pm	/^=head2 Simple Example$/;"	d
+-- Single Node Execution	_docs/Usage.pod	/^=head2 Single Node Execution$/;"	d
+-- Submit your commands	_docs/Usage.pod	/^=head2 Submit your commands$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/Utils/Git.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/Utils/Log.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/new.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head2 Subroutines$/;"	d
+-- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head2 Subroutines$/;"	d
+-- Task Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Task Dependencency Declaration $/;"	d
+-- Trouble Shooting Runner::Slurm	_docs/Usage.pod	/^=head2 Trouble Shooting Runner::Slurm$/;"	d
+-- Utils	lib/HPC/Runner/Command/Utils/Traits.pm	/^=head2 Utils$/;"	d
+-- array_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 array_counter$/;"	d
+-- attributes	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^=head2 attributes$/;"	d
+-- batch_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 batch_counter$/;"	d
+-- job_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 job_counter$/;"	d
+-- mem	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head2 mem$/;"	d
+--- Extend slurmrunner.pl to add your own custom loggin	_docs/Usage.pod	/^=head3 Extend slurmrunner.pl to add your own custom loggin$/;"	d
+--- Full Path Names	_docs/Usage.pod	/^=head3 Full Path Names$/;"	d
+--- Look at results!	lib/HPC/Runner/Command.pm	/^=head3 Look at results!$/;"	d
+--- Run Your Command	_docs/Usage.pod	/^=head3 Run Your Command$/;"	d
+--- Slurm Template	_docs/Usage.pod	/^=head3 Slurm Template$/;"	d
+--- Slurm Template with Batched Job	_docs/Usage.pod	/^=head3 Slurm Template with Batched Job$/;"	d
+--- Slurm Template with Dependency	_docs/Usage.pod	/^=head3 Slurm Template with Dependency$/;"	d
+--- Submit to the scheduler	lib/HPC/Runner/Command.pm	/^=head3 Submit to the scheduler$/;"	d
+--- Trouble Shooting mcerunner and parallelrunner	_docs/Usage.pod	/^=head3 Trouble Shooting mcerunner and parallelrunner$/;"	d
+--- Workflow	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 Workflow$/;"	d
+--- Workflow file	lib/HPC/Runner/Command.pm	/^=head3 Workflow file$/;"	d
+--- _log_commands	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 _log_commands$/;"	d
+--- account	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 account$/;"	d
+--- account-per-node	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 account-per-node$/;"	d
+--- afterok	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 afterok$/;"	d
+--- alljobs.in	_docs/Usage.pod	/^=head3 alljobs.in$/;"	d
+--- app_load_plugin	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 app_load_plugin$/;"	d
+--- assign_batch_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 assign_batch_stats$/;"	d
+--- assign_batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 assign_batch_tags$/;"	d
+--- assign_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 assign_batches$/;"	d
+--- batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 batch$/;"	d
+--- check_add_to_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 check_add_to_jobs$/;"	d
+--- check_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 check_files$/;"	d
+--- check_for_commands	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 check_for_commands$/;"	d
+--- check_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 check_jobname$/;"	d
+--- check_lines_add_cmd	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 check_lines_add_cmd$/;"	d
+--- check_note_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 check_note_meta$/;"	d
+--- check_sanity	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 check_sanity$/;"	d
+--- chunk_commands	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 chunk_commands$/;"	d
+--- cmd_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 cmd_counter$/;"	d
+--- cmdfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 cmdfile$/;"	d
+--- collect_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head3 collect_stats$/;"	d
+--- commands_per_node	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 commands_per_node$/;"	d
+--- config	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 config$/;"	d
+--- cpus_per_task	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 cpus_per_task$/;"	d
+--- create_meta_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head3 create_meta_str$/;"	d
+--- create_plugin_str	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 create_plugin_str$/;"	d
+--- create_version_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 create_version_str$/;"	d
+--- current_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 current_batch$/;"	d
+--- current_job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 current_job$/;"	d
+--- datetime_now	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 datetime_now$/;"	d
+--- deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 deps$/;"	d
+--- dirty_run	lib/HPC/Runner/Command/Utils/Git.pm	/^=head3 dirty_run$/;"	d
+--- do_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head3 do_stats$/;"	d
+--- example.in	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head4 example.in$/;"	d
+--- example.yml	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 example.yml$/;"	d
+--- execute_command	lib/HPC/Runner/Command/new.pm	/^=head3 execute_command$/;"	d
+--- gen_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 gen_load_plugins$/;"	d
+--- git_things	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 git_things$/;"	d
+--- go	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head3 go$/;"	d
+--- graph_job_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 graph_job_deps$/;"	d
+--- hpc_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 hpc_load_plugins$/;"	d
+--- hpc_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 hpc_plugins$/;"	d
+--- increase_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 increase_jobname$/;"	d
+--- index_in_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 index_in_batch$/;"	d
+--- infile	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 infile$/;"	d
+--- infile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 infile$/;"	d
+--- init_git	lib/HPC/Runner/Command/Utils/Git.pm	/^=head3 init_git$/;"	d
+--- init_log	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 init_log$/;"	d
+--- iterate_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 iterate_deps$/;"	d
+--- iterate_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 iterate_schedule$/;"	d
+--- job_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 job_plugins$/;"	d
+--- job_scheduler_id	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 job_scheduler_id$/;"	d
+--- job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 job_stats$/;"	d
+--- job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head3 job_stats$/;"	d
+--- jobname	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head3 jobname$/;"	d
+--- jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 jobname$/;"	d
+--- jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 jobs$/;"	d
+--- logdir	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 logdir$/;"	d
+--- make_the_dirs	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 make_the_dirs$/;"	d
+--- max_array_size	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 max_array_size$/;"	d
+--- metastr	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 metastr$/;"	d
+--- module	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 module$/;"	d
+--- name_log	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 name_log$/;"	d
+--- no_submit_to_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 no_submit_to_slurm$/;"	d
+--- nodes_count	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 nodes_count$/;"	d
+--- ntasks	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 ntasks$/;"	d
+--- outdir	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 outdir$/;"	d
+--- parse_file_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head3 parse_file_mce$/;"	d
+--- parse_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 parse_file_slurm$/;"	d
+--- parse_plugin_opts	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 parse_plugin_opts$/;"	d
+--- partition	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 partition$/;"	d
+--- plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 plugins$/;"	d
+--- post_process_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 post_process_file_slurm$/;"	d
+--- post_process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 post_process_jobs$/;"	d
+--- pre_process_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 pre_process_batch$/;"	d
+--- prepare_batch_files_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 prepare_batch_files_array$/;"	d
+--- prepare_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 prepare_counter$/;"	d
+--- prepare_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 prepare_files$/;"	d
+--- prepare_sched_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 prepare_sched_files$/;"	d
+--- process_batch()	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 process_batch()$/;"	d
+--- process_batch_command	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 process_batch_command$/;"	d
+--- process_batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 process_batch_deps$/;"	d
+--- process_hpc_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 process_hpc_meta$/;"	d
+--- process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 process_jobs$/;"	d
+--- process_lines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head3 process_lines$/;"	d
+--- process_table	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 process_table$/;"	d
+--- process_template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 process_template$/;"	d
+--- procs	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 procs$/;"	d
+--- procs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 procs$/;"	d
+--- project	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 project$/;"	d
+--- resolve_max_array_size	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 resolve_max_array_size$/;"	d
+--- resolve_project	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 resolve_project$/;"	d
+--- run	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 run$/;"	d
+--- run_command_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head3 run_command_mce$/;"	d
+--- sanity_check_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 sanity_check_schedule$/;"	d
+--- schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 schedule$/;"	d
+--- schedule_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 schedule_jobs$/;"	d
+--- scheduler_ids	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 scheduler_ids$/;"	d
+--- scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 scheduler_ids_by_array$/;"	d
+--- scheduler_ids_by_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 scheduler_ids_by_batch$/;"	d
+--- search_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 search_batches$/;"	d
+--- search_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 search_tags$/;"	d
+--- serial	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 serial$/;"	d
+--- set_logdir	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 set_logdir$/;"	d
+--- set_logfile	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 set_logfile$/;"	d
+--- set_outdir	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 set_outdir$/;"	d
+--- show_process_id	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 show_process_id$/;"	d
+--- slurmfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 slurmfile$/;"	d
+--- submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^=head3 submit_jobs$/;"	d
+--- submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^=head3 submit_jobs$/;"	d
+--- submit_to_scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 submit_to_scheduler$/;"	d
+--- table_data	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 table_data$/;"	d
+--- tags	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 tags$/;"	d
+--- template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 template$/;"	d
+--- template_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 template_file$/;"	d
+--- update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^=head3 update_job_deps$/;"	d
+--- update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^=head3 update_job_deps$/;"	d
+--- use_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 use_batches$/;"	d
+--- use_custom	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 use_custom$/;"	d
+--- user	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 user$/;"	d
+--- version	lib/HPC/Runner/Command/Utils/Git.pm	/^=head3 version$/;"	d
+--- walltime	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 walltime$/;"	d
+--- work	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 work$/;"	d
+Algorithm::Dependency	META.json	/^            "Algorithm::Dependency" : "0",$/;"	f
+Algorithm::Dependency	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Algorithm::Dependency;$/;"	u
+Algorithm::Dependency	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Algorithm::Dependency;$/;"	u
+Algorithm::Dependency::Ordered	META.json	/^            "Algorithm::Dependency::Ordered" : "0",$/;"	f
+Algorithm::Dependency::Ordered	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Algorithm::Dependency::Ordered;$/;"	u
+Algorithm::Dependency::Source::HoA	META.json	/^            "Algorithm::Dependency::Source::HoA" : "0",$/;"	f
+Algorithm::Dependency::Source::HoA	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
+Algorithm::Dependency::Source::HoA	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
+Algorithm::Dependency::Source::HoA	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
+Archive::Tar	META.json	/^            "Archive::Tar" : "0",$/;"	f
+Archive::Tar	lib/HPC/Runner/Command/Utils/Git.pm	/^use Archive::Tar;$/;"	u
+BUILD	lib/HPC/Runner/Command/execute_array.pm	/^sub BUILD {$/;"	s
+BUILD	lib/HPC/Runner/Command/execute_job.pm	/^sub BUILD {$/;"	s
+BUILD	lib/HPC/Runner/Command/submit_jobs.pm	/^sub BUILD {$/;"	s
+Capture::Tiny	META.json	/^            "Capture::Tiny" : "0",$/;"	f
+Cwd	META.json	/^            "Cwd" : "0",$/;"	f
+Cwd	lib/HPC/Runner/Command/Utils/Base.pm	/^use Cwd;$/;"	u
+Cwd	lib/HPC/Runner/Command/Utils/Git.pm	/^use Cwd;$/;"	u
+Cwd	lib/HPC/Runner/Command/Utils/Log.pm	/^use Cwd;$/;"	u
+Cwd	lib/HPC/Runner/Command/new.pm	/^use Cwd;$/;"	u
+Cwd	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use Cwd;$/;"	u
+Cwd	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use Cwd;$/;"	u
+DBM::Deep	META.json	/^            "DBM::Deep" : "0",$/;"	f
+DBM::Deep	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use DBM::Deep;$/;"	u
+Data::Dumper	META.json	/^            "Data::Dumper" : "0",$/;"	f
+Data::Dumper	lib/HPC/Runner/Command/Utils/Git.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/Utils/Log.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use Data::Dumper;$/;"	u
+Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use Data::Dumper;$/;"	u
+DateTime	META.json	/^            "DateTime" : "0",$/;"	f
+DateTime	lib/HPC/Runner/Command/Utils/Log.pm	/^use DateTime;$/;"	u
+DateTime	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use DateTime;$/;"	u
+DateTime	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use DateTime;$/;"	u
+DateTime::Format::Duration	META.json	/^            "DateTime::Format::Duration" : "0",$/;"	f
+DateTime::Format::Duration	lib/HPC/Runner/Command/Utils/Log.pm	/^use DateTime::Format::Duration;$/;"	u
+DateTime::Format::Duration	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use DateTime::Format::Duration;$/;"	u
+Dist::Milla	META.json	/^            "Dist::Milla" : "v1.0.16",$/;"	f
+File::Basename	META.json	/^            "File::Basename" : "0",$/;"	f
+File::Basename	lib/HPC/Runner/Command/new.pm	/^use File::Basename;$/;"	u
+File::HomeDir	META.json	/^            "File::HomeDir" : "0",$/;"	f
+File::Path	META.json	/^            "File::Path" : "0",$/;"	f
+File::Slurp	META.json	/^            "File::Slurp" : "0",$/;"	f
+File::Slurp	lib/HPC/Runner/Command/Utils/Git.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use File::Slurp;$/;"	u
+File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use File::Slurp;$/;"	u
+File::Spec	META.json	/^            "File::Spec" : "0",$/;"	f
+File::Spec	lib/HPC/Runner/Command/Utils/Git.pm	/^use File::Spec;$/;"	u
+File::Spec	lib/HPC/Runner/Command/Utils/Log.pm	/^use File::Spec;$/;"	u
+File::Spec::Functions	META.json	/^            "File::Spec::Functions" : "0",$/;"	f
+File::Temp	META.json	/^            "File::Temp" : "0",$/;"	f
+FindBin	META.json	/^            "FindBin" : "0",$/;"	f
+Git::Wrapper	META.json	/^            "Git::Wrapper" : "0",$/;"	f
+Git::Wrapper	lib/HPC/Runner/Command/Utils/Git.pm	/^use Git::Wrapper;$/;"	u
+Git::Wrapper::Plus::Branches	META.json	/^            "Git::Wrapper::Plus::Branches" : "0",$/;"	f
+Git::Wrapper::Plus::Branches	lib/HPC/Runner/Command/Utils/Git.pm	/^use Git::Wrapper::Plus::Branches;$/;"	u
+Git::Wrapper::Plus::Ref::Tag	META.json	/^            "Git::Wrapper::Plus::Ref::Tag" : "0",$/;"	f
+Git::Wrapper::Plus::Ref::Tag	lib/HPC/Runner/Command/Utils/Git.pm	/^use Git::Wrapper::Plus::Ref::Tag;$/;"	u
+Git::Wrapper::Plus::Tags	META.json	/^            "Git::Wrapper::Plus::Tags" : "0",$/;"	f
+Git::Wrapper::Plus::Tags	lib/HPC/Runner/Command/Utils/Git.pm	/^use Git::Wrapper::Plus::Tags;$/;"	u
+HPC::Runner::Command	lib/HPC/Runner/Command.pm	/^package HPC::Runner::Command;$/;"	p
+HPC::Runner::Command	lib/HPC/Runner/Command/execute_array.pm	/^extends 'HPC::Runner::Command';$/;"	e
+HPC::Runner::Command	lib/HPC/Runner/Command/execute_job.pm	/^extends 'HPC::Runner::Command';$/;"	e
+HPC::Runner::Command	lib/HPC/Runner/Command/new.pm	/^extends 'HPC::Runner::Command';$/;"	e
+HPC::Runner::Command	lib/HPC/Runner/Command/submit_jobs.pm	/^extends 'HPC::Runner::Command';$/;"	e
+HPC::Runner::Command	script/hpcrunner.pl	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use HPC::Runner::Command;$/;"	u
+HPC::Runner::Command::Plugin::ConfigHome	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^package HPC::Runner::Command::Plugin::ConfigHome;$/;"	p
+HPC::Runner::Command::Plugin::ConfigHome::Meta::Class	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^package HPC::Runner::Command::Plugin::ConfigHome::Meta::Class;$/;"	p
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Base.pm	/^    with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Base.pm	/^package HPC::Runner::Command::Utils::Base;$/;"	p
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Log.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/execute_array.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/execute_job.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/submit_jobs.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Git	lib/HPC/Runner/Command/Utils/Git.pm	/^package HPC::Runner::Command::Utils::Git;$/;"	p
+HPC::Runner::Command::Utils::Git	lib/HPC/Runner/Command/execute_array.pm	/^with 'HPC::Runner::Command::Utils::Git';$/;"	w
+HPC::Runner::Command::Utils::Git	lib/HPC/Runner/Command/execute_job.pm	/^with 'HPC::Runner::Command::Utils::Git';$/;"	w
+HPC::Runner::Command::Utils::Git	lib/HPC/Runner/Command/submit_jobs.pm	/^with 'HPC::Runner::Command::Utils::Git';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/Utils/Git.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/Utils/Log.pm	/^package HPC::Runner::Command::Utils::Log;$/;"	p
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/execute_array.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/execute_job.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/submit_jobs.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Plugin	lib/HPC/Runner/Command.pm	/^with 'HPC::Runner::Command::Utils::Plugin';$/;"	w
+HPC::Runner::Command::Utils::Plugin	lib/HPC/Runner/Command/Utils/Plugin.pm	/^package HPC::Runner::Command::Utils::Plugin;$/;"	p
+HPC::Runner::Command::Utils::Traits	lib/HPC/Runner/Command/Utils/Traits.pm	/^package HPC::Runner::Command::Utils::Traits;$/;"	p
+HPC::Runner::Command::execute_array	lib/HPC/Runner/Command/execute_array.pm	/^package HPC::Runner::Command::execute_array;$/;"	p
+HPC::Runner::Command::execute_job	lib/HPC/Runner/Command/execute_job.pm	/^package HPC::Runner::Command::execute_job;$/;"	p
+HPC::Runner::Command::execute_job::Utils::MCE	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^package HPC::Runner::Command::execute_job::Utils::MCE;$/;"	p
+HPC::Runner::Command::new	lib/HPC/Runner/Command/new.pm	/^package HPC::Runner::Command::new;$/;"	p
+HPC::Runner::Command::submit_jobs	lib/HPC/Runner/Command/submit_jobs.pm	/^package HPC::Runner::Command::submit_jobs;$/;"	p
+HPC::Runner::Command::submit_jobs::Plugin::Dummy	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^package HPC::Runner::Command::submit_jobs::Plugin::Dummy;$/;"	p
+HPC::Runner::Command::submit_jobs::Plugin::Slurm	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^package HPC::Runner::Command::submit_jobs::Plugin::Slurm;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Files;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobStats;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::ParseInput;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps;$/;"	p
+HPC::Runner::Slurm	_docs/Usage.pod	/^    extends 'HPC::Runner::Slurm';$/;"	e
+IO::File	META.json	/^            "IO::File" : "0",$/;"	f
+IO::File	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use IO::File;$/;"	u
+IO::File	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IO::File;$/;"	u
+IO::File	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use IO::File;$/;"	u
+IO::Interactive	META.json	/^            "IO::Interactive" : "0",$/;"	f
+IO::Select	META.json	/^            "IO::Select" : "0",$/;"	f
+IO::Select	lib/HPC/Runner/Command/Utils/Log.pm	/^use IO::Select;$/;"	u
+IO::Select	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IO::Select;$/;"	u
+IPC::Cmd	META.json	/^            "IPC::Cmd" : "0",$/;"	f
+IPC::Cmd	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use IPC::Cmd;$/;"	u
+IPC::Open3	META.json	/^            "IPC::Open3" : "0",$/;"	f
+IPC::Open3	lib/HPC/Runner/Command/Utils/Log.pm	/^use IPC::Open3;$/;"	u
+IPC::Open3	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IPC::Open3;$/;"	u
+JSON	META.json	/^            "JSON" : "0",$/;"	f
+JSON	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use JSON;$/;"	u
+JSON::XS	META.json	/^            "JSON::XS" : "0",$/;"	f
+JSON::XS	lib/HPC/Runner/Command/execute_array.pm	/^use JSON::XS;$/;"	u
+JSON::XS	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use JSON::XS;$/;"	u
+List::MoreUtils	META.json	/^            "List::MoreUtils" : "0",$/;"	f
+List::Uniq	META.json	/^            "List::Uniq" : "0",$/;"	f
+List::Util	META.json	/^            "List::Util" : "0",$/;"	f
+Log::Log4perl	META.json	/^            "Log::Log4perl" : "0",$/;"	f
+Log::Log4perl	_docs/Usage.pod	/^    use Log::Log4perl;$/;"	u
+Log::Log4perl	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Log::Log4perl;$/;"	u
+MCE	META.json	/^            "MCE" : "0",$/;"	f
+MCE	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use MCE;$/;"	u
+MCE::Queue	META.json	/^            "MCE::Queue" : "0",$/;"	f
+MCE::Queue	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use MCE::Queue;$/;"	u
+Main	_docs/Usage.pod	/^    package Main;$/;"	p
+Main	script/hpcrunner.pl	/^package Main;$/;"	p
+Module::Build::Tiny	META.json	/^            "Module::Build::Tiny" : "0.034"$/;"	f
+Moose	META.json	/^            "Moose" : "0",$/;"	f
+Moose	_docs/Usage.pod	/^    use Moose;$/;"	u
+Moose	lib/HPC/Runner/Command/Utils/Base.pm	/^    use Moose;$/;"	u
+Moose	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^use Moose;$/;"	u
+Moose	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^use Moose;$/;"	u
+Moose	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^use Moose;$/;"	u
+Moose	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Moose;$/;"	u
+Moose	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use Moose;$/;"	u
+Moose::Role	META.json	/^            "Moose::Role" : "0",$/;"	f
+Moose::Role	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Moose::Role;$/;"	u
+Moose::Util::TypeConstraints	META.json	/^            "Moose::Util::TypeConstraints" : "0",$/;"	f
+Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Moose::Util::TypeConstraints;$/;"	u
+Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^use Moose::Util::TypeConstraints;$/;"	u
+Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^use Moose::Util::TypeConstraints;$/;"	u
+MooseX::App	META.json	/^            "MooseX::App" : "0",$/;"	f
+MooseX::App::Command	META.json	/^            "MooseX::App::Command" : "0",$/;"	f
+MooseX::App::Command	lib/HPC/Runner/Command/execute_array.pm	/^use MooseX::App::Command;$/;"	u
+MooseX::App::Command	lib/HPC/Runner/Command/execute_job.pm	/^use MooseX::App::Command;$/;"	u
+MooseX::App::Command	lib/HPC/Runner/Command/new.pm	/^use MooseX::App::Command;$/;"	u
+MooseX::App::Command	lib/HPC/Runner/Command/submit_jobs.pm	/^use MooseX::App::Command;$/;"	u
+MooseX::App::Plugin::Config	META.json	/^            "MooseX::App::Plugin::Config" : "0",$/;"	f
+MooseX::App::Role	META.json	/^            "MooseX::App::Role" : "0",$/;"	f
+MooseX::App::Role	lib/HPC/Runner/Command/Utils/Base.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/Utils/Git.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/Utils/Log.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role::Log4perl	META.json	/^            "MooseX::App::Role::Log4perl" : "0",$/;"	f
+MooseX::App::Role::Log4perl	lib/HPC/Runner/Command/new.pm	/^with 'MooseX::App::Role::Log4perl';$/;"	w
+MooseX::Object::Pluggable	META.json	/^            "MooseX::Object::Pluggable" : "0",$/;"	f
+MooseX::Object::Pluggable	lib/HPC/Runner/Command/Utils/Plugin.pm	/^with 'MooseX::Object::Pluggable';$/;"	w
+MooseX::Types	META.json	/^            "MooseX::Types" : "0",$/;"	f
+MooseX::Types::Moose	META.json	/^            "MooseX::Types::Moose" : "0",$/;"	f
+MooseX::Types::Path::Tiny	META.json	/^            "MooseX::Types::Path::Tiny" : "0",$/;"	f
+MyApp	lib/HPC/Runner/Command/Utils/Base.pm	/^    package MyApp;$/;"	p
+POSIX	META.json	/^            "POSIX" : "0",$/;"	f
+POSIX	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use POSIX;$/;"	u
+Slurp	META.json	/^            "Slurp" : "0",$/;"	f
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use Slurp;$/;"	u
+Slurp	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use Slurp;$/;"	u
+Sort::Versions	META.json	/^            "Sort::Versions" : "0",$/;"	f
+Sort::Versions	lib/HPC/Runner/Command/Utils/Git.pm	/^use Sort::Versions;$/;"	u
+Storable	META.json	/^            "Storable" : "0",$/;"	f
+String::Approx	META.json	/^            "String::Approx" : "0",$/;"	f
+Symbol	META.json	/^            "Symbol" : "0",$/;"	f
+Symbol	lib/HPC/Runner/Command/Utils/Log.pm	/^use Symbol;$/;"	u
+Symbol	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Symbol;$/;"	u
+Template	META.json	/^            "Template" : "0",$/;"	f
+Template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Template;$/;"	u
+Test::Class::Moose	META.json	/^            "Test::Class::Moose" : "0",$/;"	f
+Test::Class::Moose	t/lib/TestMethods/Base.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use Test::Class::Moose;$/;"	u
+Test::Class::Moose::Load	META.json	/^            "Test::Class::Moose::Load" : "0",$/;"	f
+Test::Class::Moose::Runner	META.json	/^            "Test::Class::Moose::Runner" : "0",$/;"	f
+Test::More	META.json	/^            "Test::More" : "0",$/;"	f
+Test::Pod	META.json	/^            "Test::Pod" : "1.41"$/;"	f
+TestMethods::Base	t/lib/TestMethods/Base.pm	/^package TestMethods::Base;$/;"	p
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^extends 'TestMethods::Base';$/;"	e
+TestMethods::Base	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^extends 'TestMethods::Base';$/;"	e
+TestsFor::HPC::Runner::Command::Test001	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^package TestsFor::HPC::Runner::Command::Test001;$/;"	p
+TestsFor::HPC::Runner::Command::Test002	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^package TestsFor::HPC::Runner::Command::Test002;$/;"	p
+TestsFor::HPC::Runner::Command::Test003	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^package TestsFor::HPC::Runner::Command::Test003;$/;"	p
+TestsFor::HPC::Runner::Command::Test004	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^package TestsFor::HPC::Runner::Command::Test004;$/;"	p
+TestsFor::HPC::Runner::Command::Test005	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^package TestsFor::HPC::Runner::Command::Test005;$/;"	p
+TestsFor::HPC::Runner::Command::Test006	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^package TestsFor::HPC::Runner::Command::Test006;$/;"	p
+TestsFor::HPC::Runner::Command::Test007	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^package TestsFor::HPC::Runner::Command::Test007;$/;"	p
+TestsFor::HPC::Runner::Command::Test008	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^package TestsFor::HPC::Runner::Command::Test008;$/;"	p
+TestsFor::HPC::Runner::Command::Test009	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^package TestsFor::HPC::Runner::Command::Test009;$/;"	p
+Text::ANSITable	META.json	/^            "Text::ANSITable" : "0",$/;"	f
+Text::ANSITable	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Text::ANSITable;$/;"	u
+Text::ASCIITable	META.json	/^            "Text::ASCIITable" : "0",$/;"	f
+Text::ASCIITable	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Text::ASCIITable;$/;"	u
+Text::Diff	META.json	/^            "Text::Diff" : "0"$/;"	f
+Text::Diff	t/lib/TestMethods/Base.pm	/^    use Text::Diff;$/;"	u
+Try::Tiny	META.json	/^            "Try::Tiny" : "0",$/;"	f
+Try::Tiny	lib/HPC/Runner/Command/Utils/Git.pm	/^use Try::Tiny;$/;"	u
+Try::Tiny	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use Try::Tiny;$/;"	u
+Try::Tiny	lib/HPC/Runner/Command/execute_array.pm	/^use Try::Tiny;$/;"	u
+Try::Tiny	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Try::Tiny;$/;"	u
+Version::Next	META.json	/^            "Version::Next" : "0",$/;"	f
+YAML::XS	META.json	/^            "YAML::XS" : "0",$/;"	f
+YAML::XS	lib/HPC/Runner/Command/new.pm	/^use YAML::XS;$/;"	u
+_log_commands	lib/HPC/Runner/Command/Utils/Log.pm	/^sub _log_commands {$/;"	s
+_make_the_dirs	lib/HPC/Runner/Command/Utils/Base.pm	/^sub _make_the_dirs {$/;"	s
+abstract	META.json	/^   "abstract" : "Create composable bioinformatics hpc analyses.",$/;"	f
+app_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub app_load_plugins {$/;"	s
+app_log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'app_log' => ($/;"	a
+apply_global_directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub apply_global_directives {$/;"	s
+apply_job_directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub apply_job_directives {$/;"	s
+array_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'array_counter' => ($/;"	a
+array_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'array_deps' => ($/;"	a
+assert_exit_status	ci-tests/test_helpers/helpers.bash	/^assert_exit_status() {$/;"	f
+assert_failure	ci-tests/test_helpers/helpers.bash	/^assert_failure() {$/;"	f
+assert_success	ci-tests/test_helpers/helpers.bash	/^assert_success() {$/;"	f
+assign_batch_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub assign_batch_stats {$/;"	s
+assign_batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub assign_batch_tags {$/;"	s
+assign_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub assign_batches {$/;"	s
+author	META.json	/^   "author" : [$/;"	f
+batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'batch' => ($/;"	a
+batch_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'batch_counter' => ($/;"	a
+batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_deps => ($/;"	a
+batch_index_end	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'batch_index_end' => ($/;"	a
+batch_index_start	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'batch_index_start' => ($/;"	a
+batch_indexes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has batch_indexes => ($/;"	a
+batch_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_str => ($/;"	a
+batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_tags => ($/;"	a
+batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has batches => ($/;"	a
+batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has batches => ($/;"	a
+branch_things	lib/HPC/Runner/Command/Utils/Git.pm	/^sub branch_things {$/;"	s
+bugtracker	META.json	/^      "bugtracker" : {$/;"	f
+change_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub change_deps {$/;"	s
+check_add_to_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_add_to_jobs {$/;"	s
+check_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_files {$/;"	s
+check_for_commands	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub check_for_commands {$/;"	s
+check_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_jobname {$/;"	s
+check_lines_add_cmd	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub check_lines_add_cmd {$/;"	s
+check_note_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub check_note_meta {$/;"	s
+check_sanity	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub check_sanity {$/;"	s
+chunk_commands	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub chunk_commands {$/;"	s
+cmd	lib/HPC/Runner/Command/Utils/Base.pm	/^has 'cmd' => ($/;"	a
+cmd_count	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has cmd_count => ($/;"	a
+cmd_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'cmd_counter' => ($/;"	a
+cmdfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^has 'cmdfile' => ($/;"	a
+cmds	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has cmds => ($/;"	a
+cmds	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has cmds => ($/;"	a
+collect_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub collect_stats {$/;"	s
+command_log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'command_log' => ( is => 'rw', );$/;"	a
+commands_per_node	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^has 'commands_per_node' => ($/;"	a
+configure	META.json	/^      "configure" : {$/;"	f
+construct	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^sub construct {$/;"	s
+construct	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^sub construct {$/;"	s
+counter	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'counter' => ($/;"	a
+create_meta_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub create_meta_str {$/;"	s
+create_plugin_str	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub create_plugin_str {$/;"	s
+create_release	lib/HPC/Runner/Command/Utils/Git.pm	/^sub create_release {$/;"	s
+create_version_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub create_version_str {$/;"	s
+current_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'current_batch' => ($/;"	a
+current_branch	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'current_branch' => ($/;"	a
+current_job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'current_job' => ($/;"	a
+datetime_now	lib/HPC/Runner/Command/Utils/Base.pm	/^sub datetime_now {$/;"	s
+deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'deps' => ($/;"	a
+deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has deps => ($/;"	a
+develop	META.json	/^      "develop" : {$/;"	f
+directory	META.json	/^      "directory" : [$/;"	f
+dirty_run	lib/HPC/Runner/Command/Utils/Git.pm	/^sub dirty_run {$/;"	s
+do_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub do_stats {$/;"	s
+dt	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'dt' => ($/;"	a
+dynamic_config	META.json	/^   "dynamic_config" : 0,$/;"	f
+execute	lib/HPC/Runner/Command/execute_array.pm	/^sub execute {$/;"	s
+execute	lib/HPC/Runner/Command/execute_job.pm	/^sub execute {$/;"	s
+execute	lib/HPC/Runner/Command/new.pm	/^sub execute{$/;"	s
+execute	lib/HPC/Runner/Command/submit_jobs.pm	/^sub execute {$/;"	s
+execute_command	lib/HPC/Runner/Command/new.pm	/^sub execute_command{$/;"	s
+flunk	ci-tests/test_helpers/helpers.bash	/^flunk() {$/;"	f
+gen_gitignore	lib/HPC/Runner/Command/new.pm	/^sub gen_gitignore {$/;"	s
+gen_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub gen_load_plugins {$/;"	s
+gen_project_yml	lib/HPC/Runner/Command/new.pm	/^sub gen_project_yml {$/;"	s
+generated_by	META.json	/^   "generated_by" : "Dist::Milla version v1.0.16, Dist::Zilla version 6.007, CPAN::Meta::Converter version 2.150001",$/;"	f
+get_infile	lib/HPC/Runner/Command/execute_array.pm	/^sub get_infile {$/;"	s
+get_version	lib/HPC/Runner/Command/Utils/Git.pm	/^sub get_version {$/;"	s
+git	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'git' => ($/;"	a
+git_config	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_config {$/;"	s
+git_dir	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'git_dir' => ($/;"	a
+git_info	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_info {$/;"	s
+git_logs	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_logs {$/;"	s
+git_push_tags	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_push_tags {$/;"	s
+git_things	lib/HPC/Runner/Command/Utils/Base.pm	/^sub git_things {$/;"	s
+graph_job_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'graph_job_deps' => ($/;"	a
+homepage	META.json	/^      "homepage" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command",$/;"	f
+hpc_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub hpc_load_plugins {$/;"	s
+hpc_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has hpc_meta => ($/;"	a
+increase_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub increase_jobname {$/;"	s
+index_in_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub index_in_batch {$/;"	s
+index_in_batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub index_in_batch_deps {$/;"	s
+init_git	lib/HPC/Runner/Command/Utils/Git.pm	/^sub init_git {$/;"	s
+init_log	lib/HPC/Runner/Command/Utils/Log.pm	/^sub init_log {$/;"	s
+iterate_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub iterate_deps {$/;"	s
+iterate_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub iterate_schedule {$/;"	s
+job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'job' => ($/;"	a
+job_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'job_counter' => ($/;"	a
+job_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub job_load_plugins {$/;"	s
+job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'job_stats' => ($/;"	a
+jobnames	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has jobnames => ($/;"	a
+jobref	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'jobref' => ($/;"	a
+jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'jobs' => ($/;"	a
+license	META.json	/^   "license" : [$/;"	f
+log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'log' => ($/;"	a
+log	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^has 'log' => ($/;"	a
+log_cmd_messages	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_cmd_messages {$/;"	s
+log_job	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_job {$/;"	s
+log_main_messages	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_main_messages {$/;"	s
+log_table	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_table {$/;"	s
+logfile	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'logfile' => ($/;"	a
+make_test_dir	t/lib/TestMethods/Base.pm	/^sub make_test_dir{$/;"	s
+mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'mce' => ($/;"	a
+meta-spec	META.json	/^   "meta-spec" : {$/;"	f
+name	META.json	/^   "name" : "HPC-Runner-Command",$/;"	f
+name_log	lib/HPC/Runner/Command/Utils/Log.pm	/^sub name_log {$/;"	s
+namespace::autoclean	META.json	/^            "namespace::autoclean" : "0",$/;"	f
+namespace::autoclean	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^use namespace::autoclean;$/;"	u
+namespace::autoclean	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^use namespace::autoclean;$/;"	u
+namespace::autoclean	lib/HPC/Runner/Command/Utils/Git.pm	/^use namespace::autoclean;$/;"	u
+namespace::autoclean	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^use namespace::autoclean;$/;"	u
+no_index	META.json	/^   "no_index" : {$/;"	f
+parse_file_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub parse_file_mce{$/;"	s
+parse_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub parse_file_slurm {$/;"	s
+parse_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub parse_meta {$/;"	s
+parse_plugin_opts	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub parse_plugin_opts {$/;"	s
+perl	META.json	/^            "perl" : "5.010",$/;"	f
+plugin_metaroles	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^sub plugin_metaroles {$/;"	s
+pop_note_meta	lib/HPC/Runner/Command/Utils/Log.pm	/^sub pop_note_meta {$/;"	s
+post_process_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub post_process_file_slurm {$/;"	s
+post_process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub post_process_jobs {$/;"	s
+pre_process_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub pre_process_batch {$/;"	s
+prepare_batch_files_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub prepare_batch_files_array {$/;"	s
+prepare_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub prepare_counter {$/;"	s
+prepare_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub prepare_files {$/;"	s
+prepare_sched_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub prepare_sched_file {$/;"	s
+prereqs	META.json	/^   "prereqs" : {$/;"	f
+print_diff	t/lib/TestMethods/Base.pm	/^sub print_diff {$/;"	s
+process_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_batch {$/;"	s
+process_batch_command	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_batch_command {$/;"	s
+process_batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub process_batch_deps {$/;"	s
+process_hpc_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub process_hpc_meta {$/;"	s
+process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_jobs {$/;"	s
+process_lines	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub process_lines{$/;"	s
+process_lines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub process_lines {$/;"	s
+process_template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_template {$/;"	s
+proto_config	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^around 'proto_config' => sub {$/;"	x
+queue	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'queue' => ($/;"	a
+release_status	META.json	/^   "release_status" : "stable",$/;"	f
+remote	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'remote' => ($/;"	a
+repository	META.json	/^      "repository" : {$/;"	f
+requires	META.json	/^         "requires" : {$/;"	f
+resolve_max_array_size	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub resolve_max_array_size {$/;"	s
+resolve_project	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub resolve_project {$/;"	s
+resources	META.json	/^   "resources" : {$/;"	f
+return_ranges	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub return_ranges {$/;"	s
+root	book.json	/^    "root": ".\/_docs"$/;"	f
+run	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub run {$/;"	s
+run_command_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_command_mce{$/;"	s
+run_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_mce{$/;"	s
+runtime	META.json	/^      "runtime" : {$/;"	f
+sanity_check_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub sanity_check_schedule {$/;"	s
+sched_counter	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^has 'sched_counter' => ($/;"	a
+schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^has 'schedule' => ($/;"	a
+schedule_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub schedule_jobs {$/;"	s
+scheduler_id	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'scheduler_id' => ($/;"	a
+scheduler_ids	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'scheduler_ids' => ($/;"	a
+scheduler_ids	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has scheduler_ids => ($/;"	a
+scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub scheduler_ids_by_array {$/;"	s
+scheduler_ids_by_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub scheduler_ids_by_batch {$/;"	s
+scheduler_index	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'scheduler_index' => ($/;"	a
+search_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub search_batches {$/;"	s
+search_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub search_tags {$/;"	s
+set_logdir	lib/HPC/Runner/Command/Utils/Log.pm	/^sub set_logdir {$/;"	s
+set_logfile	lib/HPC/Runner/Command/Utils/Log.pm	/^sub set_logfile {$/;"	s
+set_outdir	lib/HPC/Runner/Command/Utils/Base.pm	/^sub set_outdir {$/;"	s
+slurmfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^has 'slurmfile' => ($/;"	a
+strict	META.json	/^            "strict" : "0",$/;"	f
+strict	lib/HPC/Runner/Command/Utils/Traits.pm	/^use strict;$/;"	u
+strict	lib/HPC/Runner/Command/new.pm	/^use strict;$/;"	u
+strict	t/lib/TestMethods/Base.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use strict;$/;"	u
+strict	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use strict;$/;"	u
+submit_by_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'submit_by_tags' => ($/;"	a
+submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub submit_jobs{$/;"	s
+submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub submit_jobs{$/;"	s
+submit_to_scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub submit_to_scheduler {$/;"	s
+submitted	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'submitted' => ($/;"	a
+table_data	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'table_data' => ($/;"	a
+task_deps	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'task_deps' => ($/;"	a
+task_id	lib/HPC/Runner/Command/execute_array.pm	/^has 'task_id' => ($/;"	a
+task_tags	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'task_tags' => ($/;"	a
+template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'template' => ($/;"	a
+template_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'template_file' => ($/;"	a
+test	META.json	/^      "test" : {$/;"	f
+test_000	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub test_000 : Tags(require) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub test_001 : Tags(new) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^sub test_001 : Tags(submit_jobs) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^sub test_001 : Tags(job_stats) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^sub test_001 : Tags(job_stats) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^sub test_001 : Tags(job_stats) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^sub test_001 : Tags(execute_array) {$/;"	s
+test_001	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^sub test_001 : Tags(execute_array) {$/;"	s
+test_002	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub test_002 : Tags(construction) {$/;"	s
+test_003	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub test_003 : Tags(construction) {$/;"	s
+test_003	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_003 : Tags(construction) {$/;"	s
+test_003	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub test_003 : Tags(construct) {$/;"	s
+test_004	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub test_004 : Tags(submit_jobs) {$/;"	s
+test_005	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_005 : Tags(submit_jobs) {$/;"	s
+test_005	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub test_005 : Tags(submit_jobs) {$/;"	s
+test_007	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_007 : Tags(check_hpc_meta) {$/;"	s
+test_008	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_008 : Tags(check_hpc_meta) {$/;"	s
+test_009	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_009 : Tags(check_hpc_meta) {$/;"	s
+test_010	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_010 : Tags(check_note_meta) {$/;"	s
+test_011	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_011 : Tags(check_hpc_meta) {$/;"	s
+test_012	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_012 : Tags(job_stats) {$/;"	s
+test_013	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_013 : Tags(jobname) {$/;"	s
+test_014	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_014 : Tags(job_stats) {$/;"	s
+test_015	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_015 : Tags(submit_jobs) {$/;"	s
+test_016	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub test_016 : Tags(files) {$/;"	s
+test_shutdown	t/lib/TestMethods/Base.pm	/^sub test_shutdown {$/;"	s
+total_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has 'total_batches' => ($/;"	a
+total_processes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has 'total_processes' => ($/;"	a
+type	META.json	/^         "type" : "git",$/;"	f
+unparse_plugin_opts	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub unparse_plugin_opts {$/;"	s
+update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub update_job_deps{$/;"	s
+update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub update_job_deps{$/;"	s
+url	META.json	/^         "url" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command.git",$/;"	f
+url	META.json	/^      "url" : "http:\/\/search.cpan.org\/perldoc?CPAN::Meta::Spec",$/;"	f
+using_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'using_mce' => ($/;"	a
+utf8	META.json	/^            "utf8" : "0",$/;"	f
+utf8	script/hpcrunner.pl	/^use utf8;$/;"	u
+version	META.json	/^      "version" : 2$/;"	f
+version	META.json	/^   "version" : "0.01",$/;"	f
+wait	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'wait' => ($/;"	a
+warnings	META.json	/^            "warnings" : "0"$/;"	f
+warnings	lib/HPC/Runner/Command/Utils/Traits.pm	/^use warnings;$/;"	u
+warnings	lib/HPC/Runner/Command/new.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestMethods/Base.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use warnings;$/;"	u
+warnings	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use warnings;$/;"	u
+web	META.json	/^         "web" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command"$/;"	f
+web	META.json	/^         "web" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command\/issues"$/;"	f
+work	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub work {$/;"	s
+write_batch_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub write_batch_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test005.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^sub write_test_file {$/;"	s
+write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^sub write_test_file {$/;"	s
+x_contributors	META.json	/^   "x_contributors" : [$/;"	f
+x_serialization_backend	META.json	/^   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0217"$/;"	f

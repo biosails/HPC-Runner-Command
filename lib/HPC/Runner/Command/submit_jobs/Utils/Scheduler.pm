@@ -1,16 +1,5 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler;
 
-# use Log::Log4perl qw(:easy);
-# use DateTime;
-# use JSON;
-# use List::Util qw(shuffle);
-# use IO::File;
-# use Algorithm::Dependency;
-# use Algorithm::Dependency::Source::HoA;
-# use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
-# use Moose::Util::TypeConstraints;
-# use List::MoreUtils qw(firstidx);
-
 use File::Path qw(make_path);
 use File::Temp qw/ tempfile /;
 use IO::Select;
@@ -20,6 +9,7 @@ use Symbol;
 use Template;
 use DBM::Deep;
 use Storable qw(dclone);
+use Text::ASCIITable;
 
 use MooseX::App::Role;
 
@@ -154,7 +144,7 @@ The afterok switch in slurm. --afterok 123 will tell slurm to start this job aft
 
 =cut
 
-option afterok => (
+option 'afterok' => (
     traits   => ['Array'],
     is       => 'rw',
     required => 0,
@@ -265,7 +255,7 @@ The default is to use 4 procs
 
 =cut
 
-option serial => (
+option 'serial' => (
     is      => 'rw',
     isa     => 'Bool',
     default => 0,
@@ -347,15 +337,12 @@ has 'deps' => (
     traits    => ['Array'],
     is        => 'rw',
     isa       => ArrayRefOfStrs,
-    'coerce'  => 1,
+    coerce    => 1,
     predicate => 'has_deps',
     clearer   => 'clear_deps',
     required  => 0,
     trigger   => sub {
         my $self = shift;
-
-        #print "Triggering deps deps ".Dumper($self->deps);
-        #print "Triggering deps graph deps".Dumper($self->deps);
 
         $self->graph_job_deps->{ $self->jobname } = $self->deps;
         $self->jobs->{ $self->jobname }->{deps} = $self->deps;
@@ -683,8 +670,8 @@ sub iterate_schedule {
     $self->clear_scheduler_ids;
     $self->app_log->info('Beginning to submit jobs to the scheduler');
 
-    $self->app_log->debug(
-        'Schedule is ' . join( ", ", @{ $self->schedule } ) );
+    $self->app_log->info(
+        'Schedule is ' . join( ", ", @{ $self->schedule } )."\n" );
 
     foreach my $job ( $self->all_schedules ) {
 
@@ -699,6 +686,8 @@ sub iterate_schedule {
 
         $self->process_jobs();
     }
+
+    $self->summarize_jobs;
 }
 
 =head3 iterate_deps
@@ -732,20 +721,6 @@ sub iterate_deps {
     }
 }
 
-=head3 post_process_jobs
-
-=cut
-
-sub post_process_jobs {
-    my $self = shift;
-
-    $self->jobs->{ $self->current_job }->submitted(1);
-
-    $self->inc_job_counter;
-
-    $self->clear_scheduler_ids;
-}
-
 =head3 process_jobs
 
 =cut
@@ -774,6 +749,20 @@ sub process_jobs {
 
 }
 
+=head3 post_process_jobs
+
+=cut
+
+sub post_process_jobs {
+    my $self = shift;
+
+    $self->jobs->{ $self->current_job }->submitted(1);
+
+    $self->inc_job_counter;
+
+    $self->clear_scheduler_ids;
+}
+
 =head3 pre_process_batch
 
 Go through the batch, add it, and see if we have any tags
@@ -796,6 +785,12 @@ sub pre_process_batch {
           . $desc
           . ' for job type '
           . $self->current_job );
+
+    $self->app_log->info( 'Submitted in '
+          . $self->jobs->{ $self->current_job }->{num_job_arrays}
+          . ' job arrays.'
+          . "\n" )
+      unless $self->use_batches;
 
     foreach my $batch (@batches) {
         next unless $batch;
@@ -854,7 +849,6 @@ sub scheduler_ids_by_batch {
 
 sub scheduler_ids_by_array {
     my $self = shift;
-
 
     my $scheduler_index = $self->current_batch->scheduler_index;
     return unless $scheduler_index;
@@ -1304,6 +1298,42 @@ sub submit_to_scheduler {
 
     sleep(5);
     return ( $exitcode, $stdout, $stderr );
+}
+
+=head3 summarize_jobs
+
+=cut
+
+sub summarize_jobs {
+    my $self = shift;
+
+    my $t    = Text::ASCIITable->new();
+    my $x    = 0;
+    my @rows = ();
+
+    foreach my $job ( $self->all_schedules ) {
+
+        for ( my $x = 0 ; $x < $self->jobs->{$job}->count_scheduler_ids ; $x++ )
+        {
+            my $row = [];
+            my $batch_start =
+              $self->jobs->{$job}->batch_indexes->[$x]->{'batch_index_start'};
+            my $batch_end =
+              $self->jobs->{$job}->batch_indexes->[$x]->{'batch_index_end'};
+            my $len = ( $batch_end - $batch_start ) + 1;
+
+            push( @{$row}, $job );
+            push( @{$row}, $self->jobs->{$job}->scheduler_ids->[$x] );
+            push( @{$row}, "$batch_start-$batch_end" );
+            push( @{$row}, $len );
+            push( @rows,   $row );
+        }
+    }
+    $t->setCols(
+        [ "Job Name", "Scheduler ID", "Task Indices", "Total Tasks" ] );
+    map { $t->addRow($_) } @rows;
+    $self->app_log->info("Job Summary");
+    $self->app_log->info( "\n" . $t );
 }
 
 1;
