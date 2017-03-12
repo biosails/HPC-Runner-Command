@@ -8,8 +8,6 @@ use IPC::Cmd;
 use Cwd qw(getcwd);
 use Try::Tiny;
 
-use Data::Dumper;
-
 with 'MooseX::Object::Pluggable';
 
 =head1 HPC::Runner::Command::Utils::Plugin
