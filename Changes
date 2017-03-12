@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Official stable release
 
 3.0.1  2017-01-11 10:54:34 GST
 	- Bug fixes for cpan tests
