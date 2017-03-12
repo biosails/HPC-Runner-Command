@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Bug fix for ManyConfigs
 
 3.1.0  2017-03-12 11:16:13 GST
 	- Official stable release
