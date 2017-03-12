@@ -5,7 +5,7 @@ use MooseX::App qw(Color);
 with 'HPC::Runner::Command::Utils::Plugin';
 with 'HPC::Runner::Command::Utils::ManyConfigs';
 
-our $VERSION = '3.0.1';
+our $VERSION = '3.1.0';
 
 app_strict 0;
 
