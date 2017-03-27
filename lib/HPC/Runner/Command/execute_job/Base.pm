@@ -15,7 +15,7 @@ has 'job_scheduler_id' => (
     isa     => 'Str|Undef',
     default => sub {
         my $self = shift;
-        my $scheduler_id =  $ENV{SBATCH_JOB_ID} || $ENV{PBS_JOBID} || '';
+        my $scheduler_id =  $ENV{SLURM_JOB_ID} || $ENV{SBATCH_JOB_ID} || $ENV{PBS_JOBID} || '';
         if($self->can('task_id') && $self->task_id){
           $scheduler_id = $scheduler_id . '_'.$self->task_id;
         }

@@ -314,7 +314,7 @@ sub start_command_log {
   my $cmdpid = shift;
 
     if ( $self->job_scheduler_id ) {
-        $self->name_log( "SID_" . $self->job_scheduler_id );
+        $self->name_log( "_SID_" . $self->job_scheduler_id . "_PID_" . $cmdpid );
     }
     else {
         $self->name_log( "PID_" . $cmdpid );

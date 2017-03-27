@@ -619,6 +619,8 @@ sub check_add_to_jobs {
           );
         $self->jobs->{ $self->jobname }->partition( $self->partition )
           if $self->has_partition;
+        $self->jobs->{ $self->jobname }->account( $self->account )
+          if $self->has_account;
     }
     $self->graph_job_deps->{ $self->jobname } = [];
 }
@@ -671,7 +673,7 @@ sub iterate_schedule {
     $self->app_log->info('Beginning to submit jobs to the scheduler');
 
     $self->app_log->info(
-        'Schedule is ' . join( ", ", @{ $self->schedule } )."\n" );
+        'Schedule is ' . join( ", ", @{ $self->schedule } ) . "\n" );
 
     foreach my $job ( $self->all_schedules ) {
 
@@ -1029,9 +1031,23 @@ sub process_batch {
         $ok = $self->join_scheduler_ids(':');
     }
 
-    #TODO batch_index_start and end will be an array
+    my $count_by;
+    if ( $self->use_batches ) {
+        $count_by = [
+            {
+                batch_index_start =>
+                  $self->jobs->{ $self->current_job }->{batch_index_start},
+                batch_index_end =>
+                  $self->jobs->{ $self->current_job }->{batch_index_end},
+            }
+        ];
+    }
+    else {
+        $count_by = $self->jobs->{ $self->current_job }->batch_indexes;
+    }
+
     foreach my $batch_indexes (
-        $self->jobs->{ $self->current_job }->all_batch_indexes )
+        @{$count_by} )
     {
 
         my $counter;
@@ -1313,9 +1329,14 @@ sub summarize_jobs {
 
     foreach my $job ( $self->all_schedules ) {
 
+        # use Data::Dumper;
+        #   print Dumper($self->jobs->{$job});
         for ( my $x = 0 ; $x < $self->jobs->{$job}->count_scheduler_ids ; $x++ )
         {
             my $row = [];
+
+            #TODO Add testing coverage for using batches
+            $DB::single = 2;
             my $batch_start =
               $self->jobs->{$job}->batch_indexes->[$x]->{'batch_index_start'};
             my $batch_end =

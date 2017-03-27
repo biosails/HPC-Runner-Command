@@ -30,6 +30,7 @@ has 'task_id' => (
     default => sub {
         return
              $ENV{'SLURM_ARRAY_TASK_ID'}
+          || $ENV{'SBATCH_ARRAY_TASK_ID'}
           || $ENV{'PBS_ARRAYID'}
           || $ENV{'SGE_TASK_ID'}
           || 0;

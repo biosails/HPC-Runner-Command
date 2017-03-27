@@ -34,7 +34,7 @@ option 'jobname' => (
     traits   => ['String'],
     default  => q{job},
     default =>
-      sub { return $ENV{SBATCH_JOB_NAME} || $ENV{PBS_JOBNAME} || 'job'; },
+      sub { return $ENV{SLURM_JOB_NAME} || $ENV{SBATCH_JOB_NAME} || $ENV{PBS_JOBNAME} || 'job'; },
     predicate => 'has_jobname',
     handles   => {
         add_jobname     => 'append',

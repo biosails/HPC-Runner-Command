@@ -132,7 +132,7 @@ sub sanity_check_schedule {
                         "No potential matches were found for dependency $r");
                 }
             }
-            else{
+            else {
             }
 
             $y++;
@@ -141,8 +141,8 @@ sub sanity_check_schedule {
         $depstring = join( ", ", @{$ref} );
         push( @$row, $depstring );
 
-        my $count_cmd = $self->jobs->{ $job }->count_cmds;
-        push(@$row, $count_cmd);
+        my $count_cmd = $self->jobs->{$job}->count_cmds;
+        push( @$row, $count_cmd );
 
         push( @rows, $row );
         $x++;
@@ -164,7 +164,7 @@ sub sanity_check_schedule {
             "Here is your tabular dependency list in alphabetical order");
     }
 
-    $self->app_log->info("\n\n".$t);
+    $self->app_log->info( "\n\n" . $t );
 
     return $search;
 }
@@ -226,6 +226,7 @@ sub chunk_commands {
 
         $DB::single = 2;
 
+        # TODO Update this - they should both use the same method
         if ( !$self->use_batches ) {
 
             my $number_of_batches =
@@ -238,14 +239,25 @@ sub chunk_commands {
                 $number_of_batches );
         }
         else {
-            $DB::single = 2;
-            $self->jobs->{ $self->current_job }->{batch_indexes} = [
-                {
-                    batch_index_start => $batch_index_start,
-                    batch_index_end   => $batch_index_end
-                }
-            ];
+
+            $self->max_array_size($commands_per_node);
+            my $number_of_batches =
+              $self->resolve_max_array_size(  scalar @cmds, $commands_per_node );
+
+            $self->jobs->{ $self->current_job }->{num_job_arrays} =
+              $number_of_batches;
+
+            $self->return_ranges( $batch_index_start, $batch_index_end,
+                $number_of_batches );
+
+            # $self->jobs->{ $self->current_job }->{batch_indexes} = [
+            #     {
+            #         batch_index_start => $batch_index_start,
+            #         batch_index_end   => $batch_index_end
+            #     }
+            # ];
         }
+        $DB::single = 2;
 
     }
 
