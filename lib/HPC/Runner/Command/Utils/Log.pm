@@ -14,7 +14,7 @@ use File::Spec;
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
-with 'HPC::Runner::Command::Utils::Base';
+# with 'HPC::Runner::Command::Utils::Base';
 
 =head1 HPC::Runner::Command::Utils::Log
 
