@@ -97,24 +97,22 @@ perl command.pl 2
 
 =cut
 
-#TODO move to execute_jobs
-
 sub _log_commands {
     my ( $self, $pid ) = @_;
 
     my $dt1 = DateTime->now( time_zone => 'local' );
 
     $DB::single = 2;
-
-    my ( $cmdpid, $exitcode ) = $self->log_job;
-
     my $ymd = $dt1->ymd();
     my $hms = $dt1->hms();
 
-    #TODO Make table data its own class and return it
     $self->clear_table_data;
-    $self->set_table_data( cmdpid     => $cmdpid );
     $self->set_table_data( start_time => "$ymd $hms" );
+
+    my ( $cmdpid, $exitcode ) = $self->log_job;
+
+    #TODO Make table data its own class and return it
+    $self->set_table_data( cmdpid     => $cmdpid );
 
     my $meta = $self->pop_note_meta;
     $self->set_task_tag( $cmdpid => $meta ) if $meta;
@@ -126,7 +124,7 @@ sub _log_commands {
     my $dt2      = DateTime->now();
     my $duration = $dt2 - $dt1;
     my $format   = DateTime::Format::Duration->new( pattern =>
-          '%Y years, %m months, %e days, %H hours, %M minutes, %S seconds' );
+          ' %e days, %H hours, %M minutes, %S seconds' );
 
     $self->log_cmd_messages( "info",
         "Total execution time " . $format->format_duration($duration),
@@ -255,6 +253,7 @@ sub log_job {
 
     $infh->autoflush();
 
+    # Start Command Log
     $self->start_command_log($cmdpid);
 
     $DB::single = 2;

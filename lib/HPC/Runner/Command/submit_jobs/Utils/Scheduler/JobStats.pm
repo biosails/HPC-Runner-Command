@@ -98,6 +98,7 @@ sub create_meta_str {
     $batch->{total_jobs}      = $self->keys_jobnames;
     $batch->{jobname}         = $current_job;
     $batch->{job_counter}     = $counter;
+    $batch->{job_tasks} = scalar @{$job->cmds};
 
     if ($use_batches) {
         $batch->{batch_index} = $batch_counter . "/" . $self->total_batches;

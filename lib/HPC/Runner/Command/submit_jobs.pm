@@ -31,6 +31,8 @@ option 'dry_run' => (
     documentation => 'Do a dry run - do not submit to the scheduler.'
 );
 
+# TODO investigate changing this to after 'BUILD'.
+
 sub BUILD {
     my $self = shift;
 

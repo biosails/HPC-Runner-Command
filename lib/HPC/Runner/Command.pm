@@ -5,6 +5,10 @@ use MooseX::App qw(Color);
 with 'HPC::Runner::Command::Utils::Plugin';
 with 'HPC::Runner::Command::Utils::ManyConfigs';
 
+option '+config_base' => (
+    default       => '.hpcrunner',
+);
+
 our $VERSION = '3.1.1';
 
 app_strict 0;
