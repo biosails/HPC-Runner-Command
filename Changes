@@ -1,6 +1,8 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Made some fixes to environmental variables for slurm
+	- Changed duration from %year %month ... to just %day %hours %minutes
 
 3.1.1  2017-03-12 14:44:10 GST
 	- Bug fix for ManyConfigs
