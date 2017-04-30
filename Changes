@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Additional logging info on jobs - hostname, job scheduler id, array id
 
 3.1.2  2017-04-01 11:22:06 GST
 	- Made some fixes to environmental variables for slurm

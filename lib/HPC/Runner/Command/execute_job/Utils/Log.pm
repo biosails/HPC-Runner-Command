@@ -333,6 +333,16 @@ sub start_command_log {
         $cmdpid
     );
 
+    my $log_array_msg = "";
+    if($self->can('task_id')){
+      $log_array_msg = "Array ID:\t".$self->task_id;
+    }
+    
+    $self->log_cmd_messages(
+     "info",
+     "Hostname:\t".$self->hostname."\n"."Job Scheduler ID:\t".$self->job_scheduler_id."$log_array_msg\n\n"
+    );
+
     #TODO counter is not terribly applicable with task ids
     $self->log_cmd_messages(
         "info",
