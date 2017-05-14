@@ -3,6 +3,7 @@ package HPC::Runner::Command::execute_job::Base;
 use Moose::Role;
 
 with 'HPC::Runner::Command::execute_job::Utils::Log';
+use Sys::Hostname;
 
 =head3 job_scheduler_id
 
@@ -26,6 +27,14 @@ has 'job_scheduler_id' => (
 q{This defaults to your current Job Scheduler ID. Ignore this if running on a single node},
     predicate => 'has_job_scheduler_id',
     clearer   => 'clear_job_scheduler_id',
+);
+
+has 'hostname' => (
+  is => 'rw',
+  isa => 'Str|Undef',
+  default => sub {
+    return hostname;
+  },
 );
 
 has 'wait' => (
