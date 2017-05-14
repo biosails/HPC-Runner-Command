@@ -431,6 +431,7 @@ sub assign_batch_tags {
                     push( @batch_tags, $tag );
                 }
             }
+            ##TODO can get rid of this
             elsif ( $t1 eq 'deps' ) {
                 foreach my $dep (@tags) {
                     next unless $dep;
