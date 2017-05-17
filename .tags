@@ -4,7 +4,7 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-$VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
+$VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '3.1.5';$/;"	o
 -- Acknowledgements	_docs/Usage.pod	/^=head2 Acknowledgements$/;"	d
 -- Attributes	lib/HPC/Runner/Command/Utils/Base.pm	/^=head2 Attributes$/;"	d
 -- Attributes	lib/HPC/Runner/Command/Utils/Git.pm	/^=head2 Attributes$/;"	d
@@ -28,7 +28,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 -- HPC::Runner::Slurm Example	_docs/Usage.pod	/^=head2 HPC::Runner::Slurm Example$/;"	d
 -- Internal Attributes	lib/HPC/Runner/Command/Utils/Log.pm	/^=head2 Internal Attributes$/;"	d
 -- Internal Attributes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 Internal Attributes$/;"	d
--- Job Type Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Job Type Dependencency Declaration $/;"	d
+-- Job Type Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Job Type Dependencency Declaration$/;"	d
 -- MultiNode Job Submission	_docs/Usage.pod	/^=head2 MultiNode Job Submission$/;"	d
 -- Overview	_docs/Usage.pod	/^=head2 Overview$/;"	d
 -- Purpose	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^=head2 Purpose$/;"	d
@@ -48,7 +48,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 -- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head2 Subroutines$/;"	d
 -- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^=head2 Subroutines$/;"	d
 -- Subroutines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head2 Subroutines$/;"	d
--- Task Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Task Dependencency Declaration $/;"	d
+-- Task Dependencency Declaration	lib/HPC/Runner/Command.pm	/^=head2 Task Dependencency Declaration$/;"	d
 -- Trouble Shooting Runner::Slurm	_docs/Usage.pod	/^=head2 Trouble Shooting Runner::Slurm$/;"	d
 -- Utils	lib/HPC/Runner/Command/Utils/Traits.pm	/^=head2 Utils$/;"	d
 -- array_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head2 array_counter$/;"	d
@@ -67,7 +67,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- Trouble Shooting mcerunner and parallelrunner	_docs/Usage.pod	/^=head3 Trouble Shooting mcerunner and parallelrunner$/;"	d
 --- Workflow	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 Workflow$/;"	d
 --- Workflow file	lib/HPC/Runner/Command.pm	/^=head3 Workflow file$/;"	d
---- _log_commands	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 _log_commands$/;"	d
+--- _log_commands	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^=head3 _log_commands$/;"	d
 --- account	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 account$/;"	d
 --- account-per-node	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 account-per-node$/;"	d
 --- afterok	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 afterok$/;"	d
@@ -118,7 +118,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- iterate_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 iterate_deps$/;"	d
 --- iterate_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 iterate_schedule$/;"	d
 --- job_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^=head3 job_plugins$/;"	d
---- job_scheduler_id	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 job_scheduler_id$/;"	d
+--- job_scheduler_id	lib/HPC/Runner/Command/execute_job/Base.pm	/^=head3 job_scheduler_id$/;"	d
 --- job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 job_stats$/;"	d
 --- job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^=head3 job_stats$/;"	d
 --- jobname	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^=head3 jobname$/;"	d
@@ -129,7 +129,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- max_array_size	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 max_array_size$/;"	d
 --- metastr	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 metastr$/;"	d
 --- module	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 module$/;"	d
---- name_log	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 name_log$/;"	d
+--- name_log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^=head3 name_log$/;"	d
 --- no_submit_to_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 no_submit_to_slurm$/;"	d
 --- nodes_count	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 nodes_count$/;"	d
 --- ntasks	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 ntasks$/;"	d
@@ -168,6 +168,7 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 scheduler_ids_by_array$/;"	d
 --- scheduler_ids_by_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 scheduler_ids_by_batch$/;"	d
 --- search_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 search_batches$/;"	d
+--- search_dep_batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 search_dep_batch_tags$/;"	d
 --- search_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^=head3 search_tags$/;"	d
 --- serial	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 serial$/;"	d
 --- set_logdir	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 set_logdir$/;"	d
@@ -175,10 +176,12 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- set_outdir	lib/HPC/Runner/Command/Utils/Base.pm	/^=head3 set_outdir$/;"	d
 --- show_process_id	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 show_process_id$/;"	d
 --- slurmfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^=head3 slurmfile$/;"	d
+--- start_command_log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^=head3 start_command_log$/;"	d
 --- submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^=head3 submit_jobs$/;"	d
 --- submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^=head3 submit_jobs$/;"	d
 --- submit_to_scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 submit_to_scheduler$/;"	d
---- table_data	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 table_data$/;"	d
+--- summarize_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 summarize_jobs$/;"	d
+--- table_data	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^=head3 table_data$/;"	d
 --- tags	lib/HPC/Runner/Command/Utils/Log.pm	/^=head3 tags$/;"	d
 --- template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 template$/;"	d
 --- template_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 template_file$/;"	d
@@ -191,17 +194,15 @@ $VERSION	lib/HPC/Runner/Command.pm	/^our $VERSION = '0.01';$/;"	o
 --- walltime	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^=head3 walltime$/;"	d
 --- work	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^=head3 work$/;"	d
 Algorithm::Dependency	META.json	/^            "Algorithm::Dependency" : "0",$/;"	f
-Algorithm::Dependency	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Algorithm::Dependency;$/;"	u
 Algorithm::Dependency	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Algorithm::Dependency;$/;"	u
 Algorithm::Dependency::Ordered	META.json	/^            "Algorithm::Dependency::Ordered" : "0",$/;"	f
 Algorithm::Dependency::Ordered	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Algorithm::Dependency::Ordered;$/;"	u
 Algorithm::Dependency::Source::HoA	META.json	/^            "Algorithm::Dependency::Source::HoA" : "0",$/;"	f
-Algorithm::Dependency::Source::HoA	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
 Algorithm::Dependency::Source::HoA	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
 Algorithm::Dependency::Source::HoA	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use Algorithm::Dependency::Source::HoA;$/;"	u
 Archive::Tar	META.json	/^            "Archive::Tar" : "0",$/;"	f
 Archive::Tar	lib/HPC/Runner/Command/Utils/Git.pm	/^use Archive::Tar;$/;"	u
-BUILD	lib/HPC/Runner/Command/execute_array.pm	/^sub BUILD {$/;"	s
+BUILD	lib/HPC/Runner/Command/execute_array.pm	/^sub BUILD {}$/;"	s
 BUILD	lib/HPC/Runner/Command/execute_job.pm	/^sub BUILD {$/;"	s
 BUILD	lib/HPC/Runner/Command/submit_jobs.pm	/^sub BUILD {$/;"	s
 Capture::Tiny	META.json	/^            "Capture::Tiny" : "0",$/;"	f
@@ -225,11 +226,8 @@ DBM::Deep	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use DBM::Deep;
 Data::Dumper	META.json	/^            "Data::Dumper" : "0",$/;"	f
 Data::Dumper	lib/HPC/Runner/Command/Utils/Git.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	lib/HPC/Runner/Command/Utils/Log.pm	/^use Data::Dumper;$/;"	u
-Data::Dumper	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Data::Dumper;$/;"	u
-Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use Data::Dumper;$/;"	u
-Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Data::Dumper;$/;"	u
 Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Data::Dumper;$/;"	u
@@ -244,14 +242,12 @@ Data::Dumper	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use Data::Dumper;$/;
 DateTime	META.json	/^            "DateTime" : "0",$/;"	f
 DateTime	lib/HPC/Runner/Command/Utils/Log.pm	/^use DateTime;$/;"	u
 DateTime	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use DateTime;$/;"	u
-DateTime	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use DateTime;$/;"	u
 DateTime::Format::Duration	META.json	/^            "DateTime::Format::Duration" : "0",$/;"	f
 DateTime::Format::Duration	lib/HPC/Runner/Command/Utils/Log.pm	/^use DateTime::Format::Duration;$/;"	u
 DateTime::Format::Duration	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use DateTime::Format::Duration;$/;"	u
-Dist::Milla	META.json	/^            "Dist::Milla" : "v1.0.16",$/;"	f
+Dist::Milla	META.json	/^            "Dist::Milla" : "v1.0.17",$/;"	f
 File::Basename	META.json	/^            "File::Basename" : "0",$/;"	f
 File::Basename	lib/HPC/Runner/Command/new.pm	/^use File::Basename;$/;"	u
-File::HomeDir	META.json	/^            "File::HomeDir" : "0",$/;"	f
 File::Path	META.json	/^            "File::Path" : "0",$/;"	f
 File::Slurp	META.json	/^            "File::Slurp" : "0",$/;"	f
 File::Slurp	lib/HPC/Runner/Command/Utils/Git.pm	/^use File::Slurp;$/;"	u
@@ -265,8 +261,10 @@ File::Slurp	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use File::Slurp;$/;"	
 File::Spec	META.json	/^            "File::Spec" : "0",$/;"	f
 File::Spec	lib/HPC/Runner/Command/Utils/Git.pm	/^use File::Spec;$/;"	u
 File::Spec	lib/HPC/Runner/Command/Utils/Log.pm	/^use File::Spec;$/;"	u
+File::Spec	t/lib/TestMethods/Base.pm	/^use File::Spec;$/;"	u
 File::Spec::Functions	META.json	/^            "File::Spec::Functions" : "0",$/;"	f
 File::Temp	META.json	/^            "File::Temp" : "0",$/;"	f
+File::Temp	t/lib/TestMethods/Base.pm	/^use File::Temp;$/;"	u
 FindBin	META.json	/^            "FindBin" : "0",$/;"	f
 Git::Wrapper	META.json	/^            "Git::Wrapper" : "0",$/;"	f
 Git::Wrapper	lib/HPC/Runner/Command/Utils/Git.pm	/^use Git::Wrapper;$/;"	u
@@ -291,11 +289,9 @@ HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use HPC::Run
 HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use HPC::Runner::Command;$/;"	u
 HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use HPC::Runner::Command;$/;"	u
 HPC::Runner::Command	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use HPC::Runner::Command;$/;"	u
-HPC::Runner::Command::Plugin::ConfigHome	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^package HPC::Runner::Command::Plugin::ConfigHome;$/;"	p
-HPC::Runner::Command::Plugin::ConfigHome::Meta::Class	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^package HPC::Runner::Command::Plugin::ConfigHome::Meta::Class;$/;"	p
 HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Base.pm	/^    with 'HPC::Runner::Command::Utils::Base';$/;"	w
 HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Base.pm	/^package HPC::Runner::Command::Utils::Base;$/;"	p
-HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Log.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
+HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/Utils/Log.pm	/^# with 'HPC::Runner::Command::Utils::Base';$/;"	w
 HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/execute_array.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
 HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/execute_job.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
 HPC::Runner::Command::Utils::Base	lib/HPC/Runner/Command/submit_jobs.pm	/^with 'HPC::Runner::Command::Utils::Base';$/;"	w
@@ -307,17 +303,24 @@ HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/Utils/Git.pm	/^with 'HPC
 HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/Utils/Log.pm	/^package HPC::Runner::Command::Utils::Log;$/;"	p
 HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/execute_array.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
 HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/execute_job.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
 HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/submit_jobs.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::Log	lib/HPC/Runner/Command/submit_jobs/Utils/Log.pm	/^with 'HPC::Runner::Command::Utils::Log';$/;"	w
+HPC::Runner::Command::Utils::ManyConfigs	META.json	/^            "HPC::Runner::Command::Utils::ManyConfigs" : "0",$/;"	f
+HPC::Runner::Command::Utils::ManyConfigs	lib/HPC/Runner/Command.pm	/^with 'HPC::Runner::Command::Utils::ManyConfigs';$/;"	w
 HPC::Runner::Command::Utils::Plugin	lib/HPC/Runner/Command.pm	/^with 'HPC::Runner::Command::Utils::Plugin';$/;"	w
 HPC::Runner::Command::Utils::Plugin	lib/HPC/Runner/Command/Utils/Plugin.pm	/^package HPC::Runner::Command::Utils::Plugin;$/;"	p
 HPC::Runner::Command::Utils::Traits	lib/HPC/Runner/Command/Utils/Traits.pm	/^package HPC::Runner::Command::Utils::Traits;$/;"	p
 HPC::Runner::Command::execute_array	lib/HPC/Runner/Command/execute_array.pm	/^package HPC::Runner::Command::execute_array;$/;"	p
 HPC::Runner::Command::execute_job	lib/HPC/Runner/Command/execute_job.pm	/^package HPC::Runner::Command::execute_job;$/;"	p
+HPC::Runner::Command::execute_job::Base	lib/HPC/Runner/Command/execute_job/Base.pm	/^package HPC::Runner::Command::execute_job::Base;$/;"	p
+HPC::Runner::Command::execute_job::Utils::Log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^package HPC::Runner::Command::execute_job::Utils::Log;$/;"	p
 HPC::Runner::Command::execute_job::Utils::MCE	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^package HPC::Runner::Command::execute_job::Utils::MCE;$/;"	p
 HPC::Runner::Command::new	lib/HPC/Runner/Command/new.pm	/^package HPC::Runner::Command::new;$/;"	p
 HPC::Runner::Command::submit_jobs	lib/HPC/Runner/Command/submit_jobs.pm	/^package HPC::Runner::Command::submit_jobs;$/;"	p
 HPC::Runner::Command::submit_jobs::Plugin::Dummy	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^package HPC::Runner::Command::submit_jobs::Plugin::Dummy;$/;"	p
 HPC::Runner::Command::submit_jobs::Plugin::Slurm	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^package HPC::Runner::Command::submit_jobs::Plugin::Slurm;$/;"	p
+HPC::Runner::Command::submit_jobs::Utils::Log	lib/HPC/Runner/Command/submit_jobs/Utils/Log.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Log;$/;"	p
 HPC::Runner::Command::submit_jobs::Utils::Scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler;$/;"	p
 HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch;$/;"	p
 HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives;$/;"	p
@@ -329,25 +332,26 @@ HPC::Runner::Command::submit_jobs::Utils::Scheduler::ResolveDeps	lib/HPC/Runner/
 HPC::Runner::Slurm	_docs/Usage.pod	/^    extends 'HPC::Runner::Slurm';$/;"	e
 IO::File	META.json	/^            "IO::File" : "0",$/;"	f
 IO::File	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use IO::File;$/;"	u
-IO::File	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IO::File;$/;"	u
 IO::File	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use IO::File;$/;"	u
 IO::Interactive	META.json	/^            "IO::Interactive" : "0",$/;"	f
+IO::Interactive	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use IO::Interactive;$/;"	u
 IO::Select	META.json	/^            "IO::Select" : "0",$/;"	f
 IO::Select	lib/HPC/Runner/Command/Utils/Log.pm	/^use IO::Select;$/;"	u
+IO::Select	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^use IO::Select;$/;"	u
 IO::Select	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IO::Select;$/;"	u
 IPC::Cmd	META.json	/^            "IPC::Cmd" : "0",$/;"	f
 IPC::Cmd	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use IPC::Cmd;$/;"	u
 IPC::Open3	META.json	/^            "IPC::Open3" : "0",$/;"	f
 IPC::Open3	lib/HPC/Runner/Command/Utils/Log.pm	/^use IPC::Open3;$/;"	u
+IPC::Open3	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^use IPC::Open3;$/;"	u
 IPC::Open3	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use IPC::Open3;$/;"	u
 JSON	META.json	/^            "JSON" : "0",$/;"	f
-JSON	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use JSON;$/;"	u
+JSON	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^use JSON;$/;"	u
 JSON::XS	META.json	/^            "JSON::XS" : "0",$/;"	f
 JSON::XS	lib/HPC/Runner/Command/execute_array.pm	/^use JSON::XS;$/;"	u
 JSON::XS	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^use JSON::XS;$/;"	u
 List::MoreUtils	META.json	/^            "List::MoreUtils" : "0",$/;"	f
 List::Uniq	META.json	/^            "List::Uniq" : "0",$/;"	f
-List::Util	META.json	/^            "List::Util" : "0",$/;"	f
 Log::Log4perl	META.json	/^            "Log::Log4perl" : "0",$/;"	f
 Log::Log4perl	_docs/Usage.pod	/^    use Log::Log4perl;$/;"	u
 Log::Log4perl	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Log::Log4perl;$/;"	u
@@ -357,6 +361,10 @@ MCE::Queue	META.json	/^            "MCE::Queue" : "0",$/;"	f
 MCE::Queue	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use MCE::Queue;$/;"	u
 Main	_docs/Usage.pod	/^    package Main;$/;"	p
 Main	script/hpcrunner.pl	/^package Main;$/;"	p
+Memoize	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Memoize;$/;"	u
+Memoize	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^use Memoize;$/;"	u
+Memoize	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Memoize;$/;"	u
+Module::Build::Tiny	Build	/^use Module::Build::Tiny;$/;"	u
 Module::Build::Tiny	META.json	/^            "Module::Build::Tiny" : "0.034"$/;"	f
 Moose	META.json	/^            "Moose" : "0",$/;"	f
 Moose	_docs/Usage.pod	/^    use Moose;$/;"	u
@@ -367,16 +375,13 @@ Moose	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^use Moose
 Moose	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^use Moose;$/;"	u
 Moose	t/lib/TestsFor/HPC/Runner/Command/Test004.pm	/^use Moose;$/;"	u
 Moose::Role	META.json	/^            "Moose::Role" : "0",$/;"	f
-Moose::Role	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^use Moose::Role;$/;"	u
-Moose::Role	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^use Moose::Role;$/;"	u
-Moose::Role	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use Moose::Role;$/;"	u
+Moose::Role	lib/HPC/Runner/Command/execute_job/Base.pm	/^use Moose::Role;$/;"	u
 Moose::Role	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^use Moose::Role;$/;"	u
 Moose::Role	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^use Moose::Role;$/;"	u
 Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^use Moose::Role;$/;"	u
 Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^use Moose::Role;$/;"	u
 Moose::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Moose::Role;$/;"	u
 Moose::Util::TypeConstraints	META.json	/^            "Moose::Util::TypeConstraints" : "0",$/;"	f
-Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Moose::Util::TypeConstraints;$/;"	u
 Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^use Moose::Util::TypeConstraints;$/;"	u
 Moose::Util::TypeConstraints	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^use Moose::Util::TypeConstraints;$/;"	u
 MooseX::App	META.json	/^            "MooseX::App" : "0",$/;"	f
@@ -385,13 +390,14 @@ MooseX::App::Command	lib/HPC/Runner/Command/execute_array.pm	/^use MooseX::App::
 MooseX::App::Command	lib/HPC/Runner/Command/execute_job.pm	/^use MooseX::App::Command;$/;"	u
 MooseX::App::Command	lib/HPC/Runner/Command/new.pm	/^use MooseX::App::Command;$/;"	u
 MooseX::App::Command	lib/HPC/Runner/Command/submit_jobs.pm	/^use MooseX::App::Command;$/;"	u
-MooseX::App::Plugin::Config	META.json	/^            "MooseX::App::Plugin::Config" : "0",$/;"	f
 MooseX::App::Role	META.json	/^            "MooseX::App::Role" : "0",$/;"	f
 MooseX::App::Role	lib/HPC/Runner/Command/Utils/Base.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/Utils/Git.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/Utils/Log.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/Utils/Plugin.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^use MooseX::App::Role;$/;"	u
+MooseX::App::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Log.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^use MooseX::App::Role;$/;"	u
 MooseX::App::Role::Log4perl	META.json	/^            "MooseX::App::Role::Log4perl" : "0",$/;"	f
@@ -402,6 +408,8 @@ MooseX::Types	META.json	/^            "MooseX::Types" : "0",$/;"	f
 MooseX::Types::Moose	META.json	/^            "MooseX::Types::Moose" : "0",$/;"	f
 MooseX::Types::Path::Tiny	META.json	/^            "MooseX::Types::Path::Tiny" : "0",$/;"	f
 MyApp	lib/HPC/Runner/Command/Utils/Base.pm	/^    package MyApp;$/;"	p
+PATH	.atomenv.cson	/^  PATH: "\/home\/jillian\/Dropbox\/projects\/HPC-Runner-Libs\/New\/HPC-Runner-Command\/script:\/home\/jillian\/.local\/easybuild\/software\/perl-hpc-runner\/1\/bin:\/home\/jillian\/.tmuxifier\/bin:\/usr\/local\/bin:\/usr\/local\/sbin:\/usr\/bin:\/usr\/sbin:\/bin:\/sbin:\/home\/jillian\/.local\/bin:\/home\/jillian\/bin"$/;"	f
+PERL5LIB	.atomenv.cson	/^  PERL5LIB: "\/home\/jillian\/Dropbox\/projects\/HPC-Runner-Libs\/New\/MooseX-App-Plugin-ManyConfigs\/lib:\/home\/jillian\/Dropbox\/projects\/HPC-Runner-Libs\/New\/HPC-Runner-Command-Plugin-Blog\/lib:\/home\/jillian\/Dropbox\/projects\/HPC-Runner-Libs\/New\/HPC-Runner-Command\/lib" $/;"	f
 POSIX	META.json	/^            "POSIX" : "0",$/;"	f
 POSIX	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use POSIX;$/;"	u
 Slurp	META.json	/^            "Slurp" : "0",$/;"	f
@@ -418,7 +426,10 @@ Storable	META.json	/^            "Storable" : "0",$/;"	f
 String::Approx	META.json	/^            "String::Approx" : "0",$/;"	f
 Symbol	META.json	/^            "Symbol" : "0",$/;"	f
 Symbol	lib/HPC/Runner/Command/Utils/Log.pm	/^use Symbol;$/;"	u
+Symbol	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^use Symbol;$/;"	u
 Symbol	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Symbol;$/;"	u
+Sys::Hostname	META.json	/^            "Sys::Hostname" : "0",$/;"	f
+Sys::Hostname	lib/HPC/Runner/Command/execute_job/Base.pm	/^use Sys::Hostname;$/;"	u
 Template	META.json	/^            "Template" : "0",$/;"	f
 Template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Template;$/;"	u
 Test::Class::Moose	META.json	/^            "Test::Class::Moose" : "0",$/;"	f
@@ -455,9 +466,8 @@ TestsFor::HPC::Runner::Command::Test006	t/lib/TestsFor/HPC/Runner/Command/Test00
 TestsFor::HPC::Runner::Command::Test007	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^package TestsFor::HPC::Runner::Command::Test007;$/;"	p
 TestsFor::HPC::Runner::Command::Test008	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^package TestsFor::HPC::Runner::Command::Test008;$/;"	p
 TestsFor::HPC::Runner::Command::Test009	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^package TestsFor::HPC::Runner::Command::Test009;$/;"	p
-Text::ANSITable	META.json	/^            "Text::ANSITable" : "0",$/;"	f
-Text::ANSITable	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Text::ANSITable;$/;"	u
 Text::ASCIITable	META.json	/^            "Text::ASCIITable" : "0",$/;"	f
+Text::ASCIITable	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^use Text::ASCIITable;$/;"	u
 Text::ASCIITable	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^use Text::ASCIITable;$/;"	u
 Text::Diff	META.json	/^            "Text::Diff" : "0"$/;"	f
 Text::Diff	t/lib/TestMethods/Base.pm	/^    use Text::Diff;$/;"	u
@@ -469,7 +479,7 @@ Try::Tiny	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^us
 Version::Next	META.json	/^            "Version::Next" : "0",$/;"	f
 YAML::XS	META.json	/^            "YAML::XS" : "0",$/;"	f
 YAML::XS	lib/HPC/Runner/Command/new.pm	/^use YAML::XS;$/;"	u
-_log_commands	lib/HPC/Runner/Command/Utils/Log.pm	/^sub _log_commands {$/;"	s
+_log_commands	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub _log_commands {$/;"	s
 _make_the_dirs	lib/HPC/Runner/Command/Utils/Base.pm	/^sub _make_the_dirs {$/;"	s
 abstract	META.json	/^   "abstract" : "Create composable bioinformatics hpc analyses.",$/;"	f
 app_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub app_load_plugins {$/;"	s
@@ -477,6 +487,7 @@ app_log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'app_log' => ($/;"	a
 apply_global_directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub apply_global_directives {$/;"	s
 apply_job_directives	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub apply_job_directives {$/;"	s
 array_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'array_counter' => ($/;"	a
+array_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'array_deps' => ($/;"	a
 array_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'array_deps' => ($/;"	a
 assert_exit_status	ci-tests/test_helpers/helpers.bash	/^assert_exit_status() {$/;"	f
 assert_failure	ci-tests/test_helpers/helpers.bash	/^assert_failure() {$/;"	f
@@ -487,10 +498,10 @@ assign_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm
 author	META.json	/^   "author" : [$/;"	f
 batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'batch' => ($/;"	a
 batch_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'batch_counter' => ($/;"	a
-batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_deps => ($/;"	a
 batch_index_end	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'batch_index_end' => ($/;"	a
 batch_index_start	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'batch_index_start' => ($/;"	a
 batch_indexes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has batch_indexes => ($/;"	a
+batch_scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub batch_scheduler_ids_by_array {$/;"	s
 batch_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_str => ($/;"	a
 batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has batch_tags => ($/;"	a
 batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has batches => ($/;"	a
@@ -499,6 +510,7 @@ branch_things	lib/HPC/Runner/Command/Utils/Git.pm	/^sub branch_things {$/;"	s
 bugtracker	META.json	/^      "bugtracker" : {$/;"	f
 change_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub change_deps {$/;"	s
 check_add_to_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_add_to_jobs {$/;"	s
+check_batch_index	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_batch_index {$/;"	s
 check_files	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_files {$/;"	s
 check_for_commands	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub check_for_commands {$/;"	s
 check_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub check_jobname {$/;"	s
@@ -513,8 +525,7 @@ cmdfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^has 'cmdfi
 cmds	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has cmds => ($/;"	a
 cmds	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has cmds => ($/;"	a
 collect_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub collect_stats {$/;"	s
-command_log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'command_log' => ( is => 'rw', );$/;"	a
-commands_per_node	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^has 'commands_per_node' => ($/;"	a
+command_log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^has 'command_log' => ( is => 'rw', );$/;"	a
 configure	META.json	/^      "configure" : {$/;"	f
 construct	t/lib/TestsFor/HPC/Runner/Command/Test002.pm	/^sub construct {$/;"	s
 construct	t/lib/TestsFor/HPC/Runner/Command/Test003.pm	/^sub construct {$/;"	s
@@ -524,7 +535,7 @@ construct	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^sub construct {$/;"	s
 construct	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^sub construct {$/;"	s
 construct	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^sub construct {$/;"	s
 construct	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^sub construct {$/;"	s
-counter	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'counter' => ($/;"	a
+counter	lib/HPC/Runner/Command/execute_job/Base.pm	/^has 'counter' => ($/;"	a
 create_meta_str	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub create_meta_str {$/;"	s
 create_plugin_str	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub create_plugin_str {$/;"	s
 create_release	lib/HPC/Runner/Command/Utils/Git.pm	/^sub create_release {$/;"	s
@@ -533,6 +544,7 @@ current_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'curre
 current_branch	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'current_branch' => ($/;"	a
 current_job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'current_job' => ($/;"	a
 datetime_now	lib/HPC/Runner/Command/Utils/Base.pm	/^sub datetime_now {$/;"	s
+dep_scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub dep_scheduler_ids_by_array {$/;"	s
 deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'deps' => ($/;"	a
 deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has deps => ($/;"	a
 develop	META.json	/^      "develop" : {$/;"	f
@@ -541,6 +553,7 @@ dirty_run	lib/HPC/Runner/Command/Utils/Git.pm	/^sub dirty_run {$/;"	s
 do_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^sub do_stats {$/;"	s
 dt	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'dt' => ($/;"	a
 dynamic_config	META.json	/^   "dynamic_config" : 0,$/;"	f
+env	.atomenv.cson	/^env:$/;"	f
 execute	lib/HPC/Runner/Command/execute_array.pm	/^sub execute {$/;"	s
 execute	lib/HPC/Runner/Command/execute_job.pm	/^sub execute {$/;"	s
 execute	lib/HPC/Runner/Command/new.pm	/^sub execute{$/;"	s
@@ -550,7 +563,7 @@ flunk	ci-tests/test_helpers/helpers.bash	/^flunk() {$/;"	f
 gen_gitignore	lib/HPC/Runner/Command/new.pm	/^sub gen_gitignore {$/;"	s
 gen_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub gen_load_plugins {$/;"	s
 gen_project_yml	lib/HPC/Runner/Command/new.pm	/^sub gen_project_yml {$/;"	s
-generated_by	META.json	/^   "generated_by" : "Dist::Milla version v1.0.16, Dist::Zilla version 6.007, CPAN::Meta::Converter version 2.150001",$/;"	f
+generated_by	META.json	/^   "generated_by" : "Dist::Milla version v1.0.17, Dist::Zilla version 6.008, CPAN::Meta::Converter version 2.150001",$/;"	f
 get_infile	lib/HPC/Runner/Command/execute_array.pm	/^sub get_infile {$/;"	s
 get_version	lib/HPC/Runner/Command/Utils/Git.pm	/^sub get_version {$/;"	s
 git	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'git' => ($/;"	a
@@ -561,7 +574,8 @@ git_logs	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_logs {$/;"	s
 git_push_tags	lib/HPC/Runner/Command/Utils/Git.pm	/^sub git_push_tags {$/;"	s
 git_things	lib/HPC/Runner/Command/Utils/Base.pm	/^sub git_things {$/;"	s
 graph_job_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'graph_job_deps' => ($/;"	a
-homepage	META.json	/^      "homepage" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command",$/;"	f
+homepage	META.json	/^      "homepage" : "https:\/\/github.com\/biosails\/HPC-Runner-Command",$/;"	f
+hostname	lib/HPC/Runner/Command/execute_job/Base.pm	/^has 'hostname' => ($/;"	a
 hpc_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub hpc_load_plugins {$/;"	s
 hpc_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has hpc_meta => ($/;"	a
 increase_jobname	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub increase_jobname {$/;"	s
@@ -574,36 +588,37 @@ iterate_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub ite
 job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'job' => ($/;"	a
 job_counter	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'job_counter' => ($/;"	a
 job_load_plugins	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub job_load_plugins {$/;"	s
+job_scheduler_id	lib/HPC/Runner/Command/execute_job/Base.pm	/^has 'job_scheduler_id' => ($/;"	a
+job_scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub job_scheduler_ids_by_array {$/;"	s
 job_stats	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'job_stats' => ($/;"	a
 jobnames	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has jobnames => ($/;"	a
-jobref	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'jobref' => ($/;"	a
+jobref	lib/HPC/Runner/Command/execute_job/Base.pm	/^has 'jobref' => ($/;"	a
 jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'jobs' => ($/;"	a
+jobs_current_job	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'jobs_current_job' => ( is => 'rw', );$/;"	a
 license	META.json	/^   "license" : [$/;"	f
 log	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'log' => ($/;"	a
 log	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^has 'log' => ($/;"	a
-log_cmd_messages	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_cmd_messages {$/;"	s
-log_job	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_job {$/;"	s
+log_cmd_messages	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub log_cmd_messages {$/;"	s
+log_job	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub log_job {$/;"	s
 log_main_messages	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_main_messages {$/;"	s
-log_table	lib/HPC/Runner/Command/Utils/Log.pm	/^sub log_table {$/;"	s
+log_table	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub log_table {$/;"	s
 logfile	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'logfile' => ($/;"	a
 make_test_dir	t/lib/TestMethods/Base.pm	/^sub make_test_dir{$/;"	s
 mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'mce' => ($/;"	a
 meta-spec	META.json	/^   "meta-spec" : {$/;"	f
 name	META.json	/^   "name" : "HPC-Runner-Command",$/;"	f
-name_log	lib/HPC/Runner/Command/Utils/Log.pm	/^sub name_log {$/;"	s
+name_log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub name_log {$/;"	s
 namespace::autoclean	META.json	/^            "namespace::autoclean" : "0",$/;"	f
-namespace::autoclean	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^use namespace::autoclean;$/;"	u
-namespace::autoclean	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^use namespace::autoclean;$/;"	u
 namespace::autoclean	lib/HPC/Runner/Command/Utils/Git.pm	/^use namespace::autoclean;$/;"	u
 namespace::autoclean	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Directives.pm	/^use namespace::autoclean;$/;"	u
 no_index	META.json	/^   "no_index" : {$/;"	f
-parse_file_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub parse_file_mce{$/;"	s
+parse_file_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub parse_file_mce {$/;"	s
 parse_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub parse_file_slurm {$/;"	s
 parse_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub parse_meta {$/;"	s
+parse_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub parse_meta {$/;"	s
 parse_plugin_opts	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub parse_plugin_opts {$/;"	s
 perl	META.json	/^            "perl" : "5.010",$/;"	f
-plugin_metaroles	lib/HPC/Runner/Command/Plugin/ConfigHome.pm	/^sub plugin_metaroles {$/;"	s
-pop_note_meta	lib/HPC/Runner/Command/Utils/Log.pm	/^sub pop_note_meta {$/;"	s
+pop_note_meta	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub pop_note_meta {$/;"	s
 post_process_file_slurm	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub post_process_file_slurm {$/;"	s
 post_process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub post_process_jobs {$/;"	s
 pre_process_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub pre_process_batch {$/;"	s
@@ -618,10 +633,9 @@ process_batch_command	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^su
 process_batch_deps	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub process_batch_deps {$/;"	s
 process_hpc_meta	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub process_hpc_meta {$/;"	s
 process_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_jobs {$/;"	s
-process_lines	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub process_lines{$/;"	s
+process_lines	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub process_lines {$/;"	s
 process_lines	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ParseInput.pm	/^sub process_lines {$/;"	s
 process_template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub process_template {$/;"	s
-proto_config	lib/HPC/Runner/Command/Plugin/ConfigHome/Meta/Class.pm	/^around 'proto_config' => sub {$/;"	x
 queue	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'queue' => ($/;"	a
 release_status	META.json	/^   "release_status" : "stable",$/;"	f
 remote	lib/HPC/Runner/Command/Utils/Git.pm	/^has 'remote' => ($/;"	a
@@ -633,8 +647,8 @@ resources	META.json	/^   "resources" : {$/;"	f
 return_ranges	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub return_ranges {$/;"	s
 root	book.json	/^    "root": ".\/_docs"$/;"	f
 run	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub run {$/;"	s
-run_command_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_command_mce{$/;"	s
-run_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_mce{$/;"	s
+run_command_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_command_mce {$/;"	s
+run_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^sub run_mce {$/;"	s
 runtime	META.json	/^      "runtime" : {$/;"	f
 sanity_check_schedule	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub sanity_check_schedule {$/;"	s
 sched_counter	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^has 'sched_counter' => ($/;"	a
@@ -647,11 +661,14 @@ scheduler_ids_by_array	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^s
 scheduler_ids_by_batch	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub scheduler_ids_by_batch {$/;"	s
 scheduler_index	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Batch.pm	/^has 'scheduler_index' => ($/;"	a
 search_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub search_batches {$/;"	s
+search_dep_batch_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub search_dep_batch_tags {$/;"	s
+search_index	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub search_index {$/;"	s
 search_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/ResolveDeps.pm	/^sub search_tags {$/;"	s
 set_logdir	lib/HPC/Runner/Command/Utils/Log.pm	/^sub set_logdir {$/;"	s
 set_logfile	lib/HPC/Runner/Command/Utils/Log.pm	/^sub set_logfile {$/;"	s
 set_outdir	lib/HPC/Runner/Command/Utils/Base.pm	/^sub set_outdir {$/;"	s
 slurmfile	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^has 'slurmfile' => ($/;"	a
+start_command_log	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^sub start_command_log {$/;"	s
 strict	META.json	/^            "strict" : "0",$/;"	f
 strict	lib/HPC/Runner/Command/Utils/Traits.pm	/^use strict;$/;"	u
 strict	lib/HPC/Runner/Command/new.pm	/^use strict;$/;"	u
@@ -663,14 +680,15 @@ strict	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use strict;$/;"	u
 strict	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use strict;$/;"	u
 strict	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use strict;$/;"	u
 submit_by_tags	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'submit_by_tags' => ($/;"	a
-submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub submit_jobs{$/;"	s
-submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub submit_jobs{$/;"	s
+submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub submit_jobs {$/;"	s
+submit_jobs	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub submit_jobs {$/;"	s
 submit_to_scheduler	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub submit_to_scheduler {$/;"	s
 submitted	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobDeps.pm	/^has 'submitted' => ($/;"	a
-table_data	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'table_data' => ($/;"	a
-task_deps	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'task_deps' => ($/;"	a
+summarize_jobs	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub summarize_jobs {$/;"	s
+summary_log	lib/HPC/Runner/Command/submit_jobs/Utils/Log.pm	/^has 'summary_log' => ($/;"	a
+table_data	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^has 'table_data' => ($/;"	a
 task_id	lib/HPC/Runner/Command/execute_array.pm	/^has 'task_id' => ($/;"	a
-task_tags	lib/HPC/Runner/Command/Utils/Log.pm	/^has 'task_tags' => ($/;"	a
+task_tags	lib/HPC/Runner/Command/execute_job/Utils/Log.pm	/^has 'task_tags' => ($/;"	a
 template	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'template' => ($/;"	a
 template_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^has 'template_file' => ($/;"	a
 test	META.json	/^      "test" : {$/;"	f
@@ -704,16 +722,16 @@ total_batches	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^h
 total_processes	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/JobStats.pm	/^has 'total_processes' => ($/;"	a
 type	META.json	/^         "type" : "git",$/;"	f
 unparse_plugin_opts	lib/HPC/Runner/Command/Utils/Plugin.pm	/^sub unparse_plugin_opts {$/;"	s
-update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub update_job_deps{$/;"	s
-update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub update_job_deps{$/;"	s
-url	META.json	/^         "url" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command.git",$/;"	f
+update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Dummy.pm	/^sub update_job_deps {$/;"	s
+update_job_deps	lib/HPC/Runner/Command/submit_jobs/Plugin/Slurm.pm	/^sub update_job_deps {$/;"	s
+url	META.json	/^         "url" : "https:\/\/github.com\/biosails\/HPC-Runner-Command.git",$/;"	f
 url	META.json	/^      "url" : "http:\/\/search.cpan.org\/perldoc?CPAN::Meta::Spec",$/;"	f
 using_mce	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'using_mce' => ($/;"	a
 utf8	META.json	/^            "utf8" : "0",$/;"	f
 utf8	script/hpcrunner.pl	/^use utf8;$/;"	u
 version	META.json	/^      "version" : 2$/;"	f
-version	META.json	/^   "version" : "0.01",$/;"	f
-wait	lib/HPC/Runner/Command/execute_job/Utils/MCE.pm	/^has 'wait' => ($/;"	a
+version	META.json	/^   "version" : "3.1.5",$/;"	f
+wait	lib/HPC/Runner/Command/execute_job/Base.pm	/^has 'wait' => ($/;"	a
 warnings	META.json	/^            "warnings" : "0"$/;"	f
 warnings	lib/HPC/Runner/Command/Utils/Traits.pm	/^use warnings;$/;"	u
 warnings	lib/HPC/Runner/Command/new.pm	/^use warnings;$/;"	u
@@ -724,8 +742,8 @@ warnings	t/lib/TestsFor/HPC/Runner/Command/Test006.pm	/^use warnings;$/;"	u
 warnings	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^use warnings;$/;"	u
 warnings	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^use warnings;$/;"	u
 warnings	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^use warnings;$/;"	u
-web	META.json	/^         "web" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command"$/;"	f
-web	META.json	/^         "web" : "https:\/\/github.com\/jerowe\/HPC-Runner-Command\/issues"$/;"	f
+web	META.json	/^         "web" : "https:\/\/github.com\/biosails\/HPC-Runner-Command"$/;"	f
+web	META.json	/^         "web" : "https:\/\/github.com\/biosails\/HPC-Runner-Command\/issues"$/;"	f
 work	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler.pm	/^sub work {$/;"	s
 write_batch_file	lib/HPC/Runner/Command/submit_jobs/Utils/Scheduler/Files.pm	/^sub write_batch_file {$/;"	s
 write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test001.pm	/^sub write_test_file {$/;"	s
@@ -738,4 +756,4 @@ write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test007.pm	/^sub write_test_fi
 write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test008.pm	/^sub write_test_file {$/;"	s
 write_test_file	t/lib/TestsFor/HPC/Runner/Command/Test009.pm	/^sub write_test_file {$/;"	s
 x_contributors	META.json	/^   "x_contributors" : [$/;"	f
-x_serialization_backend	META.json	/^   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0217"$/;"	f
+x_serialization_backend	META.json	/^   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0225"$/;"	f
