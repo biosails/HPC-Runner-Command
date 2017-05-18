@@ -212,6 +212,7 @@ sub chunk_commands {
         # next unless $self->jobs->{ $self->current_job }->count_cmds;
         next unless $self->jobs->{$self->current_job}->cmd_counter;
 
+        #Replace this with function that will get cmds from our tmp file
         my $iter = natatime $commands_per_node, @cmds;
 
         $self->assign_batches($iter);

@@ -321,6 +321,21 @@ has 'array_deps' => (
     },
 );
 
+has cmds => (
+    traits  => ['Array'],
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        all_cmds    => 'elements',
+        add_cmds    => 'push',
+        join_cmds   => 'join',
+        count_cmds  => 'count',
+        has_cmds    => 'count',
+        clear_cmds  => 'clear',
+    },
+);
+
 =head3 job_stats
 
 Object describing the number of jobs, number of batches per job, etc
