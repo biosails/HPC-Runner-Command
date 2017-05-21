@@ -169,7 +169,7 @@ sub prepare_batch_files_array {
 
         #TODO counters are messed up somewhere...
         next unless $self->current_batch;
-        
+
         #Assign the counters
         my $job_counter   = sprintf( "%03d", $self->job_counter );
         my $array_counter = sprintf( "%03d", $self->array_counter );
@@ -186,6 +186,7 @@ sub prepare_batch_files_array {
     }
 }
 
+#TODO Write a file per job - not per task
 sub write_batch_file {
     my $self = shift;
     my $command  = shift;

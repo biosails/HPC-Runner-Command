@@ -46,16 +46,6 @@ has cmds => (
     },
 );
 
-# use File::Temp qw/ tempfile /;
-#
-# has job_file => (
-#     is      => 'rw',
-#     default => sub {
-#         my $fh = File::Temp->new( UNLINK => 0, SUFFIX => '.dat' );
-#         return $fh;
-#     }
-# );
-
 has 'cmd_counter' => (
     traits   => ['Counter'],
     is       => 'rw',

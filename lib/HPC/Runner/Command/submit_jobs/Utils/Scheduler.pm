@@ -92,9 +92,22 @@ option 'jobname' => (
     trigger => sub {
         my $self = shift;
         $self->check_add_to_jobs();
+        $self->job_file->{$self->jobname} = File::Temp->new( UNLINK => 0, SUFFIX => '.dat' );
     },
     documentation =>
       q{Specify a job name, each job will be appended with its batch order},
+);
+
+
+
+has job_file => (
+    is      => 'rw',
+    isa => 'HashRef',
+    default => sub {
+        # my $fh = File::Temp->new( UNLINK => 0, SUFFIX => '.dat' );
+        # return $fh;
+        return {};
+    }
 );
 
 =head3 max_array_size
