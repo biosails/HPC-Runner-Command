@@ -85,11 +85,12 @@ sub update_job_deps {
 
     return if $self->use_batches;
 
-    return unless $self->current_batch->has_array_deps;
+    # return unless $self->current_batch->has_array_deps;
+    return unless $self->has_array_deps;
 
-    foreach my $array_id ( $self->current_batch->all_array_deps ) {
+    # foreach my $array_id ( $self->current_batch->all_array_deps ) {
+    foreach my $array_id ( $self->all_array_deps ) {
         next unless $array_id;
-        # $array_id = $array_id->export();
 
         my $current_job = $array_id->[0];
         my $dep_job     = $array_id->[1];
