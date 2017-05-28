@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Bug fix with counting 0th command and single-node mode
 
 3.2.0  2017-05-24 10:26:38 GST
 	- Upgrading to minor version
