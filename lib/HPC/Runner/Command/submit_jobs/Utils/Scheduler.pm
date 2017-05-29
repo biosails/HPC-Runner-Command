@@ -187,6 +187,8 @@ actual template file
 
 One is generated here for you, but you can always supply your own with --template_file /path/to/template
 
+#TODO add back PBS support and add SGE support
+
 =cut
 
 has 'template_file' => (
