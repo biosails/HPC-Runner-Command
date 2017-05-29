@@ -128,7 +128,7 @@
          "web" : "https://github.com/biosails/HPC-Runner-Command"
       }
    },
-   "version" : "3.2.1",
+   "version" : "3.2.2",
    "x_contributors" : [
       "Travis CI <nobody@nobody.org>"
    ],
