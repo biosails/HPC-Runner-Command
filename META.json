@@ -4,7 +4,7 @@
       "Jillian Rowe <jillian.e.rowe@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.17, Dist::Zilla version 6.008, CPAN::Meta::Converter version 2.150001",
+   "generated_by" : "Dist::Milla version v1.0.17, Dist::Zilla version 6.009, CPAN::Meta::Converter version 2.150001",
    "license" : [
       "perl_5"
    ],
@@ -40,6 +40,7 @@
             "Algorithm::Dependency::Ordered" : "0",
             "Algorithm::Dependency::Source::HoA" : "0",
             "Archive::Tar" : "0",
+            "Array::Compare" : "0",
             "Cwd" : "0",
             "DBM::Deep" : "0",
             "Data::Dumper" : "0",
@@ -47,6 +48,7 @@
             "DateTime" : "0",
             "DateTime::Format::Duration" : "0",
             "File::Basename" : "0",
+            "File::Copy" : "0",
             "File::Path" : "0",
             "File::Slurp" : "0",
             "File::Spec" : "0",
@@ -126,7 +128,7 @@
          "web" : "https://github.com/biosails/HPC-Runner-Command"
       }
    },
-   "version" : "3.1.7",
+   "version" : "3.2.1",
    "x_contributors" : [
       "Travis CI <nobody@nobody.org>"
    ],

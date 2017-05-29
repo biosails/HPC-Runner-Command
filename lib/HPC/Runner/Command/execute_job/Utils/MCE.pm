@@ -29,12 +29,12 @@ option 'commands' => (
 );
 
 has 'read_command' => (
-    is       => 'rw',
-    isa      => 'Num',
-    required => 0,
+    is        => 'rw',
+    isa       => 'Num|Undef',
+    required  => 0,
     predicate => 'has_read_command',
-    lazy     => 1,
-    default  => sub {
+    lazy      => 1,
+    default   => sub {
         my $self = shift;
         if ( $self->can('task_id') ) {
             return $self->task_id - $self->batch_index_start - 1;
@@ -42,6 +42,16 @@ has 'read_command' => (
         else {
             return $self->batch_index_start;
         }
+    }
+);
+
+option 'single_node' => (
+    traits  => ['Bool'],
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+    handles => {
+        'not_single_node' => 'not',
     }
 );
 
@@ -184,7 +194,16 @@ sub parse_file_mce {
         "Error opening file  " . $self->infile . "  " . $! );
     die print "The infile does not exist!\n" unless $fh;
 
-    if ( $self->has_read_command ) {
+    if ( $self->single_node ) {
+        $self->log_main_messages( 'info', 'Running in single node mode' );
+        while (<$fh>) {
+            my $line = $_;
+            $self->process_lines($line);
+        }
+    }
+    elsif ( defined $self->read_command ) {
+        $self->log_main_messages( 'info',
+            'Executing Command # ' . $self->read_command );
         my $cmds = $self->parse_cmd_file($fh);
 
         foreach my $cmd (@$cmds) {
@@ -192,13 +211,9 @@ sub parse_file_mce {
             $self->wait(0);
         }
     }
-    #We are running in single node mode
     else {
-      while(<$fh>){
-        my $line = $_;
-        $self->process_lines($line);
-      }
-
+        $self->log_main_messages( 'fatal', 'No running mode found. Exiting' );
+        exit 1;
     }
 }
 
@@ -247,9 +262,9 @@ sub process_lines {
         $self->add_cmd($line);
     }
     ##This should only be for single node mode
-    if($line =~ m/^#HPC procs=/){
-      my( $t1, $t2 ) = parse_meta($line);
-      $self->procs($t2);
+    if ( $line =~ m/^#HPC procs=/ ) {
+        my ( $t1, $t2 ) = parse_meta($line);
+        $self->procs($t2);
     }
 
     return if $line =~ m/^#/;
@@ -276,7 +291,9 @@ sub process_lines {
             return;
         }
         ##TODO Update for single node mode
-        elsif ( $self->match_cmd(qr/^wait$/) || $self->match_cmd(qr/^HPC jobname/) ) {
+        elsif ($self->match_cmd(qr/^wait$/)
+            || $self->match_cmd(qr/^HPC jobname/) )
+        {
 
             #$DB::single = 2;
             $self->log_main_messages( 'debug',
@@ -306,6 +323,7 @@ sub process_lines {
 }
 
 memoize('parse_meta');
+
 sub parse_meta {
     my $line = shift;
     my ( @match, $t1, $t2 );
@@ -315,6 +333,7 @@ sub parse_meta {
 
     return ( $t1, $2 );
 }
+
 =head3 run_command_mce
 
 MCE knows which subcommand to use from Runner/MCE - object mce
