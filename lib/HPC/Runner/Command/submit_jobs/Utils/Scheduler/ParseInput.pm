@@ -58,14 +58,14 @@ sub parse_file_slurm {
 
     close($fh);
 
-    $self->post_process_file_slurm;
+    $self->post_process_parse_file_slurm;
 }
 
 =head3 post_process_file_slurm
 
 =cut
 
-sub post_process_file_slurm {
+sub post_process_parse_file_slurm {
     my $self = shift;
 
     $self->check_for_commands;
@@ -73,6 +73,7 @@ sub post_process_file_slurm {
       return;
     }
     $self->schedule_jobs;
+    $self->print_table_schedule_info;
     $self->chunk_commands;
 }
 

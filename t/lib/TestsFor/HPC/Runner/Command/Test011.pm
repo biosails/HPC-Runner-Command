@@ -154,6 +154,7 @@ sub test_001 : Tags(execute_array) {
         };
 
     is_deeply( $test->array_deps, $array_deps );
+    is($test->jobs->{'fastqc'}->{num_job_arrays}, 4);
 
     ok(1);
 
