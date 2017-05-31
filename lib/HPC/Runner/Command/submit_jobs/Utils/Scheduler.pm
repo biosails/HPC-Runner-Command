@@ -170,16 +170,17 @@ Bool value whether or not to submit to slurm. If you are looking to debug your f
 Don't submit to slurm with --no_submit_to_slurm from the command line or
 $self->no_submit_to_slurm(0); within your code
 
+DEPRECATED - use --dry_run instead
 =cut
 
-option 'no_submit_to_slurm' => (
-    is       => 'rw',
-    isa      => 'Bool',
-    default  => 0,
-    required => 0,
-    documentation =>
-q{Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.},
-);
+# option 'no_submit_to_slurm' => (
+#     is       => 'rw',
+#     isa      => 'Bool',
+#     default  => 0,
+#     required => 0,
+#     documentation =>
+# q{Bool value whether or not to submit to slurm. If you are looking to debug your files, or this script you will want to set this to zero.},
+# );
 
 =head3 template_file
 
@@ -297,7 +298,7 @@ Our current scheduler job dependencies
 has 'scheduler_ids' => (
     traits  => ['Array'],
     is      => 'rw',
-    isa     => 'ArrayRef',
+    isa     => 'ArrayRef[Str|Num]',
     default => sub { [] },
     handles => {
         all_scheduler_ids   => 'elements',
@@ -708,7 +709,7 @@ sub iterate_schedule {
         #$DB::single = 2;
 
         $self->reset_cmd_counter;
-        $self->iterate_deps();
+        next unless $self->iterate_deps();
 
         $self->process_jobs();
     }
@@ -735,18 +736,28 @@ sub iterate_deps {
 
     my $deps = $self->graph_job_deps->{ $self->current_job };
 
+    my $submit_ok = 1;
     foreach my $dep ( @{$deps} ) {
 
-        if (   $self->no_submit_to_slurm
-            && $self->jobs->{$dep}->is_not_submitted )
-        {
-            die print "A cyclic dependencies found!!!\n";
+        if ( $self->jobs->{$dep}->submission_failure ) {
+            $self->jobs->{$self->current_job}->submission_failure(1);
+            $self->app_log->warn( 'Trying to submit job '
+                  . $self->current_job
+                  . ' which depends upon '
+                  . $dep );
+            $self->app_log->warn( 'Job '
+                  . $dep
+                  . ' failed, so we are skipping this submission' );
+            $submit_ok = 0;
+            $self->clear_scheduler_ids;
         }
         else {
             map { $self->add_scheduler_id($_) }
               $self->jobs->{$dep}->all_scheduler_ids;
         }
     }
+
+    return $submit_ok;
 }
 
 =head3 process_jobs
@@ -758,6 +769,8 @@ sub process_jobs {
 
     my $jobref = $self->jobs->{ $self->current_job };
 
+    return if $self->jobs->{$self->current_job}->submission_failure;
+
     if ( !$jobref->can('submitted') ) {
         warn
 "You seem to be mixing and matching job dependency declarations. Here there be dragons!\n";
@@ -766,9 +779,6 @@ sub process_jobs {
     #TODO This should give a warning
     return if $jobref->submitted;
 
-    #$DB::single = 2;
-
-    #If using arrays
     if ( !$self->use_batches ) {
         $self->work;
     }
@@ -800,7 +810,6 @@ Go through the batch, add it, and see if we have any tags
 sub pre_process_batch {
     my $self = shift;
 
-    #$DB::single = 2;
     $self->clear_batch;
 
     my $orig_scheduler_ids = dclone( $self->scheduler_ids );
@@ -826,15 +835,13 @@ sub pre_process_batch {
 
         if ( $self->use_batches ) {
 
-            #$DB::single = 2;
-            # $self->batch( $batch->batch_str );
             $self->scheduler_ids_by_batch;
 
             $self->work;
             $self->scheduler_ids($orig_scheduler_ids);
         }
         else {
-            $self->scheduler_ids_by_array;
+            $self->add_scheduler_ids_by_array;
         }
 
         #Only need this for job_arrays
@@ -869,7 +876,7 @@ sub scheduler_ids_by_batch {
     $self->scheduler_ids( \@scheduler_ids ) if @scheduler_ids;
 }
 
-=head3 scheduler_ids_by_array
+=head3 job_scheduler_ids_by_array
 
 #TODO do this after the all batches for a single job have been passed
 
@@ -878,7 +885,10 @@ sub scheduler_ids_by_batch {
 sub job_scheduler_ids_by_array {
     my $self = shift;
 
+    $self->app_log->info('Updating task dependencies...');
+
     foreach my $job ( $self->all_schedules ) {
+        next if $self->jobs->{$job}->submission_failure;
         $self->current_job($job);
         $self->batch_scheduler_ids_by_array;
     }
@@ -924,6 +934,7 @@ sub dep_scheduler_ids_by_array {
             my $batch_scheduler_id =
               $self->jobs->{ $self->current_job }
               ->scheduler_ids->[$index_in_batch];
+            next unless defined $batch_scheduler_id;
 
             # Get the dep scheduler id
             my $dep_scheduler_id =
@@ -952,13 +963,14 @@ sub dep_scheduler_ids_by_array {
     }
 }
 
-sub scheduler_ids_by_array {
-    my $self = shift;
+=head3 add_scheduler_ids_by_array
 
-    #TODO we should get rid of this - and just do the processing once
-    #TODO this should be in the job
-    my $scheduler_index = $self->current_batch->scheduler_index;
-    return unless $scheduler_index;
+Add the scheduler ids by the task/batch
+
+=cut
+
+sub add_scheduler_ids_by_array {
+    my $self = shift;
 
     my $current_batch_index = $self->batch_counter - 1;
 
@@ -973,12 +985,12 @@ sub scheduler_ids_by_array {
         return;
     }
 
-    #$DB::single = 2;
-
     my $batch_scheduler_id =
       $self->jobs->{ $self->current_job }->scheduler_ids->[$index_in_batch];
 
-    $self->current_batch->scheduler_id($batch_scheduler_id);
+    ##IF there is no batch id, that means something went wrong with submission
+    $self->current_batch->scheduler_id($batch_scheduler_id)
+      if $batch_scheduler_id;
 }
 
 =head3 index_in_batch
@@ -1010,17 +1022,6 @@ sub index_in_batch {
 
     my $batches = $self->jobs->{$job}->batch_indexes;
     return check_batch_index( $batches, $index );
-}
-
-sub index_in_batch_deps {
-    my $self  = shift;
-    my $job   = shift;
-    my $index = shift;
-
-    my $search_index = $self->jobs->{$job}->batch_index_start + $index;
-
-    my $batches = $self->jobs->{$job}->batch_indexes;
-    return check_batch_index( $batches, $search_index );
 }
 
 memoize('check_batch_index');
@@ -1062,13 +1063,6 @@ Take care of the counters
 
 sub work {
     my $self = shift;
-
-    #$DB::single = 2;
-
-    if ( $self->use_batches ) {
-
-        # return unless $self->has_batch;
-    }
 
     $self->process_batch;
     $self->clear_batch;
@@ -1137,10 +1131,9 @@ sub process_batch {
 
         my $command = $self->process_batch_command($counter);
 
-        $self->process_template( $counter, $command, $ok, $array_str )
-          unless $self->no_submit_to_slurm;
+        $self->process_template( $counter, $command, $ok, $array_str );
 
-        $self->post_process_jobs unless $self->no_submit_to_slurm;
+        $self->post_process_jobs;
     }
 }
 
@@ -1183,7 +1176,8 @@ sub process_template {
     my $scheduler_id = $self->submit_jobs;
 
     try {
-        $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
+        $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id)
+          if $scheduler_id;
     }
     catch {
         if ( defined $_ ) {
@@ -1320,6 +1314,8 @@ This subroutine was just about 100% from the following perlmonks discussions. Al
 
 http://www.perlmonks.org/?node_id=151886
 
+This is probably overkill - but occasionally the scheduler takes longer than we think to exit
+
 =cut
 
 sub submit_to_scheduler {
@@ -1327,10 +1323,7 @@ sub submit_to_scheduler {
     my $submit_command = shift;
 
     my ( $infh, $outfh, $errfh );
-    $errfh = gensym();    # if you uncomment this line, $errfh will
-                          # never be initialized for you and you
-                          # will get a warning in the next print
-                          # line.
+    $errfh = gensym();
     my $cmdpid;
     eval {
         $cmdpid =
@@ -1345,34 +1338,20 @@ sub submit_to_scheduler {
     while ( my @ready = $sel->can_read ) {
         foreach my $fh (@ready) {    # loop through them
             my $line;
-
-            # read up to 4096 bytes from this fh.
             my $len = sysread $fh, $line, 4096;
             if ( not defined $len ) {
-
-                # There was an error reading
-                $self->log_main_messages( 'fatal', "Error from child: $!" );
+              #Something weird happened
             }
             elsif ( $len == 0 ) {
-
-                # Finished reading from this FH because we read
-                # 0 bytes.  Remove this handle from $sel.
                 $sel->remove($fh);
                 close($fh);
             }
             else {    # we read data alright
                 if ( $fh == $outfh ) {
                     $stdout .= $line;
-
-                    $self->log_main_messages( 'debug', $line );
                 }
                 elsif ( $fh == $errfh ) {
                     $stderr .= $line;
-
-                    $self->log_main_messages( 'error', $line );
-                }
-                else {
-                    $self->log_main_messages( 'fatal', "Shouldn't be here!" );
                 }
             }
         }
@@ -1388,6 +1367,24 @@ sub submit_to_scheduler {
     return ( $exitcode, $stdout, $stderr );
 }
 
+sub job_failure {
+    my $self = shift;
+
+    $self->log->warn( "Submit scripts will be written, "
+          . "but will not be submitted to the queue." );
+    $self->log->warn(
+"Any pending jobs that depend upon this job will NOT be submitted to the queue."
+    );
+    $self->log->warn(
+        "Please look at your submission scripts in " . $self->outdir );
+    $self->log->warn(
+        "And your logs in " . $self->logdir . "\nfor more information" );
+    $self->log->warn(
+"Task dependencies are not calculated until the end of submission ... please to do not exit unless you are sure!"
+    );
+    $self->jobs->{ $self->current_job }->submission_failure(1);
+}
+
 =head3 summarize_jobs
 
 =cut
@@ -1401,8 +1398,8 @@ sub summarize_jobs {
 
     foreach my $job ( $self->all_schedules ) {
 
-        for ( my $x = 0 ; $x < $self->jobs->{$job}->count_scheduler_ids ; $x++ )
-        {
+      # for ( my $x = 0 ; $x < $self->jobs->{$job}->count_scheduler_ids ; $x++ )
+        for ( my $x = 0 ; $x < $self->jobs->{$job}->{num_job_arrays} ; $x++ ) {
             my $row = [];
 
             #TODO Add testing coverage for using batches
@@ -1414,7 +1411,7 @@ sub summarize_jobs {
             my $len = ( $batch_end - $batch_start ) + 1;
 
             push( @{$row}, $job );
-            push( @{$row}, $self->jobs->{$job}->scheduler_ids->[$x] );
+            push( @{$row}, $self->jobs->{$job}->scheduler_ids->[$x] || '0' );
             push( @{$row}, "$batch_start-$batch_end" );
             push( @{$row}, $len );
             push( @rows,   $row );
