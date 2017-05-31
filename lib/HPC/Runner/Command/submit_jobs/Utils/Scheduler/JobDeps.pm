@@ -88,7 +88,15 @@ has scheduler_ids => (
     },
 );
 
-#TODO Add object class for this
+has submission_failure => (
+  is => 'rw',
+  isa => 'Bool',
+  traits => ['Bool'],
+  default => 0,
+  handles => {
+      no_submission_failure => 'not',
+  },
+);
 
 has batches => (
     traits => ['Array'],
@@ -119,12 +127,12 @@ has batch_indexes => (
     },
 );
 
-has 'batch_index_start' => (
+has batch_index_start => (
     isa => 'Int',
     is  => 'rw',
 );
 
-has 'batch_index_end' => (
+has batch_index_end => (
     isa => 'Int',
     is  => 'rw',
 );

@@ -143,8 +143,6 @@ sub sanity_check_schedule {
                         "No potential matches were found for dependency $r");
                 }
             }
-            else {
-            }
 
             $y++;
         }
@@ -159,25 +157,57 @@ sub sanity_check_schedule {
         $x++;
     }
 
-    #Format the table
-    if ( !$search ) {
-        $t->setCols( [ "JobName", "Deps", "Suggested" ] );
-        map { $t->addRow($_) } @rows;
-        $self->app_log->fatal(
-            'There were one or more problems with your job schedule.');
-        $self->app_log->warn(
-            "Here is your tabular dependency list in alphabetical order");
-    }
-    else {
-        $t->setCols( [ "JobName", "Deps", "Task Count" ] );
-        map { $t->addRow($_) } @rows;
-        $self->app_log->info(
-            "Here is your tabular dependency list in alphabetical order");
-    }
+    #IF there are no broken dependencies - return
+    return $search if $search;
 
+    $t->setCols( [ "JobName", "Deps", "Suggested" ] );
+    map { $t->addRow($_) } @rows;
+    $self->app_log->fatal(
+        'There were one or more problems with your job schedule.');
+    $self->app_log->warn(
+        "Here is your tabular dependency list in alphabetical order");
     $self->app_log->info( "\n\n" . $t );
 
     return $search;
+}
+
+sub print_table_schedule_info {
+    my $self = shift;
+    my $t    = Text::ASCIITable->new();
+
+    my @rows = ();
+    foreach my $job ( $self->all_schedules ) {
+        my $row = [];
+        my $ref = $self->graph_job_deps->{$job};
+
+        push(@$row, $job);
+
+        my $depstring = join( ", ", @{$ref} );
+        push( @$row, $depstring );
+
+        my $count_cmd = $self->jobs->{$job}->cmd_counter;
+        push( @$row, $count_cmd );
+
+        my $mem = $self->jobs->{$job}->mem;
+        push( @$row, $mem );
+
+        my $cpus = $self->jobs->{$job}->cpus_per_task;
+        push( @$row, $cpus );
+
+        $self->assign_num_max_array($job);
+        my $array_count = $self->jobs->{$job}->{num_job_arrays};
+
+        push( @$row, $array_count );
+
+        push( @rows, $row );
+    }
+
+    $t->setCols(
+        [ "JobName", "Deps", "Task Count", "Mem", "Cpu", "Num Arrays" ] );
+    map { $t->addRow($_) } @rows;
+    $self->app_log->info(
+        "Here is your tabular dependency list in submission order");
+    $self->app_log->info( "\n\n" . $t );
 }
 
 =head3 chunk_commands
@@ -226,7 +256,7 @@ sub chunk_commands {
         my $iter = natatime $commands_per_node, @cmds;
 
         $self->assign_batches($iter);
-        $self->assign_batch_stats(scalar @cmds);
+        $self->assign_batch_stats( scalar @cmds );
 
         $self->jobs->{ $self->current_job }->{batch_index_end} =
           $self->batch_counter - 1;
@@ -238,34 +268,60 @@ sub chunk_commands {
              $self->jobs->{ $self->current_job }->{batch_index_end}
           || $self->jobs->{ $self->current_job }->{batch_index_start};
 
+        # TODO separate function
         # TODO Update this - they should both use the same method
-        my $number_of_batches;
-        if ( !$self->use_batches ) {
+        # my $number_of_batches;
+        # if ( !$self->use_batches ) {
+        #
+        #     $number_of_batches =
+        #       resolve_max_array_size( $self->max_array_size, $commands_per_node,
+        #         $self->jobs->{ $self->current_job }->cmd_counter );
+        # }
+        # else {
+        #
+        #     $self->max_array_size($commands_per_node);
+        #
+        #     $number_of_batches =
+        #       resolve_max_array_size( $self->max_array_size,
+        #         $self->jobs->{ $self->current_job }->cmd_counter,
+        #         $commands_per_node );
+        # }
+        # $self->jobs->{ $self->current_job }->{num_job_arrays} =
+        #   $number_of_batches;
 
-            $number_of_batches =
-              resolve_max_array_size( $self->max_array_size, $commands_per_node,
-                $self->jobs->{ $self->current_job }->cmd_counter );
-        }
-        else {
-
-            $self->max_array_size($commands_per_node);
-
-            $number_of_batches =
-              resolve_max_array_size( $self->max_array_size,
-                $self->jobs->{ $self->current_job }->cmd_counter,
-                $commands_per_node );
-        }
-        $self->jobs->{ $self->current_job }->{num_job_arrays} =
-          $number_of_batches;
+        my $number_of_batches =
+          $self->jobs->{ $self->current_job }->{num_job_arrays};
 
         $self->return_ranges( $batch_index_start, $batch_index_end,
             $number_of_batches );
-
     }
 
     $self->reset_job_counter;
     $self->reset_cmd_counter;
     $self->reset_batch_counter;
+}
+
+sub assign_num_max_array {
+    my $self = shift;
+    my $job  = shift;
+
+    my $commands_per_node = $self->jobs->{$job}->commands_per_node;
+    my $number_of_batches;
+    if ( !$self->use_batches ) {
+
+        $number_of_batches =
+          resolve_max_array_size( $self->max_array_size, $commands_per_node,
+            $self->jobs->{$job}->cmd_counter );
+    }
+    else {
+        $self->max_array_size($commands_per_node);
+
+        $number_of_batches =
+          resolve_max_array_size( $self->max_array_size,
+            $self->jobs->{$job}->cmd_counter,
+            $commands_per_node );
+    }
+    $self->jobs->{$job}->{num_job_arrays} = $number_of_batches;
 }
 
 sub parse_cmd_file {
@@ -313,7 +369,8 @@ sub resolve_max_array_size {
         return $number_of_batches;
     }
 
-    $number_of_batches = $cmd_size / ( $max_array_size + 1 );
+    # $number_of_batches = $cmd_size / ( $max_array_size + 1 );
+    $number_of_batches = $cmd_size / $max_array_size;
 
     return POSIX::ceil($number_of_batches);
 }
@@ -367,11 +424,12 @@ Iterate through the batches to assign stats (number of batches per job, number o
 =cut
 
 sub assign_batch_stats {
-    my $self = shift;
+    my $self      = shift;
     my $cmd_count = shift;
 
     foreach my $batch ( @{ $self->jobs->{ $self->current_job }->batches } ) {
         $self->current_batch($batch);
+
         #How does this work?
         $self->inc_cmd_counter( $self->commands_per_node );
 
@@ -409,7 +467,7 @@ sub assign_batches {
           HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch->new(
             batch_tags => $batch_tags,
             job        => $self->current_job,
-            cmd_count => scalar @vals,
+            cmd_count  => scalar @vals,
           );
 
         $self->jobs->{ $self->current_job }->add_batches($batch_ref);
@@ -659,7 +717,7 @@ sub search_dep_batch_tags {
     my $x               = 0;
     foreach my $dep_batch ( @{$dep_batches} ) {
         push( @scheduler_index, $x )
-          if  search_tags( $dep_batch->batch_tags, $tags );
+          if search_tags( $dep_batch->batch_tags, $tags );
         $x++;
     }
 
