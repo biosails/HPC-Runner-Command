@@ -541,6 +541,7 @@ sub parse_meta {
 sub process_all_batch_deps {
     my $self = shift;
 
+    return if $self->jobs->{$self->current_job}->submission_failure;
     return unless $self->jobs->{ $self->current_job }->submit_by_tags;
     return unless $self->jobs->{ $self->current_job }->has_deps;
 
@@ -635,6 +636,8 @@ sub check_equal_batch_tags {
     return 1;
 }
 
+#TODO separate out all batches vs arrays/tasks
+
 =head3 process_batch_deps
 
 If a job has one or more job tags it is possible to fine tune dependencies
@@ -660,12 +663,15 @@ job01 - Sample2 would be submitted as schedulerid 1235
 job02 - Sample1 would be submitted as schedulerid 1236 - with dep on 1234 (with no job tags this would be 1234, 1235)
 job02 - Sample2 would be submitted as schedulerid 1237 - with dep on 1235 (with no job tags this would be 1234, 1235)
 
+TODO combine this with process_all_batch_deps
+
 =cut
 
 sub process_batch_deps {
     my $self  = shift;
     my $batch = shift;
 
+    return if $self->jobs->{$self->current_job}->submission_failure;
     return unless $self->jobs->{ $self->current_job }->submit_by_tags;
     return unless $self->jobs->{ $self->current_job }->has_deps;
 

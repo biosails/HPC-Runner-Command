@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- When a job fails - only jobs that depend upon that job will not be submitted, but the rest of the workflow is fine
 
 3.2.2  2017-05-29 14:50:37 GST
 	- Bug fix for array task dependencies

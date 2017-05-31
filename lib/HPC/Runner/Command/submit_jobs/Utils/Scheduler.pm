@@ -885,7 +885,10 @@ sub scheduler_ids_by_batch {
 sub job_scheduler_ids_by_array {
     my $self = shift;
 
+    $self->app_log->info('Updating task dependencies...');
+
     foreach my $job ( $self->all_schedules ) {
+        next if $self->jobs->{$job}->submission_failure;
         $self->current_job($job);
         $self->batch_scheduler_ids_by_array;
     }
