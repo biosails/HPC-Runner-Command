@@ -44,17 +44,17 @@ sub gen_batch_index_str {
 
 sub gen_array_str {
     my $self          = shift;
-    my $batch_index = shift;
+    my $batch_indexes = shift;
 
-    my $batch_index_start = $batch_index->{batch_index_start} - 1;
-    my $batch_index_end   = $batch_index->{batch_index_end} - 1;
+    my $batch_index_start = $batch_indexes->{batch_index_start} - 1;
+    my $batch_index_end   = $batch_indexes->{batch_index_end} - 1;
 
     my $start_array =
-      $self->jobs->{ $self->current_job }->batches->[$batch_index_start]
+      $self->jobs->{ $self->current_job }->{batches}->[$batch_index_start]
       ->{cmd_start} + $self->jobs->{ $self->current_job }->{cmd_start};
 
     my $end_array =
-      $self->jobs->{ $self->current_job }->batches->[$batch_index_end]
+      $self->jobs->{ $self->current_job }->{batches}->[$batch_index_end]
       ->{cmd_start} + $self->jobs->{ $self->current_job }->{cmd_start};
 
     my $array_str =

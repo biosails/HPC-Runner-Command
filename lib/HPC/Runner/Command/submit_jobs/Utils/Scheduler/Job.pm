@@ -1,4 +1,4 @@
-package HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
+package HPC::Runner::Command::submit_jobs::Utils::Scheduler::Job;
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -7,7 +7,7 @@ use HPC::Runner::Command::Utils::Traits qw(ArrayRefOfStrs);
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::Directives';
 
-=head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::JobDeps;
+=head1 HPC::Runner::Command::submit_jobs::Utils::Scheduler::Job;
 
 =cut
 
@@ -113,6 +113,8 @@ has batches => (
     },
 );
 
+##Batches are groups of commands
+
 has batch_indexes => (
     traits  => ['Array'],
     is      => 'rw',
@@ -123,7 +125,7 @@ has batch_indexes => (
         add_batch_indexes    => 'push',
         has_batch_indexes    => 'count',
         count_batch_indexes  => 'count',
-        has_no_batch_indexes => 'is_empty',
+        # has_no_batch_indexes => 'is_empty',
     },
 );
 
@@ -137,13 +139,13 @@ has batch_index_end => (
     is  => 'rw',
 );
 
-has 'submit_by_tags' => (
+has submit_by_tags => (
     is      => 'rw',
     isa     => 'Bool',
     default => 0,
 );
 
-has 'submitted' => (
+has submitted => (
     traits  => ['Bool'],
     is      => 'rw',
     isa     => 'Bool',

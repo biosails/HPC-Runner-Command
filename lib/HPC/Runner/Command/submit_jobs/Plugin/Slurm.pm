@@ -76,8 +76,6 @@ Update the job dependencies if using job_array (not batches)
 sub update_job_deps {
     my $self = shift;
 
-    return if $self->use_batches;
-
     return unless $self->has_array_deps;
 
     while ( my ( $current_task, $v ) = each %{ $self->array_deps } ) {

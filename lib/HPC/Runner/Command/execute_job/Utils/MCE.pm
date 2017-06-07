@@ -28,6 +28,13 @@ option 'commands' => (
     default  => 1,
 );
 
+=head2 read_command
+
+Commands in the command file are 0 indexed
+The first command is 0
+
+=cut
+
 has 'read_command' => (
     is        => 'rw',
     isa       => 'Num|Undef',
@@ -224,6 +231,13 @@ sub parse_file_mce {
         exit 1;
     }
 }
+
+=head3 parse_cmd_file
+
+Parse the command file for the read_command
+Commands are 0 indexed
+
+=cut
 
 sub parse_cmd_file {
     my $self = shift;
