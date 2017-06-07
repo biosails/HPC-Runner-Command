@@ -47,7 +47,7 @@ has 'read_command' => (
             return $self->task_id - $self->batch_index_start;
         }
         elsif ( $self->can('batch_index_start') ) {
-            return $self->batch_index_start;
+            return $self->batch_index_start - 1;
         }
         else {
             $self->log->fatal(
@@ -249,14 +249,16 @@ sub parse_cmd_file {
 
     my @cmds = ();
     my $cmd  = '';
+
     while (<$fh>) {
         my $line = $_;
         next unless $line;
+        next unless $line =~ m/\S/;
 
         $cmd .= $line;
         next if $line =~ m/\\$/;
         next if $line =~ m/^#/;
-        if ( $x == $self->read_command && $cmd_count <= $self->commands ) {
+        if ( $x == $self->read_command && $cmd_count < $self->commands ) {
             $add_cmds = 1;
         }
         if ($add_cmds) {

@@ -133,29 +133,22 @@ sub test_001 : Tags(use_batches) {
         '1238' => [ '1234', '1235' ]
     };
 
+    my $rows = $test->summarize_jobs;
+
+    my $expect_rows = [
+        [ 'trimmomatic_gzip',  '1234', '1-2',   2 ],
+        [ 'trimmomatic_gzip',  '1235', '3-4',   2 ],
+        [ 'trimmomatic_gzip',  '1236', '5-6',   2 ],
+        [ 'trimmomatic_gzip',  '1237', '7-8',   2 ],
+        [ 'trimmomatic_gzip1', '1238', '9-10',  2 ],
+        [ 'trimmomatic_gzip1', '1239', '11-12', 2 ],
+        [ 'trimmomatic_gzip1', '1240', '13-14', 2 ],
+        [ 'trimmomatic_gzip1', '1241', '15-16', 2 ]
+    ];
+    is_deeply( $rows, $expect_rows, 'Rows pass' );
+
     chdir($cwd);
     remove_tree($test_dir);
 }
-
-# sub test_002 : Tags(use_array) {
-#     my $cwd      = getcwd();
-#     my $test     = construct();
-#     my $test_dir = getcwd();
-#
-#     my ( $source, $dep );
-#
-#     $test->max_array_size(2);
-#     $test->parse_file_slurm();
-#     $test->iterate_schedule();
-#
-#     is( $test->jobs->{'trimmomatic_gzip'}->{num_job_arrays}, 2);
-#     is( $test->jobs->{'trimmomatic_gzip'}->count_scheduler_ids, 2);
-#     # diag( Dumper( $test->jobs->{'trimmomatic_gzip'} ) );
-#
-#     ok(1);
-#
-#     chdir($cwd);
-#     remove_tree($test_dir);
-# }
 
 1;

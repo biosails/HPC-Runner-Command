@@ -57,8 +57,12 @@ sub summarize_jobs {
     my $x    = 0;
     my @rows = ();
 
-    $DB::single=2;
+    $DB::single = 2;
 
+    #SIGHS
+    #cmd_start is zero indexes
+    #But batches are 1 indexes
+    #WHY DO I DO THIS TO MYSELF
     foreach my $job ( $self->all_schedules ) {
 
         my $cmd_start         = $self->jobs->{$job}->{cmd_start};
@@ -69,17 +73,20 @@ sub summarize_jobs {
 
             next unless $self->jobs->{$job}->batch_indexes->[$x];
 
-            my $batch_indexes     = $self->jobs->{$job}->batch_indexes->[$x];
+            my $batch_indexes = $self->jobs->{$job}->batch_indexes->[$x];
 
             my $batch_index_start = $batch_indexes->{batch_index_start} - 1;
             my $batch_index_end   = $batch_indexes->{batch_index_end} - 1;
 
             my $start_array =
-              $self->jobs->{$job}->batches->[$batch_index_start]->{cmd_start} + $cmd_start;
+              $self->jobs->{$job}->batches->[$batch_index_start]->{cmd_start} +
+              $cmd_start;
 
             my $end_array =
-              $self->jobs->{ $job }->batches
-              ->[$batch_index_end]->{cmd_start} + $cmd_start;
+              $self->jobs->{$job}->batches->[$batch_index_end]->{cmd_start} +
+              $cmd_start - 1 +
+              $self->jobs->{$job}->commands_per_node;
+
             my $len = $end_array - $start_array + 1;
 
             push( @{$row}, $job );

@@ -28,9 +28,6 @@ sub write_test_file {
     my $t = "$test_dir/script/test002.1.sh";
     open( my $fh, ">$t" );
     print $fh <<EOF;
-
-#HPC jobname=trimmomatic_gzip
-
 #TASK tags=Sample_PAG008_V4_E2
 gzip -f Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq
 
@@ -57,12 +54,13 @@ sub construct {
     my $t = "$test_dir/script/test002.1.sh";
     MooseX::App::ParsedArgv->new(
         argv => [
-            "execute_job", "--infile", $t,
+            "execute_job", "--infile", $t, '--commands', 1,
+            '--batch_index_start', 1,
         ]
     );
 
     my $test = HPC::Runner::Command->new_with_command();
-    $test->logname('slurm_logs');
+    $test->logname('001_trimmomatic');
     $test->log( $test->init_log );
     return $test;
 }
@@ -72,48 +70,92 @@ sub test_001 : Tags(use_batches) {
     my $test     = construct();
     my $test_dir = getcwd();
 
-    my ( $source, $dep );
+    is( $test->read_command, 0, 'Read command passes' );
+    is( $test->commands,     1, 'Num of commands passes' );
 
-    $test->parse_file_slurm();
-    $test->iterate_schedule();
+    my $fh = IO::File->new( $test->infile, q{<} );
+    my $cmds = $test->parse_cmd_file($fh);
 
-    is( $test->jobs->{'trimmomatic_gzip'}->{num_job_arrays},
-        4, 'Num job arrays passes' );
-    is( $test->jobs->{'trimmomatic_gzip'}->count_scheduler_ids,
-        4, 'Count scheduler ids passes' );
-    is( $test->jobs->{'trimmomatic_gzip'}->count_batch_indexes,
-        4, 'Count batch indexes passes' );
-
-    my $array_deps = {
-        '1241' => [ '1236', '1237' ],
-        '1240' => [ '1236', '1237' ],
-        '1239' => [ '1234', '1235' ],
-        '1238' => [ '1234', '1235' ]
-    };
+    my $expect_cmds =
+      [     "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq\n" ];
+    is_deeply( $cmds, $expect_cmds, 'Commands pass' );
 
     chdir($cwd);
     remove_tree($test_dir);
 }
 
-# sub test_002 : Tags(use_array) {
-#     my $cwd      = getcwd();
-#     my $test     = construct();
-#     my $test_dir = getcwd();
-#
-#     my ( $source, $dep );
-#
-#     $test->max_array_size(2);
-#     $test->parse_file_slurm();
-#     $test->iterate_schedule();
-#
-#     is( $test->jobs->{'trimmomatic_gzip'}->{num_job_arrays}, 2);
-#     is( $test->jobs->{'trimmomatic_gzip'}->count_scheduler_ids, 2);
-#     # diag( Dumper( $test->jobs->{'trimmomatic_gzip'} ) );
-#
-#     ok(1);
-#
-#     chdir($cwd);
-#     remove_tree($test_dir);
-# }
+sub test_002 : Tags(use_batches) {
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
+
+    $test->commands(2);
+    is( $test->read_command, 0, 'Read command passes' );
+    is( $test->commands,     2, 'Num of commands passes' );
+
+    my $fh = IO::File->new( $test->infile, q{<} );
+    my $cmds = $test->parse_cmd_file($fh);
+
+    my $expect_cmds = [
+            "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq\n",
+
+        "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_2PE.fastq\n",
+    ];
+    is_deeply( $cmds, $expect_cmds, 'Commands pass' );
+
+    chdir($cwd);
+    remove_tree($test_dir);
+}
+
+sub test_003 : Tags(use_batches) {
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
+
+    $test->read_command(1);
+    $test->commands(2);
+    is( $test->read_command, 1, 'Read command passes' );
+    is( $test->commands,     2, 'Num of commands passes' );
+
+    my $fh = IO::File->new( $test->infile, q{<} );
+    my $cmds = $test->parse_cmd_file($fh);
+
+    my $expect_cmds = [
+        "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_2PE.fastq\n",
+        "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_1SE.fastq\n"
+    ];
+
+    is_deeply( $cmds, $expect_cmds, 'Commands pass' );
+    
+    chdir($cwd);
+    remove_tree($test_dir);
+}
+
+sub test_004 : Tags(use_batches) {
+    my $cwd      = getcwd();
+    my $test     = construct();
+    my $test_dir = getcwd();
+
+    $test->read_command(3);
+    is( $test->read_command, 3, 'Read command passes' );
+    is( $test->commands,     1, 'Num of commands passes' );
+
+    my $fh = IO::File->new( $test->infile, q{<} );
+    my $cmds = $test->parse_cmd_file($fh);
+
+    my $expect_cmds = [
+            "#TASK tags=Sample_PAG008_V4_E2\n"
+          . "gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_1PE.fastq\n"
+    ];
+    is_deeply( $cmds, $expect_cmds, 'Commands pass' );
+
+    chdir($cwd);
+    remove_tree($test_dir);
+}
 
 1;

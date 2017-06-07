@@ -56,8 +56,7 @@ sub gen_batch_index_str {
     ## The first command in a job file is 0
     # $DB::single = 2;
     my $start =
-      $self->jobs->{ $self->current_job }->{batches}->[$counter]->{cmd_start} -
-      1;
+      $self->jobs->{ $self->current_job }->{batches}->[$counter]->{cmd_start};
     return "$start";
 }
 
