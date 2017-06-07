@@ -1,6 +1,9 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Refactored Scheduler.pm into several more modules
+	- Bug fix for use_arrays and commands_per_node
+	- Better test coverage for execute_job
 
 3.2.3  2017-05-31 16:45:39 GST
 	- When a job fails - only jobs that depend upon that job will not be submitted, but the rest of the workflow is fine
