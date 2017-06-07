@@ -1,3 +1,3 @@
 env:
-  PATH: "/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/script:/home/jillian/.local/easybuild/software/perl-hpc-runner/1/bin:/home/jillian/.tmuxifier/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/home/jillian/.local/bin:/home/jillian/bin"
-  PERL5LIB: "/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/MooseX-App-Plugin-ManyConfigs/lib:/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command-Plugin-Blog/lib:/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/lib" 
+  PATH: "/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/script:/home/jillian/.eb/software/perl-hpc-runner-command/1/bin:/home/jillian/.tmuxifier/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/home/jillian/.local/bin:/home/jillian/bin"
+  PERL5LIB: "/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/MooseX-App-Plugin-ManyConfigs/lib:/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command-Plugin-Blog/lib:/home/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/lib"

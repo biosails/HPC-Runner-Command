@@ -28,6 +28,13 @@ option 'commands' => (
     default  => 1,
 );
 
+=item read_command
+
+Commands in the command file are 0 indexed
+The first command is 0
+
+=cut
+
 has 'read_command' => (
     is        => 'rw',
     isa       => 'Num|Undef',
@@ -37,7 +44,7 @@ has 'read_command' => (
     default   => sub {
         my $self = shift;
         if ( $self->can('task_id') && $self->can('batch_index_start') ) {
-            return $self->task_id - $self->batch_index_start - 1;
+            return $self->task_id - $self->batch_index_start;
         }
         elsif ( $self->can('batch_index_start') ) {
             return $self->batch_index_start;
@@ -196,7 +203,7 @@ sub parse_file_mce {
     my $self = shift;
 
     $self->process_table;
-    
+
     my $fh = IO::File->new( $self->infile, q{<} )
       or $self->log_main_messages( "fatal",
         "Error opening file  " . $self->infile . "  " . $! );
@@ -224,6 +231,13 @@ sub parse_file_mce {
         exit 1;
     }
 }
+
+=head3 parse_cmd_file
+
+Parse the command file for the read_command
+Commands are 0 indexed
+
+=cut
 
 sub parse_cmd_file {
     my $self = shift;
