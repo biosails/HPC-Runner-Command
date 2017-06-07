@@ -28,7 +28,7 @@ option 'commands' => (
     default  => 1,
 );
 
-=item read_command
+=head2 read_command
 
 Commands in the command file are 0 indexed
 The first command is 0

@@ -53,10 +53,9 @@ sub gen_array_str {
       $self->jobs->{ $self->current_job }->{batches}->[$batch_index_start]
       ->{cmd_start} + $self->jobs->{ $self->current_job }->{cmd_start};
 
-    ## + 1 ???
     my $end_array =
       $self->jobs->{ $self->current_job }->{batches}->[$batch_index_end]
-      ->{cmd_start} + $self->jobs->{ $self->current_job }->{cmd_start} + 1;
+      ->{cmd_start} + $self->jobs->{ $self->current_job }->{cmd_start};
 
     my $array_str =
         $start_array . "-"
