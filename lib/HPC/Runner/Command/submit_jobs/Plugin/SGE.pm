@@ -1,4 +1,4 @@
-package HPC::Runner::Command::submit_jobs::Plugin::Slurm;
+package HPC::Runner::Command::submit_jobs::Plugin::SGE;
 
 use Data::Dumper;
 use Log::Log4perl;
@@ -8,25 +8,13 @@ use Moose::Role;
 
 =head1 HPC::Runner::Command::Plugin::Scheduler::Slurm;
 
-Use the SLURM scheduler
-
 =cut
 
 has 'submit_command' => (
     is      => 'rw',
     isa     => 'Str',
-    default => 'sbatch',
+    default => 'qsub',
 );
-
-=head3 template_file
-
-actual template file
-
-One is generated here for you, but you can always supply your own with --template_file /path/to/template
-
-#TODO add back PBS support and add SGE support
-
-=cut
 
 has 'template_file' => (
     is      => 'rw',
@@ -39,38 +27,27 @@ has 'template_file' => (
         my $tt = <<EOF;
 #!/usr/bin/env bash
 #
-#SBATCH --share
-#SBATCH --job-name=[% JOBNAME %]
-#SBATCH --output=[% OUT %]
-[% IF job.has_account %]
-#SBATCH --account=[% job.account %]
+#$ -N [% JOBNAME %]
+#$ -S /bin/bash
+#$ -cwd
+[% IF job.has_queue %]
+#$-q [% job.queue %]
 [% END %]
-[% IF job.has_partition %]
-#SBATCH --partition=[% job.partition %]
-[% END %]
-[% IF job.has_nodes_count %]
-#SBATCH --nodes=[% job.nodes_count %]
-[% END %]
-[% IF job.has_ntasks %]
-#SBATCH --ntasks=[% job.ntasks %]
-[% END %]
-[% IF job.has_cpus_per_task %]
-#SBATCH --cpus-per-task=[% job.cpus_per_task %]
-[% END %]
-[% IF job.has_ntasks_per_node %]
-#SBATCH --ntasks-per-node=[% job.ntasks_per_node %]
-[% END %]
-[% IF job.has_mem %]
-#SBATCH --mem=[% job.mem %]
-[% END %]
+#$ -pe smp [% job.cpus_per_task %]
 [% IF job.has_walltime %]
-#SBATCH --time=[% job.walltime %]
+#$ -l h_rt=[% job.walltime %]
+[% END %]
+#$ -j y
+#$ -o [% OUT %]
+[% IF job.has_mem %]
+#$ -l mh_vem=[% job.mem %]
 [% END %]
 [% IF ARRAY_STR %]
-#SBATCH --array=[% ARRAY_STR %]
+#$ -t=[% ARRAY_STR %]
 [% END %]
+
 [% IF AFTEROK %]
-#SBATCH --dependency=afterok:[% AFTEROK %]
+#$ -hold_jid=[% AFTEROK %]
 [% END %]
 
 [% IF MODULES %]
@@ -78,7 +55,6 @@ module load [% MODULES %]
 [% END %]
 
 [% COMMAND %]
-
 EOF
 
         print $fh $tt;
@@ -95,8 +71,6 @@ EOF
 has 'log' => (
     is      => 'rw',
     default => sub {
-        my $self = shift;
-
         my $log_conf = q(
 log4perl.rootLogger = DEBUG, Screen
 log4perl.appender.Screen = \
@@ -117,13 +91,12 @@ log4perl.appender.Screen.layout.ConversionPattern = \
 
 =head3 submit_jobs
 
-Submit jobs to slurm queue using sbatch.
+Submit jobs to slurm queue using PBS.
 
 Format is
 
-Submitted batch job <job_id>
+ "Your job <job_id> ("<job_name>") has been submitted"
 
-Where <job_id> is just only numeric
 =cut
 
 sub submit_jobs {
@@ -140,15 +113,16 @@ sub submit_jobs {
         $self->log->warn( "STDOUT: " . $stdout ) if $stdout;
     }
 
-    my ($jobid) = $stdout =~ m/(\d.*)$/ if $stdout;
+    # my $jobid = $stdout;
+    my $jobid;
+    ($jobid) = $stdout =~ m/Your job (\d.*) \(/;
 
     if ( !$jobid ) {
         $self->job_failure;
     }
     else {
-        $self->log->debug( "Submited job "
-              . $self->slurmfile
-              . "\n\tWith Slurm jobid $jobid" );
+        $self->log->debug(
+            "Submited job " . $self->slurmfile . "\n\tWith SGE jobid $jobid" );
     }
 
     return $jobid;
@@ -158,6 +132,9 @@ sub submit_jobs {
 
 Update the job dependencies if using job_array (not batches)
 
+NOTE - Task dependencies may not be supported.
+
+
 =cut
 
 sub update_job_deps {
@@ -165,10 +142,29 @@ sub update_job_deps {
 
     return unless $self->has_array_deps;
 
+    $self->log->warn('Task dependencies in SGE is still very experimental!');
+    $self->log->warn( 'Please raise any problems as an issue at github.' . "\n"
+          . "\thttp://github.com/biosails/HPC-Runner-Command" );
+
     while ( my ( $current_task, $v ) = each %{ $self->array_deps } ) {
-        my $dep_tasks = join( ':', @$v );
-        my $cmd =
-          "scontrol update job=$current_task -W depend=afterok:$dep_tasks";
+
+        my $cmd;
+        if ( $self->use_batches ) {
+            my $dep_tasks = join( ':', @$v );
+            $cmd = "qalter -hold_jid \"$dep_tasks\" $current_task ";
+        }
+        else {
+            foreach my $tv ( @{$v} ) {
+                my @tmp = split( '_', $tv );
+                $tv = $tmp[0] . '[' . $tmp[1] . ']';
+            }
+
+            my @tmp = split( '_', $current_task );
+            $current_task = $tmp[0] . '[' . $tmp[1] . ']';
+
+            my $dep_tasks = join( ':', @$v );
+            $cmd = "qalter -hold_jid \"$dep_tasks\" \"$current_task\" ";
+        }
 
         $self->submit_to_scheduler($cmd);
     }

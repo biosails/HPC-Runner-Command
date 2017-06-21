@@ -84,6 +84,7 @@ option 'jobname' => (
              $ENV{SLURM_JOB_NAME}
           || $ENV{SBATCH_JOB_NAME}
           || $ENV{PBS_JOBNAME}
+          || $ENV{JOB_NAME}
           || 'job';
     },
     predicate => 'has_jobname',
