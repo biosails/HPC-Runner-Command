@@ -21,23 +21,11 @@ sub build_task_deps {
     # my $batch_task_index   = shift;
     # my $dep_task_index     = shift;
 
-    my $array_dep = [ $batch_scheduler_id, $dep_scheduler_id, ];
-
-    return $array_dep;
+    # my $array_dep = [ $batch_scheduler_id, $dep_scheduler_id, ];
+    #
+    # return $array_dep;
+    return $self->assign_scheduler_deps($batch_scheduler_id, $dep_scheduler_id);
 }
-
-# sub prepare_batch_indexes {
-#     my $self = shift;
-#
-#     return [
-#         {
-#             batch_index_start =>
-#               $self->jobs->{ $self->current_job }->{batch_index_start},
-#             batch_index_end =>
-#               $self->jobs->{ $self->current_job }->{batch_index_end},
-#         }
-#     ];
-# }
 
 sub prepare_batch_indexes {
     my $self = shift;

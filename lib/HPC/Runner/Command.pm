@@ -9,6 +9,12 @@ option '+config_base' => (
     default       => '.hpcrunner',
 );
 
+option 'verbose' => (
+  is => 'rw',
+  isa => 'Bool',
+  default => 0,
+);
+
 our $VERSION = '3.2.5';
 
 app_strict 0;
@@ -19,7 +25,9 @@ app_strict 0;
 
 =begin HTML
 
-<p><img src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg" width="500" height="250" alt="HPC::Runner::Command" /></p>
+<p><img
+src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg"
+width="500" height="250" alt="HPC::Runner::Command" /></p>
 
 =end HTML
 
@@ -33,11 +41,11 @@ To create a new project
 
 To submit jobs to a cluster
 
-    hpcrunner.pl submit_jobs
+    hpcrunner.pl submit_jobs --infile my_submission.sh
 
 To run jobs on an interactive queue or workstation
 
-    hpcrunner.pl execute_job
+    hpcrunner.pl single_node --infile my_submission.sh
 
 =head1 DESCRIPTION
 
@@ -45,9 +53,11 @@ HPC::Runner::Command is a set of libraries for scaffolding data analysis project
 submitting and executing jobs on an HPC cluster or workstation, and obsessively
 logging results.
 
-Get help by heading on over to github and raising an issue L<https://github.com/biosails/HPC-Runner-Command/issues>.
+Get help by heading on over to github and raising an issue. L<GitHub |
+https://github.com/biosails/HPC-Runner-Command/issues>.
 
-Please see the complete documentation at L<HPC::Runner::Command GitBooks | https://jerowe.gitbooks.io/hpc-runner-command-docs/content/>.
+Please see the complete documentation at L<HPC::Runner::Command GitBooks |
+https://jerowe.gitbooks.io/hpc-runner-command-docs/content/>.
 
 =head1 Quick Start - Create a New Project
 
@@ -59,7 +69,8 @@ You can create a new project, with a sane directory structure by using
 
 =head2 Simple Example
 
-Our simplest example is a single job type with no dependencies - each task is independent of all other tasks.
+Our simplest example is a single job type with no dependencies - each task is
+independent of all other tasks.
 
 =head3 Workflow file
 
@@ -142,10 +153,14 @@ Within a job type we can declare dependencies on particular tasks.
 =head2 Declare Scheduler Variables
 
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
-generalized variables for declaring types across templates. For more
-information please see L<< Job Scheduler Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >>
+generalized variables for declaring types across templates. For more information
+please see L< Job Scheduler
+Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >
 
-Additionally, for workflows with a large number of tasks, please see L<< Considerations for Workflows with a Large Number of Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks >> for information on how to group tasks together.
+Additionally, for workflows with a large number of tasks, please see L<
+Considerations for Workflows with a Large Number of
+Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks >
+for information on how to group tasks together.
 
 =head3 Workflow file
 
@@ -155,6 +170,7 @@ Additionally, for workflows with a large number of tasks, please see L<< Conside
 	#HPC cpus_per_task=1
 	#HPC partition=serial
 	#HPC commands_per_node=1
+  #HPC mem=4GB
 	#TASK tags=Sample1
 	unzip Sample1.zip
 	#TASK tags=Sample2
