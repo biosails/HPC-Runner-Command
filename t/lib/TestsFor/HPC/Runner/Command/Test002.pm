@@ -264,14 +264,13 @@ sub test_014 : Tags(job_stats) {
     $test->iterate_schedule();
 
     my $batch_job01_001 = {
-        'job'        => 'job01',
-        'batch_tags' => ['Sample1'],
-
-        # 'array_deps'      => [],
+        'job'             => 'job01',
+        'batch_tags'      => ['Sample1'],
         'scheduler_index' => {},
         'scheduler_id'    => '1234',
         'cmd_count'       => 1,
         'cmd_start'       => 1,
+        # 'logname'         => '001_job01',
     };
 
     is_deeply( $test->jobs->{job01}->batches->[0],
@@ -284,12 +283,14 @@ sub test_014 : Tags(job_stats) {
         'scheduler_id'    => '1234',
         'cmd_count'       => 1,
         'cmd_start'       => 2,
+        # 'logname'         => '002_job01',
     };
 
     is_deeply( $test->jobs->{job01}->batches->[1],
         $batch_job01_002, 'Job 01 Batch 002 matches' );
 
     my $batch_job02_001 = {
+
         # 'array_deps' => [ [ '1235_3', '1234_1' ] ],
         # 'scheduler_index' => { 'job01' => [0] },
         'job'             => 'job02',
@@ -298,6 +299,7 @@ sub test_014 : Tags(job_stats) {
         'scheduler_id'    => '1235',
         'cmd_count'       => 1,
         'cmd_start'       => 1,
+        # 'logname'         => '002_job01',
     };
 
     is_deeply( $test->jobs->{job02}->batches->[0],
@@ -317,7 +319,7 @@ sub test_014 : Tags(job_stats) {
     is_deeply( $test->jobs->{job02}->batches->[1],
         $batch_job02_002, 'Job 02 Batch 002 matches' );
 
-    my $array_deps = { '1235_3' => ['1234_1' ] , '1235_4' => [ '1234_2' ] };
+    my $array_deps = { '1235_3' => ['1234_1'], '1235_4' => ['1234_2'] };
 
     is_deeply( $test->array_deps, $array_deps, 'ArrayDeps Match' );
     #

@@ -1,18 +1,22 @@
 package HPC::Runner::Command;
 
+use strict;
+use warnings;
+
 use MooseX::App qw(Color);
 
 with 'HPC::Runner::Command::Utils::Plugin';
 with 'HPC::Runner::Command::Utils::ManyConfigs';
 
-option '+config_base' => (
-    default       => '.hpcrunner',
-);
+with 'HPC::Runner::Command::Logger::JSON';
+use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
+
+option '+config_base' => ( default => '.hpcrunner', );
 
 option 'verbose' => (
-  is => 'rw',
-  isa => 'Bool',
-  default => 0,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 our $VERSION = '3.2.5';

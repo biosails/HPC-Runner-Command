@@ -789,6 +789,7 @@ sub process_batch {
         $self->post_process_jobs;
 
         $self->post_process_batch_indexes($batch_indexes);
+        $self->inc_batch_counter;
     }
 }
 
@@ -801,7 +802,7 @@ Put the scheduler_id in each batch
 sub post_process_batch_indexes {
     my $self          = shift;
     my $batch_indexes = shift;
-    
+
     my $scheduler_id = $self->jobs->{ $self->current_job }->scheduler_ids->[-1];
 
     for (

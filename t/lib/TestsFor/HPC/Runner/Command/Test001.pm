@@ -41,8 +41,10 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::Dummy');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::PBS');
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::SGE');
+    require_ok('HPC::Runner::Command::submit_jobs::Logger::JSON');
     require_ok('HPC::Runner::Command::execute_job::Utils::Log');
     require_ok('HPC::Runner::Command::execute_job');
+    require_ok('HPC::Runner::Command::execute_job::Logger::JSON');
     require_ok('HPC::Runner::Command::execute_array');
     require_ok('HPC::Runner::Command::single_node');
     ok(1);

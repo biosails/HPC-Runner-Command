@@ -3,10 +3,15 @@ package HPC::Runner::Command::execute_job::Utils::Log;
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
+use IPC::Cmd qw[can_run];
 use IPC::Open3;
 use IO::Select;
 use Symbol;
 use Try::Tiny;
+use Path::Tiny;
+use Number::Bytes::Human qw(format_bytes parse_bytes);
+use DateTime::Duration;
+use Memoize;
 
 with 'HPC::Runner::Command::Utils::Log';
 
@@ -82,7 +87,8 @@ sub _log_commands {
     my $hms = $dt1->hms();
 
     $self->clear_table_data;
-    $self->set_table_data( start_time => "$ymd $hms" );
+    $self->set_table_data( start_time    => "$ymd $hms" );
+    $self->set_table_data( start_time_dt => $dt1 );
 
     my ( $cmdpid, $exitcode ) = $self->log_job;
     return unless defined $cmdpid;
@@ -109,6 +115,8 @@ sub _log_commands {
         $cmdpid );
 
     $self->log_table( $cmdpid, $exitcode, $format->format_duration($duration) );
+
+    $self->update_json_task;
 
     return $exitcode;
 }
@@ -149,10 +157,12 @@ sub log_table {
     $self->set_table_data( exit_time => "$ymd $hms" );
     $self->set_table_data( exitcode  => $exitcode );
     $self->set_table_data( duration  => $duration );
+    $self->set_table_data( task_id   => $self->counter );
 
     my $version = $self->version || "0.0";
     my $task_tags = "";
 
+    ##TODO UPdate this with File::Spec
     my $logfile = $self->logdir . "/" . $self->logfile;
 
     open( my $pidtablefh, ">>" . $self->process_table )
@@ -215,6 +225,12 @@ sub log_job {
     $errfh = gensym();    # if you uncomment this line, $errfh will
     my $cmdpid;
 
+    #We need to put a sleep here so that we can catch the proc file
+    my $cmd = $self->cmd;
+    chomp($cmd);
+    $cmd = $cmd . "; sleep 10s\n";
+    $self->cmd($cmd);
+
     try {
         $cmdpid = open3( $infh, $outfh, $errfh, $self->cmd );
     }
@@ -234,10 +250,15 @@ sub log_job {
 
     # Start Command Log
     $self->start_command_log($cmdpid);
+    $self->create_json_task($cmdpid);
+    $self->get_cmd_stats($cmdpid);
+
     my $sel = new IO::Select;    # create a select object
     $sel->add( $outfh, $errfh ); # and add the fhs
 
-    while ( my @ready = $sel->can_read ) {
+    while (1) {
+        last unless $sel->can_read;
+        my @ready = $sel->can_read;
         foreach my $fh (@ready) {    # loop through them
             my $line;
             my $len = sysread $fh, $line, 4096;
@@ -258,12 +279,131 @@ sub log_job {
                 }
             }
         }
+        $self->get_cmd_stats($cmdpid);
+        ##TODO Add Variable
+        sleep( $self->poll_time );
     }
 
     waitpid( $cmdpid, 1 );
     $exitcode = $?;
 
     return ( $cmdpid, $exitcode );
+}
+
+sub get_cmd_stats {
+    my $self   = shift;
+    my $cmdpid = shift;
+
+    ##TODO Add in check for can_run(pstree)
+    return unless can_run('pstree');
+    my $cmd = "pstree -p $cmdpid";
+
+    my $child_pids = `$cmd`;
+
+    my (@cmdpids) = $child_pids =~ m/\((\d+)\)/g;
+    push( @cmdpids, $cmdpid );
+
+    my $found_stats      = 0;
+    my $total_stats_data = {
+        vmpeak => 0,
+        vmsize => 0,
+        vmhwm  => 0,
+        vmrss  => 0,
+    };
+
+    # my $dt2 = DateTime->now( time_zone => 'local' );
+    # my $duration = $dt2 - $dt1;
+    # my $format =
+    #   DateTime::Format::Duration->new(
+    #     pattern => ' %e days, %H hours, %M minutes, %S seconds' );
+
+    foreach my $cmdpid (@cmdpids) {
+        my $stats_file = path("/proc/$cmdpid/status");
+
+        if ( $stats_file->exists ) {
+            my $data = $stats_file->slurp_utf8;
+
+            if ( $data =~ m/State: Z/ || $data =~ m/State.*zombine/ ) {
+                next;
+            }
+            elsif ( $data =~ m/State:  S/ || $data =~ m/State.*sleeping/ ) {
+                next;
+            }
+            elsif ( $data =~ m/State:  R/ || $data =~ m/State.*run/ ) {
+                my $stats = parse_proc_file_data($data);
+                $total_stats_data = add_proc_stats($stats);
+                $found_stats      = 1;
+            }
+            else {
+                ##This probably means that the file was deleted mid slurp
+                next;
+            }
+            $self->log_cmd_messages( "info", $data . "\n\n\n", $cmdpid );
+        }
+    }
+}
+
+=head3 add_proc_stats
+
+Sum up all the pids and child pids from the proc
+
+=cut
+
+memoize('add_proc_stats');
+
+sub add_proc_stats {
+    my $total_stats_data = shift;
+    my $proc_data        = shift;
+
+    $total_stats_data->{vmpeak} =
+      $total_stats_data->{vmpeak} + $proc_data->{vmpeak};
+    $total_stats_data->{vmrss} =
+      $total_stats_data->{vmrss} + $proc_data->{vmrss};
+    $total_stats_data->{vmsize} =
+      $total_stats_data->{vmsize} + $proc_data->{vmsize};
+    $total_stats_data->{vmhwm} =
+      $total_stats_data->{vmhwm} + $proc_data->{vmhwm};
+
+    return $total_stats_data;
+}
+
+=head3 parse_proc_file_data
+Get the data from the proc file
+If it is in a running state it might look like This
+# VmPeak:  4491304 kB
+# VmSize:  4491304 kB
+..
+# VmHWM:    919748 kB
+# VmRSS:    919748 kB
+=cut
+
+sub parse_proc_file_data {
+    my $data = shift;
+
+    my $human = Number::Bytes::Human->new(
+        bs          => 1000,
+        round_style => 'round',
+        precision   => 2
+    );
+
+    my ( $vmpeak, $vmsize, $vmhwm, $vmrss ) = ( 0, 0, 0, 0 );
+
+    ($vmpeak) = $data =~ m/VmPeak:  (\w+)/;
+    ($vmsize) = $data =~ m/VmSize:  (\w+)/;
+    ($vmhwm)  = $data =~ m/VmHWM:  (\w+)/;
+    ($vmrss)  = $data =~ m/VmRSS:  (\w+)/;
+
+    $vmpeak = parse_bytes($vmpeak) if $vmpeak;
+    $vmsize = parse_bytes($vmsize) if $vmsize;
+    $vmhwm  = parse_bytes($vmhwm)  if $vmhwm;
+    $vmrss  = parse_bytes($vmhwm)  if $vmrss;
+
+    return {
+        vmpeak => $vmpeak,
+        vmsize => $vmsize,
+        vmhwm  => $vmhwm,
+        vmrss  => $vmrss
+    };
 }
 
 =head3 start_command_log
@@ -295,6 +435,9 @@ sub start_command_log {
     my $log_array_msg = "";
     if ( $self->can('task_id') ) {
         $log_array_msg = "\nArray ID:\t" . $self->task_id . "\n";
+    }
+    else {
+        $log_array_msg = "\nTask ID:\t" . $self->counter . "\n";
     }
 
     $self->log_cmd_messages(

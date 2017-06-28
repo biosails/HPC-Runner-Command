@@ -33,6 +33,7 @@ option 'project' => (
       . '#HPC jobname=gzip will be submitted as 001_project_gzip',
     required  => 0,
     predicate => 'has_project',
+    cmd_aliases => ['p'],
 );
 
 =head3 infile
@@ -48,6 +49,7 @@ option 'infile' => (
 q{File of commands separated by newline. The command 'wait' indicates all previous commands should finish before starting the next one.},
     isa    => AbsFile,
     coerce => 1,
+    cmd_aliases => ['i'],
 );
 
 =head3 outdir

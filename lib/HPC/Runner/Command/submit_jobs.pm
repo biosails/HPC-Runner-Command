@@ -13,6 +13,7 @@ with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler';
+with 'HPC::Runner::Command::submit_jobs::Logger::JSON';
 
 command_short_description 'Submit jobs to the HPC system';
 command_long_description 'This job parses your input file and writes out one or
@@ -28,7 +29,15 @@ option 'dry_run' => (
     is            => 'rw',
     isa           => 'Bool',
     default       => 0,
-    documentation => 'Do a dry run - do not submit to the scheduler.'
+    documentation => 'Do a dry run - do not submit to the scheduler.',
+    cmd_aliases   => ['dr'],
+);
+
+has 'submission_uuid' => (
+    is        => 'rw',
+    isa       => 'Str',
+    required  => 0,
+    predicate => 'has_submissions_uuid',
 );
 
 use Moose::Util qw/apply_all_roles/;
@@ -37,18 +46,20 @@ sub BUILD {
     my $self = shift;
 
     if ( $self->dry_run ) {
-        $self->hpc_plugins(['Dummy']);
+        $self->hpc_plugins( ['Dummy'] );
     }
 
     $self->git_things;
     $self->gen_load_plugins;
     $self->hpc_load_plugins;
 
-    if($self->use_batches){
-      apply_all_roles($self, 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseBatches');
+    if ( $self->use_batches ) {
+        apply_all_roles( $self,
+            'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseBatches' );
     }
-    else{
-      apply_all_roles($self, 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays');
+    else {
+        apply_all_roles( $self,
+            'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays' );
     }
 }
 
@@ -56,9 +67,11 @@ sub execute {
     my $self = shift;
 
     $self->app_log->info('Parsing input file');
+    $self->create_json_submission;
     $self->parse_file_slurm;
     $self->app_log->info('Submitting jobs');
     $self->iterate_schedule;
+    $self->update_json_submission;
 }
 
 1;

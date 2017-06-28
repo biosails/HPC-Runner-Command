@@ -28,12 +28,17 @@ Load plugins that are used both by the submitter and executor such as logging pl
 =cut
 
 option 'plugins' => (
+    traits   => ['Array'],
     is            => 'rw',
     isa           => 'ArrayRef[Str]',
     documentation => 'Load aplication plugins',
     cmd_split     => qr/,/,
     required      => 0,
     default       => sub { [] },
+    handles   => {
+        has_plugins   => 'count',
+        join_plugins  => 'join',
+    },
 );
 
 option 'plugins_opts' => (
@@ -74,12 +79,17 @@ Load job execution plugins
 =cut
 
 option 'job_plugins' => (
+    traits   => ['Array'],
     is            => 'rw',
     isa           => 'ArrayRef[Str]',
     documentation => 'Load job execution plugins',
     cmd_split     => qr/,/,
     required      => 0,
     default       => sub { [] },
+    handles   => {
+        has_job_plugins   => 'count',
+        join_job_plugins  => 'join',
+    },
 );
 
 option 'job_plugins_opts' => (
@@ -199,18 +209,20 @@ sub create_plugin_str {
 
     my $plugin_str = "";
 
-    if ( $self->job_plugins ) {
+    ##TODO Update this if we don't have plugin strings
+    if ( $self->has_job_plugins ) {
         my @uniq = uniq( @{ $self->job_plugins } );
         $self->job_plugins( \@uniq );
         $plugin_str .= " \\\n\t";
         $plugin_str .= "--job_plugins " . join( ",", @{ $self->job_plugins } );
+
         $plugin_str .= " \\\n\t" if $self->job_plugins_opts;
         $plugin_str .=
           $self->unparse_plugin_opts( $self->job_plugins_opts, 'job_plugins' )
           if $self->job_plugins_opts;
     }
 
-    if ( $self->plugins ) {
+    if ( $self->has_plugins ) {
         my @uniq = uniq( @{ $self->job_plugins } );
         $self->job_plugins( \@uniq );
         $plugin_str .= " \\\n\t";
