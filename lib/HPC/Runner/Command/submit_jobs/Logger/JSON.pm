@@ -10,6 +10,7 @@ use File::Spec;
 use Data::UUID;
 use File::Path qw(make_path remove_tree);
 use File::Slurp;
+use DateTime;
 
 =head3 create_json_submission
 
@@ -64,6 +65,8 @@ sub gen_hpc_meta {
     my $hpc_meta = {};
     $hpc_meta->{uuid}        = $self->submission_uuid;
     $hpc_meta->{project}     = $self->project if $self->has_project;
+    my $dt = DateTime->now(time_zone => 'local');
+    $hpc_meta->{submission_time} = "$dt";
     $hpc_meta->{jobs}        = [];
     $hpc_meta->{submissions} = {};
 
