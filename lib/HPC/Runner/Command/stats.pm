@@ -129,7 +129,6 @@ sub iter_submissions {
     my $results = $self->get_submissions();
 
     foreach my $result ( @{$results} ) {
-
         $self->clear_archive;
         $self->data_tar($result);
         my $basename = $self->data_tar->basename('.tar.gz');
@@ -143,7 +142,6 @@ sub iter_submissions {
             $self->iter_jobs_summary( $submission, $jobref ) if $self->summary;
             $self->iter_jobs_long( $submission, $jobref ) if $self->long;
         }
-
     }
 
 }

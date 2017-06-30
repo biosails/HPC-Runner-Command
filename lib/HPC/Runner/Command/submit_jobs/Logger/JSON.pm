@@ -23,7 +23,8 @@ We don't actually do anything here, but its a handy wrapper for loggers that cre
 sub create_json_submission {
     my $self = shift;
 
-    $self->archive->write( $self->data_tar );
+    # my $tar = $self->set_archive;
+    # $self->archive($tar);
 }
 
 =head3 update_json_submission
@@ -42,11 +43,8 @@ sub update_json_submission {
     my $basename = $self->data_tar->basename('.tar.gz');
     my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
 
-    # write_file( $submission_file, $json_text );
-
     $self->archive->add_data( $submission_file, $json_text );
     $self->archive->write( $self->data_tar );
-    ##TODO This should be a tar archive!
 
     return $hpc_meta;
 }

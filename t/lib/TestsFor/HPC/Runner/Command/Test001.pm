@@ -25,6 +25,7 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::Utils::Git');
     require_ok('HPC::Runner::Command::Utils::Plugin');
     require_ok('HPC::Runner::Command::Utils::Traits');
+    require_ok('HPC::Runner::Command::Logger::JSON');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Log');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler::Batch');
@@ -43,10 +44,15 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::submit_jobs::Plugin::SGE');
     require_ok('HPC::Runner::Command::submit_jobs::Logger::JSON');
     require_ok('HPC::Runner::Command::execute_job::Utils::Log');
+    require_ok('HPC::Runner::Command::execute_job::Utils::MemProfile');
     require_ok('HPC::Runner::Command::execute_job');
     require_ok('HPC::Runner::Command::execute_job::Logger::JSON');
     require_ok('HPC::Runner::Command::execute_array');
     require_ok('HPC::Runner::Command::single_node');
+    require_ok('HPC::Runner::Command::stats');
+    require_ok('HPC::Runner::Command::stats::Logger::JSON');
+    require_ok('HPC::Runner::Command::stats::Logger::JSON::Summary');
+    require_ok('HPC::Runner::Command::stats::Logger::JSON::Long');
     ok(1);
 }
 

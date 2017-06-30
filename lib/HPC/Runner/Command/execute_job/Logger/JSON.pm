@@ -66,22 +66,20 @@ sub create_json_task {
       if $self->can('scheduler_id');
 
     my $basename = $self->data_tar->basename('.tar.gz');
-    my $data_dir = File::Spec->catdir($basename, $job_meta->{jobname} );
+    my $data_dir = File::Spec->catdir( $basename, $job_meta->{jobname} );
+
     # make_path($data_dir);
 
     $self->add_to_running( $data_dir, $task_obj );
 
-    $self->create_task_file( $data_dir, $task_obj );
-
     return $task_obj;
 }
 
+## keep this or no?
 sub create_task_file {
     my $self     = shift;
     my $data_dir = shift;
     my $json_obj = shift;
-
-    $json_obj->{memory_profile} = [];
 
     my $t_file = File::Spec->catfile( $data_dir, $self->counter . '.json' );
     $self->write_json( $t_file, $json_obj );
@@ -124,10 +122,10 @@ sub get_from_running {
 sub update_json_task {
     my $self = shift;
 
+    my @stats    = ( 'vmpeak', 'vmrss', 'vmsize', 'vmhwm' );
     my $job_meta = $self->parse_meta_str;
     my $basename = $self->data_tar->basename('.tar.gz');
-    my $data_dir = File::Spec->catdir($basename, $job_meta->{jobname} );
-    # make_path($data_dir);
+    my $data_dir = File::Spec->catdir( $basename, $job_meta->{jobname} );
 
     my $tags = "";
     if ( exists $self->table_data->{task_tags} ) {
@@ -138,13 +136,26 @@ sub update_json_task {
     }
 
     my $task_obj = $self->get_from_running($data_dir);
-    $task_obj->{exit_time} = $self->table_data->{exit_time};
-    $task_obj->{duration}  = $self->table_data->{duration};
-    $task_obj->{exit_code} = $self->table_data->{exitcode};
-    $task_obj->{task_tags} = $tags;
+    $task_obj->{exit_time}      = $self->table_data->{exit_time};
+    $task_obj->{duration}       = $self->table_data->{duration};
+    $task_obj->{exit_code}      = $self->table_data->{exitcode};
+    $task_obj->{task_tags}      = $tags;
+    $task_obj->{memory_profile} = {};
+
+    foreach my $stat (@stats) {
+        $task_obj->{memory_profile}->{$stat}->{low} =
+          $self->task_mem_data->{low}->{$stat};
+        $task_obj->{memory_profile}->{$stat}->{high} =
+          $self->task_mem_data->{high}->{$stat};
+        $task_obj->{memory_profile}->{$stat}->{mean} =
+          $self->task_mem_data->{mean}->{$stat};
+        $task_obj->{memory_profile}->{$stat}->{count} =
+          $self->task_mem_data->{count}->{$stat};
+    }
 
     $self->remove_from_running($data_dir);
     $self->add_to_complete( $data_dir, $task_obj );
+    # $self->create_task_file( $data_dir, $task_obj );
     return $task_obj;
 }
 
@@ -193,7 +204,7 @@ sub write_json {
         $self->archive->add_data( $file, $json_text );
     }
 
-    $self->archive->write($self->data_tar);
+    $self->archive->write( $self->data_tar );
 }
 
 1;

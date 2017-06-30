@@ -31,18 +31,18 @@ option 'data_tar' => (
     documentation => 'Location of tar file for hpcrunner logging data.',
     trigger       => sub {
         my $self = shift;
-        my $tar = $self->set_archive;
+        my $tar  = $self->set_archive;
         $self->archive($tar);
     },
 );
 
 has 'archive' => (
-    is       => 'rw',
-    required => 0,
-    lazy     => 1,
+    is        => 'rw',
+    required  => 0,
+    lazy      => 1,
     predicate => 'has_archive',
-    clearer => 'clear_archive',
-    default  => sub {
+    clearer   => 'clear_archive',
+    default   => sub {
         my $self = shift;
         return $self->set_archive;
     },
@@ -51,8 +51,12 @@ has 'archive' => (
 sub set_archive {
     my $self = shift;
     my $tar  = Archive::Tar->new;
-    if ( $self->has_data_tar ) {
+
+    if ( $self->has_data_tar && $self->data_tar->exists ) {
         $tar->read( $self->data_tar );
+    }
+    elsif ( $self->has_data_tar ) {
+        $tar->write( $self->data_tar );
     }
     else {
         #Create a UID and a tar

@@ -61,6 +61,9 @@ sub BUILD {
         apply_all_roles( $self,
             'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays' );
     }
+    
+    my $tar = $self->set_archive;
+    $self->archive($tar);
 }
 
 sub execute {

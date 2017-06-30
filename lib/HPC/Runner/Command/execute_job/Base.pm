@@ -15,23 +15,6 @@ use Sys::Hostname;
 
 =cut
 
-option 'poll_time' => (
-    is  => 'rw',
-    isa => 'Num',
-    documentation =>
-      'Time in seconds to poll the process for memory profiling.',
-    default     => 100,
-    cmd_aliases => ['pt'],
-);
-
-option 'memory_difference' => (
-    is            => 'rw',
-    isa           => 'Num',
-    documentation => 'Difference from last memory profile in order to record.',
-    default       => 0.10,
-    cmd_aliases   => ['md'],
-);
-
 
 =head2 Internal Attriutes
 
