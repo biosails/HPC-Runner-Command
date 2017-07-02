@@ -80,7 +80,8 @@ perl command.pl 2
 =cut
 
 sub _log_commands {
-    my ( $self, $pid ) = @_;
+  my $self = shift;
+  my $pid = shift;
 
     my $dt1 = DateTime->now( time_zone => 'local' );
     $self->task_start_time($dt1);

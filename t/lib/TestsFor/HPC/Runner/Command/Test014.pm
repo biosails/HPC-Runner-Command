@@ -162,4 +162,34 @@ sub test_004 : Tags(use_batches) {
     remove_tree($test_dir);
 }
 
+sub test_005 : Tags(use_batches) {
+    my $test     = construct();
+    my $test_dir = getcwd();
+
+    my $fh = IO::File->new( $test->infile, q{<} );
+    my $cmds = $test->parse_cmd_file($fh);
+
+    write_file(
+'Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq', 'THIS IS A FILE'
+    );
+
+    $test->cmd($cmds->[0]);
+    $test->_log_commands;
+
+    # diag($test->cmd);
+    # diag($test->data_tar);
+    # diag(Dumper $test->archive->list_files);
+    my $basename = $test->data_tar->basename('.tar.gz');
+    my $complete_file = File::Spec->catdir( $basename, 'job','complete.json' );
+    my $running_file = File::Spec->catdir( $basename, 'job','running.json' );
+
+    ok($test->archive->contains_file($complete_file));
+    ok($test->archive->contains_file($running_file));
+    diag($test->archive->get_content($complete_file));
+    ok(1);
+
+    chdir($Bin);
+    remove_tree($test_dir);
+}
+
 1;

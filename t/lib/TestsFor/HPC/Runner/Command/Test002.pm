@@ -161,6 +161,15 @@ sub test_007 : Tags(check_hpc_meta) {
         $test->jobs->{ $test->jobname }->module,
         'Modules pass'
     );
+    
+    $line = "#HPC conda_env=path_to_conda\n";
+    $test->process_hpc_meta($line);
+
+    is_deeply(
+        'path_to_conda',
+        $test->jobs->{ $test->jobname }->conda_env,
+        'Conda passes'
+    );
 
     chdir($cwd);
     remove_tree($test_dir);

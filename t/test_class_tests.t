@@ -8,7 +8,7 @@ use Test::Class::Moose::Runner;
 if ( $ENV{'DEV'} eq 'DEV' ) {
     Test::Class::Moose::Runner->new(
         test_classes => [
-            'TestsFor::HPC::Runner::Command::Test001',
+            # 'TestsFor::HPC::Runner::Command::Test001',
             # 'TestsFor::HPC::Runner::Command::Test002',
             # 'TestsFor::HPC::Runner::Command::Test003',
             # 'TestsFor::HPC::Runner::Command::Test005',
@@ -20,9 +20,9 @@ if ( $ENV{'DEV'} eq 'DEV' ) {
             # 'TestsFor::HPC::Runner::Command::Test011',
             # 'TestsFor::HPC::Runner::Command::Test012',
             # 'TestsFor::HPC::Runner::Command::Test013',
-            # 'TestsFor::HPC::Runner::Command::Test014',
+            'TestsFor::HPC::Runner::Command::Test014',
             # 'TestsFor::HPC::Runner::Command::Test015',
-            'TestsFor::HPC::Runner::Command::Test016',
+            # 'TestsFor::HPC::Runner::Command::Test016',
         ],
     )->runtests;
 }

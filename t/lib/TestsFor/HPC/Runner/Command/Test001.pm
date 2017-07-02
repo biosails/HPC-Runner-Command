@@ -110,19 +110,19 @@ sub test_003 : Tags(construction) {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    my $t = "$test_dir/script/test001.1.sh";
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test001.1.sh' );
     MooseX::App::ParsedArgv->new(
         argv => [
             "execute_job", "--infile",
-            $t,            "--batch_index_start",
+            $file,            "--batch_index_start",
             1,             "--outdir",
             "$test_dir/logs",
         ]
     );
     my $test = HPC::Runner::Command->new_with_command();
 
-    is( $test->outdir, "$test_dir/logs", "Outdir is logs" );
-    is( $test->infile, "$t",             "Infile is ok" );
+    is( $test->outdir, File::Spec->catdir($test_dir, 'logs'), "Outdir is logs" );
+    is( $test->infile, $file,             "Infile is ok" );
     isa_ok( $test, 'HPC::Runner::Command' );
 
     chdir($cwd);

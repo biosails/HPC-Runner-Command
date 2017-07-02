@@ -74,23 +74,10 @@ sub test_003 : Tags(construct) {
     is_deeply( [ 'hpcjob_001', 'hpcjob_002', 'hpcjob_003', 'hpcjob_004' ],
         $test->schedule, 'Schedule passes' );
 
-    chdir($cwd);
+    chdir($Bin);
     remove_tree($test_dir);
 }
 
-# sub test_004 : Tags(submit_jobs) {
-#     my $cwd      = getcwd();
-#     my $test = construct();
-#     my $test_dir = getcwd();
-#
-#     $test->parse_file_slurm();
-#     $test->iterate_schedule();
-#
-#     ok(1);
-#
-#     chdir($cwd);
-#     remove_tree($test_dir);
-# }
 #
 # sub test_005 : Tags(submit_jobs) {
 #     my $cwd      = getcwd();
