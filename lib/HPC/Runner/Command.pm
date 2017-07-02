@@ -1,8 +1,5 @@
 package HPC::Runner::Command;
 
-use strict;
-use warnings;
-
 use MooseX::App qw(Color);
 
 with 'HPC::Runner::Command::Utils::Plugin';
@@ -12,6 +9,22 @@ with 'HPC::Runner::Command::Logger::JSON';
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 option '+config_base' => ( default => '.hpcrunner', );
+
+=head3 project
+
+When submitting jobs we will prepend the jobname with the project name
+
+=cut
+
+option 'project' => (
+    is            => 'rw',
+    isa           => 'Str',
+    documentation => 'Give your jobnames an additional project name. '
+      . '#HPC jobname=gzip will be submitted as 001_project_gzip',
+    required  => 0,
+    predicate => 'has_project',
+    cmd_aliases => ['p'],
+);
 
 option 'verbose' => (
     is      => 'rw',
@@ -24,7 +37,7 @@ option 'poll_time' => (
     isa => 'Num',
     documentation =>
       'Time in seconds to poll the process for memory profiling.',
-    default     => 100,
+    default     => 5,
     cmd_aliases => ['pt'],
 );
 
@@ -36,9 +49,25 @@ option 'memory_diff' => (
     cmd_aliases   => ['md'],
 );
 
+has 'submission_uuid' => (
+    is        => 'rw',
+    isa       => 'Str',
+    required  => 0,
+    predicate => 'has_submissions_uuid',
+);
+
 our $VERSION = '3.2.5';
 
 app_strict 0;
+
+sub BUILD { }
+
+after 'BUILD' => sub {
+    my $self = shift;
+
+    my $tar = $self->set_archive;
+    $self->archive($tar);
+};
 
 =encoding utf-8
 
@@ -218,6 +247,8 @@ for information on how to group tasks together.
 	tree hpc-runner
 
 =cut
+
+__PACKAGE__->meta()->make_immutable();
 
 1;
 

@@ -1,6 +1,8 @@
 package HPC::Runner::Command::execute_job::Logger::JSON;
 
 use Moose::Role;
+use namespace::autoclean;
+
 use JSON;
 use File::Spec;
 use DateTime;
@@ -9,7 +11,6 @@ use Data::UUID;
 use File::Path qw(make_path remove_tree);
 use File::Slurp;
 use Cwd;
-
 use Data::Dumper;
 
 has 'task_json' => (
@@ -76,6 +77,7 @@ sub create_json_task {
 }
 
 ## keep this or no?
+##TODO Create Mem profile file
 sub create_task_file {
     my $self     = shift;
     my $data_dir = shift;
@@ -119,6 +121,9 @@ sub get_from_running {
     return $json_obj->{ $self->table_data->{task_id} };
 }
 
+##TODO Once we add to the complete
+## Get all the for the tasks
+## Compute mean, min, max of all tasks
 sub update_json_task {
     my $self = shift;
 
@@ -154,7 +159,8 @@ sub update_json_task {
     }
 
     $self->remove_from_running($data_dir);
-    $self->add_to_complete( $data_dir, $task_obj );
+    ##TODO Add in mem for job
+    my $complete = $self->add_to_complete( $data_dir, $task_obj );
     # $self->create_task_file( $data_dir, $task_obj );
     return $task_obj;
 }
@@ -169,6 +175,8 @@ sub add_to_complete {
 
     $json_obj->{ $self->counter } = $task_data;
     $self->write_json( $c_file, $json_obj );
+
+    return $json_obj;
 }
 
 ##Going to have to update these for creating the archive

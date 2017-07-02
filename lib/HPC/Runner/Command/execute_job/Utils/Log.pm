@@ -1,6 +1,8 @@
 package HPC::Runner::Command::execute_job::Utils::Log;
 
 use MooseX::App::Role;
+use namespace::autoclean;
+
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 use IPC::Open3;

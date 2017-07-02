@@ -1,6 +1,8 @@
 package HPC::Runner::Command::execute_job::Utils::MCE;
 
 use MooseX::App::Role;
+use namespace::autoclean;
+
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 with 'HPC::Runner::Command::execute_job::Base';

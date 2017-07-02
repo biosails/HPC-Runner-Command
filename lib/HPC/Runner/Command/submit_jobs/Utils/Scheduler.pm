@@ -1,5 +1,8 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler;
 
+use MooseX::App::Role;
+use namespace::autoclean;
+
 use File::Path qw(make_path);
 use File::Temp qw/ tempfile /;
 use IO::Select;
@@ -14,8 +17,6 @@ use Storable qw(dclone);
 use Text::ASCIITable;
 use Memoize;
 use List::MoreUtils qw(first_index);
-
-use MooseX::App::Role;
 
 use HPC::Runner::Command::Utils::Traits qw(ArrayRefOfStrs);
 

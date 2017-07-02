@@ -13,6 +13,7 @@ use Data::Dumper;
 use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
+use File::Spec;
 
 extends 'TestMethods::Base';
 
@@ -27,9 +28,8 @@ $ENV{'SLURM_ARRAY_TASK_ID'}=1;
 sub write_test_file {
     my $test_dir = shift;
 
-    my $t = "$test_dir/script/test002.1.sh";
-    open( my $fh, ">$t" );
-    print $fh <<EOF;
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test001.1.sh' );
+    my $text = <<EOF;
 #TASK tags=Sample_PAG008_V4_E2
 gzip -f Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq
 
@@ -43,7 +43,7 @@ gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_1SE.fastq
 gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_1PE.fastq
 EOF
 
-    close($fh);
+    write_file( $file, $text );
 }
 
 sub construct {
@@ -55,10 +55,10 @@ sub construct {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    my $t = "$test_dir/script/test002.1.sh";
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test001.1.sh' );
     MooseX::App::ParsedArgv->new(
         argv => [
-            "execute_array", "--infile", $t, '--commands', 1,
+            "execute_array", "--infile", $file, '--commands', 1,
             '--batch_index_start', 1,
         ]
     );

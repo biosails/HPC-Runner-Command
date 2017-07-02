@@ -11,16 +11,16 @@ use File::Path qw(make_path remove_tree);
 use IPC::Cmd qw[can_run];
 use Data::Dumper;
 use Capture::Tiny ':all';
-use Slurp;
 use File::Slurp;
+use File::Spec;
 
 extends 'TestMethods::Base';
 
 sub write_test_file {
     my $test_dir = shift;
 
-    open( my $fh, ">$test_dir/script/test002.1.sh" );
-    print $fh <<EOF;
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test002.1.sh' );
+    my $text=<<EOF;
 #HPC jobname=pyfasta
 #HPC module=gencore_dev gencore_metagenomics_dev
 #HPC commands_per_node=1
@@ -78,7 +78,7 @@ blastx -db  env_nr -query Sample6
 
 EOF
 
-    close($fh);
+    write_file( $file, $text );
 }
 
 sub construct {
@@ -88,12 +88,12 @@ sub construct {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    my $t = "$test_dir/script/test002.1.sh";
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test002.1.sh' );
     MooseX::App::ParsedArgv->new(
         argv => [
             "submit_jobs",    "--infile",
-            $t,               "--outdir",
-            "$test_dir/logs", "--hpc_plugins",
+            $file,               "--outdir",
+            File::Spec->catdir($test_dir, 'logs'), "--hpc_plugins",
             "Dummy",
         ]
     );
@@ -123,7 +123,7 @@ sub test_001 : Tags(job_stats) {
     my $logdir = $test->logdir;
     my $outdir = $test->outdir;
 
-    my @files = glob( $test->outdir . "/*" );
+    my @files = glob( File::Spec->catdir($test->outdir , "*") );
 
     is( scalar @files, 8, "Got the right number of files" );
 

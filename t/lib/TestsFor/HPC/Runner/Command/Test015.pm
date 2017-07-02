@@ -13,6 +13,7 @@ use Data::Dumper;
 use Capture::Tiny ':all';
 use Slurp;
 use File::Slurp;
+use File::Spec;
 use File::Temp qw/ tempfile /;
 
 extends 'TestMethods::Base';
@@ -26,9 +27,8 @@ Test for non linear task deps
 sub write_test_file {
     my $test_dir = shift;
 
-    my $t = "$test_dir/script/test002.1.sh";
-    open( my $fh, ">$t" );
-    print $fh <<EOF;
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test001.1.sh' );
+    my $text = <<EOF;
 #HPC jobname=trimmomatic_gzip
 
 #TASK tags=Sample_PAG008_V4_E2
@@ -47,7 +47,7 @@ gzip -f Sample_PAG008_V4_E2_read1_trimmomatic_1PE.fastq
 gzip -f Sample_PAG008_V4_E2_read2_trimmomatic_2PE.fastq
 EOF
 
-    close($fh);
+    write_file( $file, $text );
 }
 
 sub construct {
@@ -59,9 +59,9 @@ sub construct {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    my $t = "$test_dir/script/test002.1.sh";
+    my $file = File::Spec->catdir( $test_dir, 'script', 'test001.1.sh' );
     MooseX::App::ParsedArgv->new(
-        argv => [ "submit_jobs", "--infile", $t, '--hpc_plugins', 'PBS', '--verbose'] );
+        argv => [ "submit_jobs", "--infile", $file, '--hpc_plugins', 'PBS', '--verbose'] );
 
     my $test = HPC::Runner::Command->new_with_command();
     $test->log( $test->init_log );

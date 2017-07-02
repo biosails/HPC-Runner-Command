@@ -76,6 +76,11 @@ has 'template_file' => (
 module load [% MODULES %]
 [% END %]
 
+[% IF job.has_conda_env %]
+source activate [% job.conda_env %]
+[% END %]
+
+
 [% COMMAND %]
 
 EOF
@@ -142,7 +147,7 @@ sub update_job_deps {
     my $self = shift;
 
     return unless $self->has_array_deps;
-    
+
     my $array_deps_file = File::Spec->catdir( $self->logdir, 'array_deps.txt' );
 
     foreach my $current_task ( sort keys %{ $self->array_deps } ) {

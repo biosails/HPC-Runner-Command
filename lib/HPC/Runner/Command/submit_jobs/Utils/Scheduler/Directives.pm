@@ -39,6 +39,24 @@ option 'module' => (
     },
 );
 
+=head3 conda_env
+
+Anaconda envs to load
+
+Load anaconda envs with
+
+  source activate /path/to/my/env
+
+=cut
+
+option 'conda_env' => (
+    is            => 'rw',
+    isa           => 'Str',
+    required      => 0,
+    documentation => q{Conda env to activate.},
+    predicate => 'has_conda_env',
+);
+
 =head3 cpus_per_task
 
 slurm item --cpus_per_task defaults to 1

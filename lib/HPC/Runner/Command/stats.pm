@@ -1,12 +1,10 @@
-use strict;
-use warnings;
-
 package HPC::Runner::Command::stats;
 
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
 with 'HPC::Runner::Command::stats::Logger::JSON::Summary';
 with 'HPC::Runner::Command::stats::Logger::JSON::Long';
+with 'HPC::Runner::Command::Logger::Loggers';
 
 use Log::Log4perl qw(:easy);
 use JSON;
@@ -95,27 +93,6 @@ has 'task_data' => (
     clearer => 'clear_task_data',
 );
 
-##Application log
-##TODO Add this to its own class in hpcrunner
-has 'app_log' => (
-    is      => 'rw',
-    lazy    => 1,
-    default => sub {
-        my $self     = shift;
-        my $log_conf = q(
-log4perl.category = DEBUG, Screen
-log4perl.appender.Screen = \
-    Log::Log4perl::Appender::ScreenColoredLevels
-log4perl.appender.Screen.layout = \
-    Log::Log4perl::Layout::PatternLayout
-log4perl.appender.Screen.layout.ConversionPattern = \
-    [%d] %m %n
-        );
-
-        Log::Log4perl->init( \$log_conf );
-        return get_logger();
-    }
-);
 
 sub execute {
     my $self = shift;
@@ -172,9 +149,9 @@ sub get_submissions {
         $results = ["$file"];
     }
     elsif ( $self->has_data_tar && !$self->data_tar->exists ) {
-        $self->app_log->fatal(
+        $self->screen_log->fatal(
             'You have supplied a data tar that does not exist.');
-        $self->app_log->fatal(
+        $self->screen_log->fatal(
             'Data Tar ' . $self->data_tar . ' does not exist' );
         exit 1;
     }
@@ -197,7 +174,7 @@ sub search_submission {
     }
 
     if ( !path($data_path)->exists && path($data_path)->is_dir ) {
-        $self->app_log->info( 'There is no data logged. '
+        $self->screen_log->info( 'There is no data logged. '
               . 'Please ensure you either in the project directory, '
               . 'or that you have supplied --data_dir to the correct location.'
         );
@@ -205,9 +182,9 @@ sub search_submission {
 
     ##TODO In the case of a lot of submissions - get the most recent directory
     my @files = File::Find::Rule->file()->name('*.tar.gz')->in($data_path);
-    $self->app_log->info( 'Found ' . scalar @files . ' submissions.' );
-    $self->app_log->info('Reporting on the most recent.') if $self->most_recent;
-    $self->app_log->info('Reporting on all submissions.') if $self->all;
+    $self->screen_log->info( 'Found ' . scalar @files . ' submissions.' );
+    $self->screen_log->info('Reporting on the most recent.') if $self->most_recent;
+    $self->screen_log->info('Reporting on all submissions.') if $self->all;
 
     my %stats = ();
     map { my $st = stat($_); $stats{ $st->[9] } = $_ } @files;
@@ -221,4 +198,5 @@ sub search_submission {
     return \@sorted_files;
 }
 
+__PACKAGE__->meta()->make_immutable();
 1;

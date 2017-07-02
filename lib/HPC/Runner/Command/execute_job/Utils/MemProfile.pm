@@ -18,7 +18,7 @@ has 'task_mem_data' => (
     default => sub { return {} },
 );
 
-has 'can_procs' => (
+has 'can_pstree' => (
     is      => 'rw',
     isa     => 'Num',
     default => sub {
@@ -31,7 +31,7 @@ sub get_cmd_stats {
     my $self   = shift;
     my $cmdpid = shift;
 
-    return unless $self->can_procs;
+    return unless $self->can_pstree;
     my $cmd = "pstree -p $cmdpid";
 
     my $child_pids = `$cmd`;

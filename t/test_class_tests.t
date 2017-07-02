@@ -21,7 +21,8 @@ if ( $ENV{'DEV'} eq 'DEV' ) {
             # 'TestsFor::HPC::Runner::Command::Test012',
             # 'TestsFor::HPC::Runner::Command::Test013',
             # 'TestsFor::HPC::Runner::Command::Test014',
-            'TestsFor::HPC::Runner::Command::Test015',
+            # 'TestsFor::HPC::Runner::Command::Test015',
+            'TestsFor::HPC::Runner::Command::Test016',
         ],
     )->runtests;
 }

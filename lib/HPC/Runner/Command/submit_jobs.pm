@@ -33,12 +33,6 @@ option 'dry_run' => (
     cmd_aliases   => ['dr'],
 );
 
-has 'submission_uuid' => (
-    is        => 'rw',
-    isa       => 'Str',
-    required  => 0,
-    predicate => 'has_submissions_uuid',
-);
 
 use Moose::Util qw/apply_all_roles/;
 
@@ -61,7 +55,7 @@ sub BUILD {
         apply_all_roles( $self,
             'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays' );
     }
-    
+
     my $tar = $self->set_archive;
     $self->archive($tar);
 }
