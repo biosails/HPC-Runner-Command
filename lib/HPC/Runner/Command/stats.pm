@@ -97,6 +97,7 @@ option 'json' =>
 is => 'rw',
 isa => 'Bool',
 default => 0,
+documentation => 'Output data in json instead of a table.'
 );
 
 sub execute {

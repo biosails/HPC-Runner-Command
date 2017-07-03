@@ -23,17 +23,17 @@ conda config --add channels bioconda
 conda install -y perl perl-app-cpanminus perl-moose perl-test-class-moose perl-path-tiny
 
 #Install
-cpanm --notest Package::DeprecationManager
+# cpanm --notest Package::DeprecationManager
 cpanm --notest --installdeps .
-cpanm --quiet --notest --skip-satisfied Dist::Milla
-cpan-install --notest Dist::Zilla::Plugin::AutoPrereqs
-cpan-install --coverage   # installs converage prereqs, if enabled
+# cpanm --quiet --notest --skip-satisfied Dist::Milla
+# cpan-install --notest Dist::Zilla::Plugin::AutoPrereqs
+# cpan-install --coverage   # installs converage prereqs, if enabled
 
 #Before Script
-coverage-setup
+# coverage-setup
 
 #Run tests
-prove -l -j$(test-jobs) $(test-files)   # parallel testing
+prove -l -v t/test_class_tests.t
 
 #After success
-coverage-report
+# coverage-report
