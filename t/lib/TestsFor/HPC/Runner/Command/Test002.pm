@@ -61,6 +61,9 @@ sub construct {
 
     my $test_methods = TestMethods::Base->new();
     my $test_dir     = $test_methods->make_test_dir();
+
+    diag('Test dir is '.$test_dir);
+
     my $file         = File::Spec->catdir( $test_dir, 'script', 'test002.1.sh' );
     write_test_file($test_dir);
 
@@ -80,15 +83,14 @@ sub construct {
 
 sub test_003 : Tags(construction) {
 
-    my $cur_dir  = getcwd();
     my $test     = construct();
     my $test_dir = getcwd();
 
     my $expect_logdir = File::Spec->catdir($test_dir, 'logs');
     my $expect_infile = File::Spec->catdir($test_dir, 'script', 'test002.1.sh');
 
-    is( path($test->outdir)->relative, $expect_logdir, "Outdir is logs" );
-    is( path($test->infile)->relative, $expect_infile, "Infile is ok" );
+    is( path($test->outdir)->relative, path($expect_logdir)->relative, "Outdir is logs" );
+    is( path($test->infile)->relative, path($expect_infile)->relative, "Infile is ok" );
 
     isa_ok( $test, 'HPC::Runner::Command' );
 }
@@ -96,7 +98,6 @@ sub test_003 : Tags(construction) {
 sub test_005 : Tags(submit_jobs) {
     my $self = shift;
 
-    my $cwd      = getcwd();
     my $test     = construct();
     my $test_dir = getcwd();
 
