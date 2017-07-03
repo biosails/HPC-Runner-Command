@@ -4,25 +4,22 @@ use Moose::Role;
 use namespace::autoclean;
 use JSON;
 
+with 'HPC::Runner::Command::stats::Logger::JSON::Summary';
+with 'HPC::Runner::Command::stats::Logger::JSON::Summary::JSONOutput';
+
 sub iter_jobs_long {
     my $self       = shift;
     my $submission = shift;
     my $jobref     = shift;
 
     my $submission_id = $submission->{uuid};
-    my $table         = $self->build_table($submission);
+    my $start_time    = $submission->{submission_time} || '';
+    my $project       = $submission->{project} || '';
 
-    $table->setCols(
-        [
-            'Jobname',
-            'TaskID',
-            'Task Tags',
-            'Start Time',
-            'End Time',
-            'Duration',
-            'Exit Code'
-        ]
-    );
+    my $submission_obj = {};
+    $submission_obj->{$submission_id}->{project}         = $project;
+    $submission_obj->{$submission_id}->{submission_time} = $start_time;
+    $submission_obj->{submission_data}                   = $submission;
 
     foreach my $job ( @{$jobref} ) {
         my $jobname = $job->{job};
@@ -32,46 +29,31 @@ sub iter_jobs_long {
         }
         my $total_tasks = $job->{total_tasks};
 
-        my $tasks = $self->get_tasks( $submission_id, $jobname );
-        $self->iter_tasks_long( $jobname, $tasks, $table );
+        # my $tasks = $self->get_tasks( $submission_id, $jobname );
+        my $completed_tasks =
+          $self->get_completed_tasks( $submission_id, $jobname );
 
+        $submission_obj->{$submission_id}->{jobs}->{$jobname}->{tasks_complete}
+          = $completed_tasks;
+
+       # $submission_obj->{$submission_id}->{jobs}->{$jobname}->{tasks_complete}
+       #   = $tasks;
         $self->task_data( {} );
-    }
 
-    print $table;
-    print "\n";
+        $self->iter_tasks_summary( $submission_id, $jobname );
+        my $summary = $self->gen_job_tasks_summary($jobname);
+        $summary->{$jobname}->{total_tasks} = $total_tasks;
+        $submission_obj->{$submission_id}->{jobs}->{$jobname}->{summary} =
+          $summary;
 
-    print Dumper($table);
-}
+        my $running = $self->get_running_tasks( $submission_id, $jobname );
+        $submission_obj->{$submission_id}->{jobs}->{$jobname}->{tasks_running}
+          = $running;
 
-sub iter_tasks_long {
-    my $self    = shift;
-    my $jobname = shift;
-    my $tasks   = shift;
-    my $table   = shift;
-
-    foreach my $task ( @{$tasks} ) {
-
-        my $task_tags  = $task->{task_tags}  || '';
-        my $start_time = $task->{start_time} || '';
-
-        my $end_time = $task->{exit_time} || '';
-        my $duration = $task->{duration}  || '';
-        my $exit_code = $task->{exit_code};
-        my $task_id = $task->{task_id} || '';
-
-        if ( !defined $exit_code ) {
-            $exit_code = '';
-        }
-
-        $table->addRow(
-            [
-                $jobname,  $task_id,  $task_tags, $start_time,
-                $end_time, $duration, $exit_code,
-            ]
-        );
+        push( @{ $self->json_data }, $submission_obj );
 
     }
+
 }
 
 1;

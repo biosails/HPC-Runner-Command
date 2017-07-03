@@ -106,6 +106,12 @@ sub BUILD {
     elsif(! $self->json && $self->summary ) {
       apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::Summary::TableOutput');
     }
+    elsif ( $self->json && $self->long ) {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::Long::JSONOutput');
+    }
+    elsif(! $self->json && $self->long ) {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::Long::TableOutput');
+    }
 }
 
 sub execute {

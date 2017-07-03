@@ -62,12 +62,6 @@ sub construct {
     my $test_methods = TestMethods::Base->new();
     my $test_dir     = $test_methods->make_test_dir();
 
-    diag('Test dir is '.$test_dir);
-    diag('Cwd is '.cwd());
-    diag('GetCwd is '.getcwd());
-    diag('Canonpat is '.path($test_dir)->canonpath);
-    diag('Path Tiny is '.path(cwd()));
-
     my $file         = File::Spec->catdir( $test_dir, 'script', 'test002.1.sh' );
     write_test_file($test_dir);
 

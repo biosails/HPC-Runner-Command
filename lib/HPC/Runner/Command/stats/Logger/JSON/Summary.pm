@@ -6,7 +6,6 @@ use Moose::Role;
 
 use JSON;
 
-
 ##This is probably mostly the same across plugins
 sub iter_tasks_summary {
     my $self          = shift;
@@ -25,8 +24,6 @@ sub iter_tasks_summary {
         running  => $running
     };
 }
-
-###These are logging platform specific
 
 sub count_running_tasks {
     my $self          = shift;
@@ -49,6 +46,48 @@ sub count_running_tasks {
     }
 }
 
+sub get_running_tasks {
+    my $self          = shift;
+    my $submission_id = shift;
+    my $jobname       = shift;
+
+    my $basename = $self->data_tar->basename('.tar.gz');
+    my $running_file =
+      File::Spec->catdir( $basename, $jobname, 'running.json' );
+
+    if ( $self->archive->contains_file($running_file) ) {
+        my $running_json = $self->archive->get_content($running_file);
+        ##TODO Add in some error checking
+        my $running = decode_json($running_json);
+        return $running;
+    }
+    else {
+        return {};
+    }
+
+}
+
+sub get_completed_tasks {
+    my $self          = shift;
+    my $submission_id = shift;
+    my $jobname       = shift;
+
+    my $basename = $self->data_tar->basename('.tar.gz');
+    my $complete_file =
+      File::Spec->catdir( $basename, $jobname, 'complete.json' );
+
+    if ( $self->archive->contains_file($complete_file) ) {
+        my $complete_json = $self->archive->get_content($complete_file);
+        ##TODO Add in some error checking
+        my $complete = decode_json($complete_json);
+        return $complete;
+    }
+    else {
+        return {};
+    }
+
+}
+
 sub count_successful_tasks {
     my $self          = shift;
     my $submission_id = shift;
@@ -64,6 +103,12 @@ sub count_failed_tasks {
 
     return $self->search_complete( $jobname, 0 );
 }
+
+=head3 search_complete
+
+See which jobs completed successfully
+
+=cut
 
 sub search_complete {
     my $self    = shift;
@@ -83,7 +128,6 @@ sub search_complete {
     else {
         return 0;
     }
-
 }
 
 sub look_for_exit_code {

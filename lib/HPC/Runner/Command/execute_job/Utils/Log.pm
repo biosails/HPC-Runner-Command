@@ -227,12 +227,6 @@ sub log_job {
     $errfh = gensym();    # if you uncomment this line, $errfh will
     my $cmdpid;
 
-    #We need to put a sleep here so that we can catch the proc file
-    my $cmd = $self->cmd;
-    chomp($cmd);
-    $cmd = $cmd . "; sleep 10s\n";
-    $self->cmd($cmd);
-
     try {
         $cmdpid = open3( $infh, $outfh, $errfh, $self->cmd );
     }
