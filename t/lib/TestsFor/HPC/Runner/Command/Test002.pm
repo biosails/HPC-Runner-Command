@@ -146,7 +146,7 @@ sub test_005 : Tags(submit_jobs) {
     #     like( $got, qr/$expect7/, 'Template matches' );
     #     like( $got, qr/$expect8/, 'Template matches' );
 
-    chdir($cwd);
+    chdir($Bin);
     remove_tree($test_dir);
 }
 

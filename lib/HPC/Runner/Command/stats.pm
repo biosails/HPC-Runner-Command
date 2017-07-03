@@ -100,11 +100,11 @@ has 'task_data' => (
 sub BUILD {
     my $self = shift;
 
-    if ( $self->json ) {
-      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::JSONOutput');
+    if ( $self->json && $self->summary ) {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::Summary::JSONOutput');
     }
-    else {
-      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::TableOutput');
+    elsif(! $self->json && $self->summary ) {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::Summary::TableOutput');
     }
 }
 
