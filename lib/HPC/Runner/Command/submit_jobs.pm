@@ -69,6 +69,10 @@ sub execute {
     $self->app_log->info('Submitting jobs');
     $self->iterate_schedule;
     $self->update_json_submission;
+    $self->app_log->info('Your jobs have been submitted. For status updates please run:');
+    $self->app_log->info('hpcrunner.pl stats');
+    $self->app_log->info('To get status updates for only this job please run');
+    $self->app_log->info('hpcrunner.pl stats --data_tar '.$self->data_tar);
 }
 
 1;

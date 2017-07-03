@@ -1,16 +1,10 @@
 #!/usr/bin/env bash
 
-if [[ $TRAVIS_OS_NAME = "linux" ]]
-then
-    tag=Linux
-else
-    tag=MacOSX
-fi
-
 # install conda
 mkdir -p /anaconda
 curl -O https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VER-$tag-x86_64.sh
-sudo bash Miniconda3-$MINICONDA_VER-$tag-x86_64.sh -b -p /anaconda
+curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+sudo bash Miniconda3-latest-MacOSX-x86_64.sh -b -p /anaconda
 sudo chown -R $USER /anaconda
 export PATH=/anaconda/bin:$PATH
 
