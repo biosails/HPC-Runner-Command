@@ -9,6 +9,7 @@ Call the hpcrunner.pl submit_jobs command
 use MooseX::App::Command;
 extends 'HPC::Runner::Command';
 
+with 'HPC::Runner::Command::Logger::JSON';
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';

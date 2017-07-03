@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+set -x -e
+
 # install conda
 curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-sudo bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/anaconda
+bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/anaconda
 export PATH=$HOME/anaconda/bin:$PATH
 
 conda config --add channels nyuad-cgsb && \

@@ -7,6 +7,7 @@ use Try::Tiny;
 
 extends 'HPC::Runner::Command';
 
+with 'HPC::Runner::Command::Logger::JSON';
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';
@@ -60,7 +61,7 @@ after 'BUILD' => sub {
 
     $self->gen_load_plugins;
     $self->job_load_plugins;
-    
+
     my $tar = $self->set_archive;
     $self->archive($tar);
 };

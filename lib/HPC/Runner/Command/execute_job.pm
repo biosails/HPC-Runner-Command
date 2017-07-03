@@ -5,6 +5,7 @@ use JSON;
 
 extends 'HPC::Runner::Command';
 
+with 'HPC::Runner::Command::Logger::JSON';
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
 with 'HPC::Runner::Command::Utils::Git';
@@ -40,7 +41,7 @@ sub BUILD {
     if(exists $job_meta->{job_cmd_start}){
       $self->counter($job_meta->{job_cmd_start} + $self->batch_index_start);
     }
-    
+
     my $tar = $self->set_archive;
     $self->archive($tar);
 }

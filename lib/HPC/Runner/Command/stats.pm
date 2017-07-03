@@ -1,6 +1,7 @@
 package HPC::Runner::Command::stats;
 
 use MooseX::App::Command;
+with 'HPC::Runner::Command::Logger::JSON';
 extends 'HPC::Runner::Command';
 with 'HPC::Runner::Command::stats::Logger::JSON::Summary';
 with 'HPC::Runner::Command::stats::Logger::JSON::Long';

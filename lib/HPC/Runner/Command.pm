@@ -5,7 +5,6 @@ use MooseX::App qw(Color);
 with 'HPC::Runner::Command::Utils::Plugin';
 with 'HPC::Runner::Command::Utils::ManyConfigs';
 
-with 'HPC::Runner::Command::Logger::JSON';
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 option '+config_base' => ( default => '.hpcrunner', );
