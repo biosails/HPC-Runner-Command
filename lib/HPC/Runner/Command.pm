@@ -21,8 +21,8 @@ option 'project' => (
     isa           => 'Str',
     documentation => 'Give your jobnames an additional project name. '
       . '#HPC jobname=gzip will be submitted as 001_project_gzip',
-    required  => 0,
-    predicate => 'has_project',
+    required    => 0,
+    predicate   => 'has_project',
     cmd_aliases => ['p'],
 );
 
@@ -32,22 +32,6 @@ option 'verbose' => (
     default => 0,
 );
 
-option 'poll_time' => (
-    is  => 'rw',
-    isa => 'Num',
-    documentation =>
-      'Time in seconds to poll the process for memory profiling.',
-    default     => 5,
-    cmd_aliases => ['pt'],
-);
-
-option 'memory_diff' => (
-    is            => 'rw',
-    isa           => 'Num',
-    documentation => 'Difference from last memory profile in order to record.',
-    default       => 0.10,
-    cmd_aliases   => ['md'],
-);
 
 has 'submission_uuid' => (
     is        => 'rw',
@@ -61,13 +45,6 @@ our $VERSION = '3.2.5';
 app_strict 0;
 
 sub BUILD { }
-
-after 'BUILD' => sub {
-    my $self = shift;
-
-    my $tar = $self->set_archive;
-    $self->archive($tar);
-};
 
 =encoding utf-8
 

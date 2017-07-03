@@ -16,6 +16,57 @@ sub iter_jobs_summary {
     my $submission = shift;
     my $jobref     = shift;
 
+    if($self->json){
+      $self->iter_jobs_summary_json($submission, $jobref);
+    }
+    else{
+      $self->iter_jobs_summary_table($submission, $jobref);
+    }
+}
+
+##These should be roles
+sub iter_jobs_summary_json {
+    my $self = shift;
+    my $submission = shift;
+    my $jobref     = shift;
+
+    my $submission_id = $submission->{uuid};
+
+    my $summary = {};
+    foreach my $job ( @{$jobref} ) {
+        my $jobname = $job->{job};
+        if ( $self->jobname ) {
+            next unless $self->jobname eq $jobname;
+        }
+        my $total_tasks = $job->{total_tasks};
+
+        $self->iter_tasks_summary( $submission_id, $jobname );
+        $self->task_data->{$jobname}->{total} = $total_tasks;
+
+        $summary->{$jobname} = {};
+
+        $summary->{$jobname}->{complete} =
+          $self->task_data->{$jobname}->{complete};
+        $summary->{$jobname}->{running} =
+          $self->task_data->{$jobname}->{running};
+        $summary->{$jobname}->{success} =
+          $self->task_data->{$jobname}->{success};
+        $summary->{$jobname}->{fail}  = $self->task_data->{$jobname}->{fail};
+        $summary->{$jobname}->{total} = $self->task_data->{$jobname}->{total};
+
+        $self->task_data( {} );
+    }
+
+    my $submission_obj = {};
+    $submission_obj->{$submission_id} = $summary;
+    push(@{$self->json_summary}, $submission_obj);
+}
+
+sub iter_jobs_summary_table {
+    my $self       = shift;
+    my $submission = shift;
+    my $jobref     = shift;
+
     my $submission_id = $submission->{uuid};
     my $table         = $self->build_table($submission);
     $table->setCols(

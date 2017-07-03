@@ -93,11 +93,17 @@ has 'task_data' => (
     clearer => 'clear_task_data',
 );
 
-option 'json' =>
-is => 'rw',
-isa => 'Bool',
-default => 0,
-documentation => 'Output data in json instead of a table.'
+option 'json' => (
+    is            => 'rw',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => 'Output data in json instead of a table.',
+);
+
+has 'json_summary' => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { return [] }
 );
 
 sub execute {
@@ -122,9 +128,16 @@ sub iter_submissions {
             my $submission      = decode_json($submission_json);
             my $jobref          = $submission->{jobs};
 
-            $self->iter_jobs_summary( $submission, $jobref ) if $self->summary;
+            $self->iter_jobs_summary( $submission, $jobref )
+              if $self->summary;
             $self->iter_jobs_long( $submission, $jobref ) if $self->long;
         }
+    }
+
+    if ( $self->json ) {
+        my $json = encode_json( $self->json_summary );
+        print $json;
+        print "\n";
     }
 
 }
@@ -188,9 +201,12 @@ sub search_submission {
 
     ##TODO In the case of a lot of submissions - get the most recent directory
     my @files = File::Find::Rule->file()->name('*.tar.gz')->in($data_path);
-    $self->screen_log->info( 'Found ' . scalar @files . ' submissions.' );
-    $self->screen_log->info('Reporting on the most recent.') if $self->most_recent;
-    $self->screen_log->info('Reporting on all submissions.') if $self->all;
+    if ( !$self->json ) {
+        $self->screen_log->info( 'Found ' . scalar @files . ' submissions.' );
+        $self->screen_log->info('Reporting on the most recent.')
+          if $self->most_recent;
+        $self->screen_log->info('Reporting on all submissions.') if $self->all;
+    }
 
     my %stats = ();
     map { my $st = stat($_); $stats{ $st->[9] } = $_ } @files;
@@ -205,4 +221,5 @@ sub search_submission {
 }
 
 __PACKAGE__->meta()->make_immutable();
+
 1;

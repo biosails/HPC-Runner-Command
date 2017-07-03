@@ -15,6 +15,7 @@ use Slurp;
 use File::Slurp;
 use JSON::XS;
 use File::Spec;
+use Path::Tiny;
 
 use Algorithm::Dependency::Source::HoA;
 use Algorithm::Dependency;
@@ -83,8 +84,11 @@ sub test_003 : Tags(construction) {
     my $test     = construct();
     my $test_dir = getcwd();
 
-    is( $test->outdir, File::Spec->catdir($test_dir, 'logs'), "Outdir is logs" );
-    is( $test->infile, File::Spec->catdir($test_dir, 'script', 'test002.1.sh'), "Infile is ok" );
+    my $expect_logdir = File::Spec->catdir($test_dir, 'logs');
+    my $expect_infile = File::Spec->catdir($test_dir, 'script', 'test002.1.sh');
+
+    is( path($test->outdir)->relative, $expect_logdir, "Outdir is logs" );
+    is( path($test->infile)->relative, $expect_infile, "Infile is ok" );
 
     isa_ok( $test, 'HPC::Runner::Command' );
 }
@@ -161,7 +165,7 @@ sub test_007 : Tags(check_hpc_meta) {
         $test->jobs->{ $test->jobname }->module,
         'Modules pass'
     );
-    
+
     $line = "#HPC conda_env=path_to_conda\n";
     $test->process_hpc_meta($line);
 
@@ -378,7 +382,7 @@ sub test_016 : Tags(files) {
     my $logdir = $test->logdir;
     my $outdir = $test->outdir;
 
-    my @files = glob( File::Spec->catdir($test->outdir , "*") );
+    my @files = glob( File::Spec->catdir(path($test->outdir)->relative , "*") );
 
     #TODO add tests to make sure files say what they should
     is( scalar @files, 4, 'number of files matches' );
