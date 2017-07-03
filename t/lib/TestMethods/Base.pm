@@ -12,27 +12,30 @@ use File::Spec;
 use File::Slurp;
 use Cwd;
 
-sub make_test_dir{
+sub make_test_dir {
 
     my $tmpdir = File::Spec->tmpdir();
-    my $tmp = File::Temp->newdir(UNLINK =>0, CLEANUP => 0, TEMPLATE => File::Spec->catdir($tmpdir,'hpcrunnerXXXXXXX'));
+    my $tmp    = File::Temp->newdir(
+        UNLINK   => 0,
+        CLEANUP  => 0,
+        TEMPLATE => File::Spec->catdir( $tmpdir, 'hpcrunnerXXXXXXX' )
+    );
     my $test_dir = $tmp->dirname;
 
     remove_tree($test_dir);
     make_path($test_dir);
-    make_path(File::Spec->catdir($test_dir,'script'));
+    make_path( File::Spec->catdir( $test_dir, 'script' ) );
 
     chdir($test_dir);
     diag('START in make test dir!');
-    diag('Test Dir is '.$test_dir);
-    diag('Cwd is '.cwd());
+    diag( 'Test Dir is ' . $test_dir );
+    diag( 'Cwd is ' . cwd() );
     diag('END in make test dir!')
 
-    if(can_run('git') && !-d File::Spec->catdir($test_dir,".git")){
+      if ( can_run('git') && !-d File::Spec->catdir( $test_dir, ".git" ) ) {
         system('git init');
     }
 
-    diag('In make_test_dir testdir: '.$test_dir);
     return $test_dir;
 }
 
@@ -52,9 +55,9 @@ sub print_diff {
     my $diff = diff \$got, \$expect;
     diag("Diff is\n\n$diff\n\n");
 
-    write_file('got.diff', $got) or die print "Couldn't write $!\n";
-    write_file('expect.diff', $expect) or die print "Couldn't write $!\n";
-    write_file('diff.diff', $diff) or die print "Could't write $!\n";
+    write_file( 'got.diff',    $got )    or die print "Couldn't write $!\n";
+    write_file( 'expect.diff', $expect ) or die print "Couldn't write $!\n";
+    write_file( 'diff.diff',   $diff )   or die print "Could't write $!\n";
 
     ok(1);
 }
