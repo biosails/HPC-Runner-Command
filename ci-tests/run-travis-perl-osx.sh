@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 # install conda
-mkdir -p /anaconda
 curl -O https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VER-$tag-x86_64.sh
 curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-sudo bash Miniconda3-latest-MacOSX-x86_64.sh -b -p /anaconda
-sudo chown -R $USER /anaconda
-export PATH=/anaconda/bin:$PATH
+sudo bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/anaconda
+export PATH=$HOME/anaconda/bin:$PATH
 
+conda config --set always_yes yes --set changeps1 no
 conda config --add channels nyuad-cgsb && \
 conda config --add channels conda-forge && \
 conda config --add channels defaults && \
