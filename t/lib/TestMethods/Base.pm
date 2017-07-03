@@ -30,9 +30,9 @@ sub make_test_dir {
     diag('START in make test dir!');
     diag( 'Test Dir is ' . $test_dir );
     diag( 'Cwd is ' . cwd() );
-    diag('END in make test dir!')
+    diag('END in make test dir!');
 
-      if ( can_run('git') && !-d File::Spec->catdir( $test_dir, ".git" ) ) {
+    if ( can_run('git') && !-d File::Spec->catdir( $test_dir, '.git' ) ) {
         system('git init');
     }
 

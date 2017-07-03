@@ -44,8 +44,6 @@ sub iter_jobs_long {
 
     print $table;
     print "\n";
-
-    print Dumper($table);
 }
 
 sub iter_tasks_long {
@@ -78,7 +76,6 @@ sub iter_tasks_long {
     }
 }
 
-##TODO Move this to long view
 sub get_tasks {
     my $self          = shift;
     my $submission_id = shift;
