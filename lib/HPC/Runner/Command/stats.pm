@@ -93,6 +93,11 @@ has 'task_data' => (
     clearer => 'clear_task_data',
 );
 
+option 'json' =>
+is => 'rw',
+isa => 'Bool',
+default => 0,
+);
 
 sub execute {
     my $self = shift;

@@ -8,6 +8,7 @@ else
 fi
 
 # install conda
+mkdir -p /anaconda
 curl -O https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VER-$tag-x86_64.sh
 sudo bash Miniconda3-$MINICONDA_VER-$tag-x86_64.sh -b -p /anaconda
 sudo chown -R $USER /anaconda
