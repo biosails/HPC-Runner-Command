@@ -36,7 +36,8 @@ sub make_test_dir {
         system('git init');
     }
 
-    return $test_dir;
+    # return $test_dir;
+    return cwd();
 }
 
 # Tests were failing if they were running asyncronously.
