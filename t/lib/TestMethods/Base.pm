@@ -10,6 +10,7 @@ use IPC::Cmd qw[can_run];
 use File::Temp;
 use File::Spec;
 use File::Slurp;
+use Cwd;
 
 sub make_test_dir{
 
@@ -22,6 +23,10 @@ sub make_test_dir{
     make_path(File::Spec->catdir($test_dir,'script'));
 
     chdir($test_dir);
+    diag('START in make test dir!')
+    diag('Test Dir is '.$test_dir);
+    diag('Cwd is '.cwd());
+    diag('END in make test dir!')
 
     if(can_run('git') && !-d File::Spec->catdir($test_dir,".git")){
         system('git init');
