@@ -19,7 +19,7 @@ sub make_test_dir{
 
     remove_tree($test_dir);
     make_path($test_dir);
-    make_path("$test_dir/script");
+    make_path(File::Spec->catdir($test_dir,'script'));
 
     chdir($test_dir);
 
@@ -27,6 +27,7 @@ sub make_test_dir{
         system('git init');
     }
 
+    diag('In make_test_dir testdir: '.$test_dir);
     return $test_dir;
 }
 
