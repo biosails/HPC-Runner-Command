@@ -23,7 +23,7 @@ sub make_test_dir{
     make_path(File::Spec->catdir($test_dir,'script'));
 
     chdir($test_dir);
-    diag('START in make test dir!')
+    diag('START in make test dir!');
     diag('Test Dir is '.$test_dir);
     diag('Cwd is '.cwd());
     diag('END in make test dir!')
