@@ -1,15 +1,14 @@
-use strict;
-use warnings;
-
 package HPC::Runner::Command::execute_job::Base;
 
 use MooseX::App::Role;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
-use Archive::Tar;
 
+with 'HPC::Runner::Command::execute_job::Utils::Plugin';
 with 'HPC::Runner::Command::execute_job::Utils::Log';
 with 'HPC::Runner::Command::execute_job::Logger::JSON';
+
 use Sys::Hostname;
+use Archive::Tar;
 
 =head2 Command Line Options
 

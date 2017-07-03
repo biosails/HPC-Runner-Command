@@ -1,15 +1,15 @@
 package HPC::Runner::Command::stats;
 
 use MooseX::App::Command;
-with 'HPC::Runner::Command::Logger::JSON';
+use Moose::Util qw/apply_all_roles/;
 extends 'HPC::Runner::Command';
+
+with 'HPC::Runner::Command::Logger::JSON';
 with 'HPC::Runner::Command::stats::Logger::JSON::Summary';
 with 'HPC::Runner::Command::stats::Logger::JSON::Long';
 with 'HPC::Runner::Command::Logger::Loggers';
 
-use Log::Log4perl qw(:easy);
 use JSON;
-use Text::ASCIITable;
 use File::Find::Rule;
 use File::stat;
 use File::Spec;
@@ -48,13 +48,7 @@ option 'all' => (
     cmd_aliases => ['a'],
 );
 
-option 'project' => (
-    is            => 'rw',
-    isa           => 'Str',
-    documentation => 'Query by project',
-    required      => 0,
-    predicate     => 'has_project',
-);
+option '+project' => ( documentation => 'Query by project.', );
 
 option 'jobname' => (
     is            => 'rw',
@@ -87,6 +81,15 @@ option 'long' => (
     cmd_aliases => ['l'],
 );
 
+option 'json' => (
+    is            => 'rw',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => 'Output data in json instead of a table. '
+      . 'This option suppresses logging output.',
+    cmd_aliases => ['j'],
+);
+
 has 'task_data' => (
     is      => 'rw',
     isa     => 'HashRef',
@@ -94,18 +97,16 @@ has 'task_data' => (
     clearer => 'clear_task_data',
 );
 
-option 'json' => (
-    is            => 'rw',
-    isa           => 'Bool',
-    default       => 0,
-    documentation => 'Output data in json instead of a table.',
-);
+sub BUILD {
+    my $self = shift;
 
-has 'json_summary' => (
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { return [] }
-);
+    if ( $self->json ) {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::JSONOutput');
+    }
+    else {
+      apply_all_roles($self, 'HPC::Runner::Command::stats::Logger::JSON::TableOutput');
+    }
+}
 
 sub execute {
     my $self = shift;
@@ -135,28 +136,6 @@ sub iter_submissions {
         }
     }
 
-    if ( $self->json ) {
-        my $json = encode_json( $self->json_summary );
-        print $json;
-        print "\n";
-    }
-
-}
-
-## TODO This one is mostly the same
-sub build_table {
-    my $self = shift;
-    my $res  = shift;
-
-    my $start_time = $res->{start_time} || '';
-    my $project    = $res->{project}    || '';
-    my $id         = $res->{uuid}       || '';
-    my $header     = "Time: " . $start_time;
-    $header .= " Project: " . $project;
-    $header .= "\nSubmissionID: " . $id;
-    my $table = Text::ASCIITable->new( { headingText => $header } );
-
-    return $table;
 }
 
 sub get_submissions {

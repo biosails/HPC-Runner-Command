@@ -7,8 +7,11 @@ Call the hpcrunner.pl submit_jobs command
 =cut
 
 use MooseX::App::Command;
+use Moose::Util qw/apply_all_roles/;
 extends 'HPC::Runner::Command';
 
+with 'HPC::Runner::Command::submit_jobs::Utils::Plugin';
+with 'HPC::Runner::Command::execute_job::Utils::Plugin';
 with 'HPC::Runner::Command::Logger::JSON';
 with 'HPC::Runner::Command::Utils::Base';
 with 'HPC::Runner::Command::Utils::Log';
@@ -33,9 +36,6 @@ option 'dry_run' => (
     documentation => 'Do a dry run - do not submit to the scheduler.',
     cmd_aliases   => ['dr'],
 );
-
-
-use Moose::Util qw/apply_all_roles/;
 
 sub BUILD {
     my $self = shift;
