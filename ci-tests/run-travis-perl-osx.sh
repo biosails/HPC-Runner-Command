@@ -19,7 +19,7 @@ conda config --add channels defaults && \
 conda config --add channels r && \
 conda config --add channels bioconda
 
-conda install perl perl-app-cpanminus perl-moose perl-path-tiny
+conda install perl perl-app-cpanminus perl-moose perl-test-class-moose perl-path-tiny
 
 #Install
 cpanm --notest Package::DeprecationManager
