@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # install conda
-curl -O https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VER-$tag-x86_64.sh
 curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
 sudo bash Miniconda3-latest-MacOSX-x86_64.sh -b -p $HOME/anaconda
 export PATH=$HOME/anaconda/bin:$PATH
