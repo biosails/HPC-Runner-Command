@@ -114,6 +114,11 @@ independent of all other tasks.
 
 	tree hpc-runner
 
+=head3 Audit your results
+
+  hpcrunner.pl stats -h
+  hpcrunner.pl stats
+
 =head2 Job Type Dependencency Declaration
 
 Most of the time we have jobs that depend upon other jobs.
@@ -174,18 +179,23 @@ Within a job type we can declare dependencies on particular tasks.
 
 	tree hpc-runner
 
+=head3 Audit your results
+
+  hpcrunner.pl stats -h
+  hpcrunner.pl stats
+
 =cut
 
 =head2 Declare Scheduler Variables
 
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
 generalized variables for declaring types across templates. For more information
-please see L< Job Scheduler
-Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html >
+please see L<Job Scheduler
+Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html>
 
-Additionally, for workflows with a large number of tasks, please see L<
-Considerations for Workflows with a Large Number of
-Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks >
+Additionally, for workflows with a large number of tasks, please see
+L<Considerations for Workflows with a Large Number of
+Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks>
 for information on how to group tasks together.
 
 =head3 Workflow file
@@ -222,6 +232,11 @@ for information on how to group tasks together.
 
 	tree hpc-runner
 
+=head3 Audit your results
+
+  hpcrunner.pl stats -h
+  hpcrunner.pl stats
+
 =cut
 
 __PACKAGE__->meta()->make_immutable();
@@ -246,7 +261,7 @@ As of Version 2.41:
 
 This modules continuing development is supported by NYU Abu Dhabi in the Center
 for Genomics and Systems Biology. With approval from NYUAD, this information was
-generalized and put on bitbucket, for which the authors would like to express
+generalized and put on github, for which the authors would like to express
 their gratitude.
 
 Before Version 2.41
