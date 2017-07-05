@@ -1,6 +1,8 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+
+3.2.6  2017-07-05 11:46:45 GST
 	- Enhancements to the logging interface
 	- New JSON logging interface
 	- hpcrunner.pl stats command - works from tar archive and is meant to be a starting point for additional loggers
