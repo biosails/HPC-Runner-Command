@@ -1,5 +1,8 @@
 package HPC::Runner::Command::submit_jobs::Utils::Scheduler;
 
+use MooseX::App::Role;
+use namespace::autoclean;
+
 use File::Path qw(make_path);
 use File::Temp qw/ tempfile /;
 use IO::Select;
@@ -14,8 +17,6 @@ use Storable qw(dclone);
 use Text::ASCIITable;
 use Memoize;
 use List::MoreUtils qw(first_index);
-
-use MooseX::App::Role;
 
 use HPC::Runner::Command::Utils::Traits qw(ArrayRefOfStrs);
 
@@ -789,6 +790,7 @@ sub process_batch {
         $self->post_process_jobs;
 
         $self->post_process_batch_indexes($batch_indexes);
+        $self->inc_batch_counter;
     }
 }
 
@@ -801,7 +803,7 @@ Put the scheduler_id in each batch
 sub post_process_batch_indexes {
     my $self          = shift;
     my $batch_indexes = shift;
-    
+
     my $scheduler_id = $self->jobs->{ $self->current_job }->scheduler_ids->[-1];
 
     for (

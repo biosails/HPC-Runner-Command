@@ -30,6 +30,7 @@ sub update_job_scheduler_deps_by_task {
         $self->batch_scheduler_ids_by_task;
     }
 
+    ##TODO consider changing this to each schedule
     $self->update_job_deps;
 }
 

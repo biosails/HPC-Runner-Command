@@ -3,6 +3,8 @@ package HPC::Runner::Command::submit_jobs::Plugin::Slurm;
 use Data::Dumper;
 use Log::Log4perl;
 use File::Temp qw/ tempfile /;
+use File::Slurp;
+use File::Spec;
 
 use Moose::Role;
 
@@ -75,6 +77,10 @@ has 'template_file' => (
 
 [% IF MODULES %]
 module load [% MODULES %]
+[% END %]
+
+[% IF job.has_conda_env %]
+source activate [% job.conda_env %]
 [% END %]
 
 [% COMMAND %]
@@ -165,12 +171,15 @@ sub update_job_deps {
 
     return unless $self->has_array_deps;
 
+    my $array_deps_file = File::Spec->catdir($self->logdir , 'array_deps.txt');
+
     while ( my ( $current_task, $v ) = each %{ $self->array_deps } ) {
-        my $dep_tasks = join( ':', @$v );
+        my $dep_tasks = join( ':', @{$v} );
         my $cmd =
           "scontrol update job=$current_task -W depend=afterok:$dep_tasks";
 
         $self->submit_to_scheduler($cmd);
+        write_file($array_deps_file, { append => 1 }, $current_task."\t".join(',', @{$v}));
     }
 }
 

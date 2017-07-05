@@ -1,13 +1,21 @@
 package HPC::Runner::Command::execute_job::Base;
 
-use Moose::Role;
+use MooseX::App::Role;
+use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
-# use MooseX::App::Role;
-
+with 'HPC::Runner::Command::execute_job::Utils::Plugin';
 with 'HPC::Runner::Command::execute_job::Utils::Log';
+with 'HPC::Runner::Command::execute_job::Logger::JSON';
+
 use Sys::Hostname;
+use Archive::Tar;
 
 =head2 Command Line Options
+
+=cut
+
+
+=head2 Internal Attriutes
 
 =cut
 
@@ -54,6 +62,14 @@ has 'wait' => (
     isa     => 'Bool',
     default => 0,
 );
+
+=head3 counter
+
+This is task_id counter. Batch index start and/or array_id get passed in on the command line
+But for instances where we are creating a threadpool of more than 1 task
+The counter keeps track
+
+=cut
 
 has 'counter' => (
     traits   => ['Counter'],

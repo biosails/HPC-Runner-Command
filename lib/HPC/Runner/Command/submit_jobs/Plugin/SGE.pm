@@ -54,6 +54,11 @@ has 'template_file' => (
 module load [% MODULES %]
 [% END %]
 
+[% IF job.has_conda_env %]
+source activate [% job.conda_env %]
+[% END %]
+
+
 [% COMMAND %]
 EOF
 

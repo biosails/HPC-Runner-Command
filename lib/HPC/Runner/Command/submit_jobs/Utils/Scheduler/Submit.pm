@@ -25,6 +25,8 @@ sub process_submit_command {
 
     my $logname = $self->create_log_name($counter);
 
+    $self->jobs->{$self->current_job}->add_lognames($logname);
+
     $command = "sleep 20\n";
     $command .= "cd " . getcwd() . "\n";
     if ( $self->has_custom_command ) {
@@ -51,8 +53,11 @@ sub process_submit_command {
       . $self->jobs->{ $self->current_job }->procs . " \\\n"
       . "\t--logname "
       . $logname . " \\\n"
+      . "\t--data_tar "
+      . $self->data_tar . " \\\n"
       . "\t--process_table "
       . $self->process_table;
+
 
     #TODO Update metastring to give array index
     my $metastr =
@@ -183,6 +188,8 @@ sub submit_to_scheduler {
         $self->app_log->fatal( 'Cmd failed with exitcode ' . $exitcode );
         return [ $exitcode, '', $@ ];
     };
+
+    return unless $cmdpid;
 
     my $sel = new IO::Select;    # create a select object
     $sel->add( $outfh, $errfh ); # and add the fhs

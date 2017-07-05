@@ -1,14 +1,21 @@
 package HPC::Runner::Command::execute_job::Utils::Log;
 
 use MooseX::App::Role;
+use namespace::autoclean;
+
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 use IPC::Open3;
+use IPC::Cmd qw[can_run];
 use IO::Select;
 use Symbol;
 use Try::Tiny;
+use Path::Tiny;
+use File::Path qw(make_path remove_tree);
+use File::Slurp;
 
 with 'HPC::Runner::Command::Utils::Log';
+with 'HPC::Runner::Command::execute_job::Utils::MemProfile';
 
 ##Command Log
 has 'command_log' => ( is => 'rw', );
@@ -73,16 +80,19 @@ perl command.pl 2
 =cut
 
 sub _log_commands {
-    my ( $self, $pid ) = @_;
+  my $self = shift;
+  my $pid = shift;
 
     my $dt1 = DateTime->now( time_zone => 'local' );
+    $self->task_start_time($dt1);
 
     #$DB::single = 2;
     my $ymd = $dt1->ymd();
     my $hms = $dt1->hms();
 
     $self->clear_table_data;
-    $self->set_table_data( start_time => "$ymd $hms" );
+    $self->set_table_data( start_time    => "$ymd $hms" );
+    $self->set_table_data( start_time_dt => $dt1 );
 
     my ( $cmdpid, $exitcode ) = $self->log_job;
     return unless defined $cmdpid;
@@ -109,6 +119,8 @@ sub _log_commands {
         $cmdpid );
 
     $self->log_table( $cmdpid, $exitcode, $format->format_duration($duration) );
+
+    $self->update_json_task;
 
     return $exitcode;
 }
@@ -149,16 +161,13 @@ sub log_table {
     $self->set_table_data( exit_time => "$ymd $hms" );
     $self->set_table_data( exitcode  => $exitcode );
     $self->set_table_data( duration  => $duration );
+    $self->set_table_data( task_id   => $self->counter );
 
     my $version = $self->version || "0.0";
     my $task_tags = "";
 
-    my $logfile = $self->logdir . "/" . $self->logfile;
-
-    open( my $pidtablefh, ">>" . $self->process_table )
-      or die $self->app_log->fatal("Couldn't open process file $!\n");
-
-    #or die print "Couldn't open process file $!\n";
+    ##TODO Update this with File::Spec
+    my $logfile = File::Spec->catdir( $self->logdir, $self->logfile );
 
     if ( $self->can('task_tags') ) {
         my $aref = $self->get_task_tag($cmdpid) || [];
@@ -172,11 +181,12 @@ sub log_table {
         $self->set_table_data( version => $version );
     }
 
+    my $text = '';
     if ( $self->can('job_scheduler_id') && $self->can('jobname') ) {
         my $schedulerid = $self->job_scheduler_id || '';
 
         my $jobname = $self->jobname || '';
-        print $pidtablefh <<EOF;
+        $text =<<EOF;
 |$version|$schedulerid|$jobname|$task_tags|$cmdpid|$exitcode|$duration|
 EOF
 
@@ -184,10 +194,12 @@ EOF
         $self->set_table_data( jobname     => $jobname );
     }
     else {
-        print $pidtablefh <<EOF;
+        $text =<<EOF;
 |$cmdpid|$exitcode|$duration|
 EOF
     }
+
+    write_file($self->process_table, {append => 1}, $text) || $self->app_log->warn("Unable to write to the process table! $!");
 }
 
 #TODO move to execute_jobs
@@ -234,10 +246,15 @@ sub log_job {
 
     # Start Command Log
     $self->start_command_log($cmdpid);
+    $self->create_json_task($cmdpid);
+    $self->get_cmd_stats($cmdpid);
+
     my $sel = new IO::Select;    # create a select object
     $sel->add( $outfh, $errfh ); # and add the fhs
 
-    while ( my @ready = $sel->can_read ) {
+    while (1) {
+        last unless $sel->can_read;
+        my @ready = $sel->can_read;
         foreach my $fh (@ready) {    # loop through them
             my $line;
             my $len = sysread $fh, $line, 4096;
@@ -258,6 +275,9 @@ sub log_job {
                 }
             }
         }
+        $self->get_cmd_stats($cmdpid);
+        ##TODO Add Variable
+        sleep( $self->poll_time );
     }
 
     waitpid( $cmdpid, 1 );
@@ -295,6 +315,9 @@ sub start_command_log {
     my $log_array_msg = "";
     if ( $self->can('task_id') ) {
         $log_array_msg = "\nArray ID:\t" . $self->task_id . "\n";
+    }
+    else {
+        $log_array_msg = "\nTask ID:\t" . $self->counter . "\n";
     }
 
     $self->log_cmd_messages(

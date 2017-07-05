@@ -5,19 +5,45 @@ use MooseX::App qw(Color);
 with 'HPC::Runner::Command::Utils::Plugin';
 with 'HPC::Runner::Command::Utils::ManyConfigs';
 
-option '+config_base' => (
-    default       => '.hpcrunner',
+use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
+
+option '+config_base' => ( default => '.hpcrunner', );
+
+=head3 project
+
+When submitting jobs we will prepend the jobname with the project name
+
+=cut
+
+option 'project' => (
+    is            => 'rw',
+    isa           => 'Str',
+    documentation => 'Give your jobnames an additional project name. '
+      . '#HPC jobname=gzip will be submitted as 001_project_gzip',
+    required    => 0,
+    predicate   => 'has_project',
+    cmd_aliases => ['p'],
 );
 
 option 'verbose' => (
-  is => 'rw',
-  isa => 'Bool',
-  default => 0,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+);
+
+
+has 'submission_uuid' => (
+    is        => 'rw',
+    isa       => 'Str',
+    required  => 0,
+    predicate => 'has_submissions_uuid',
 );
 
 our $VERSION = '3.2.5';
 
 app_strict 0;
+
+sub BUILD { }
 
 =encoding utf-8
 
@@ -197,6 +223,8 @@ for information on how to group tasks together.
 	tree hpc-runner
 
 =cut
+
+__PACKAGE__->meta()->make_immutable();
 
 1;
 
