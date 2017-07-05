@@ -90,13 +90,13 @@ sub gen_project_yml {
     my $hash = {
         ProjectName => $self->project,
         TopDir      => getcwd(),
-        LogDir      => File::Spec->catdir(getcwd() , "hpc-runner", "logs"),
-        BlogDir     => File::Spec->catdir(getcwd() , "hpc-runner", "www", "hexo")
+        LogDir      => File::Spec->catdir(cwd() , "hpc-runner", "logs"),
+        BlogDir     => File::Spec->catdir(cwd() , "hpc-runner", "www", "hexo")
     };
 
     write_file('.project.yml', Dump $hash);
 
-    $self->log->info("$self->{projectname} Initialized...");
+    $self->log->info("Project: ".$self->project." Initialized...");
 }
 
 sub gen_gitignore {
@@ -111,4 +111,5 @@ sub gen_gitignore {
 }
 
 __PACKAGE__->meta()->make_immutable();
+
 1;
