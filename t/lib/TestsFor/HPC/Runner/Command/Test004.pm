@@ -10,6 +10,7 @@ use IPC::Cmd qw[can_run];
 use Data::Dumper;
 use Capture::Tiny ':all';
 use File::Spec;
+use File::Slurp;
 
 extends 'TestMethods::Base';
 

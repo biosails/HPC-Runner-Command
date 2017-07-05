@@ -185,7 +185,7 @@ sub test_005 : Tags(use_batches) {
 
     ok($test->archive->contains_file($complete_file));
     ok($test->archive->contains_file($running_file));
-    diag($test->archive->get_content($complete_file));
+    # diag($test->archive->get_content($complete_file));
     ok(1);
 
     chdir($Bin);

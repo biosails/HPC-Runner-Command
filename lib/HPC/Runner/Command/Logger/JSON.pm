@@ -64,6 +64,7 @@ sub set_archive {
         $tar->write($archive);
     }
 
+    $ENV{HPC_DATA_TAR} = $self->data_tar->stringify;
     return $tar;
 }
 
