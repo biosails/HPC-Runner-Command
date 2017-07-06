@@ -58,6 +58,7 @@ sub create_json_task {
         start_time => $self->table_data->{start_time},
         jobname    => $job_meta->{jobname},
         task_id    => $self->counter,
+
         # submission_uuid => $self->submission_uuid,
         # task_uuid       => $uuid,
         # job_meta        => $job_meta,
@@ -161,6 +162,7 @@ sub update_json_task {
     $self->remove_from_running($data_dir);
     ##TODO Add in mem for job
     my $complete = $self->add_to_complete( $data_dir, $task_obj );
+
     # $self->create_task_file( $data_dir, $task_obj );
     return $task_obj;
 }
@@ -209,10 +211,12 @@ sub write_json {
         $self->archive->replace_content( $file, $json_text );
     }
     else {
-        $self->archive->add_data( $file, $json_text );
+        $self->archive->add_data( $file, $json_text )
+          || $self->command_log->warn(
+            'We were not able to add ' . $file . ' to the archive' );
     }
 
-    $self->archive->write( $self->data_tar );
+    $self->archive->write( $self->data_tar ) || $self->command_log->warn('We were not able to write '.$file.' to the archive');
 }
 
 1;
