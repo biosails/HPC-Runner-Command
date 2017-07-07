@@ -7,6 +7,7 @@ with 'HPC::Runner::Command::Utils::Log';
 use Text::ASCIITable;
 use File::Spec;
 use File::Slurp;
+use Log::Log4perl qw(:easy);
 
 sub print_table_schedule_info {
     my $self = shift;
