@@ -125,7 +125,7 @@ sub write_task_project_table {
     my $task_file = File::Spec->catdir( $self->logdir, 'project_task_table.md' );
     write_file( $task_file, '| Job | TaskID | Status | Notes |'."\n" );
     foreach my $job ( $self->all_schedules ) {
-        my $cmd_start         = $self->jobs->{$job}->{cmd_start};
+        my $cmd_start         = $self->jobs->{$job}->{cmd_start} + 1;
         my $cmd_end = $self->jobs->{$job}->cmd_counter + $cmd_start;
         for(my $x=$cmd_start; $x<=$cmd_end; $x++){
           write_file($task_file, {append => 1}, '| '.$job.' | '.$x.' | | |'."\n");
