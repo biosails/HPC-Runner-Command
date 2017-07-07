@@ -178,7 +178,7 @@ sub update_job_deps {
     while ( my ( $current_task, $v ) = each %{ $self->array_deps } ) {
         my $dep_tasks = join( ':', @{$v} );
         my $cmd =
-          "scontrol update job=$current_task -W depend=afterok:$dep_tasks";
+          "scontrol update job=$current_task depend=afterok:$dep_tasks";
 
         my ( $exitcode, $stdout, $stderr ) = $self->submit_to_scheduler($cmd);
         write_file(
