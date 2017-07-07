@@ -19,8 +19,7 @@ sub check_lock {
     my $max_retries = 1000;
     my $x           = 0;
     while ( $self->lock_exists($data_dir) ) {
-      print "LOCK EXISTS!\n";
-        Time::HiRes::sleep(0.1);
+        Time::HiRes::sleep(0.5);
         $x++;
         last if $x >= $max_retries;
     }
