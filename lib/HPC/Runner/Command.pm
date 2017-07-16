@@ -31,17 +31,14 @@ option 'project' => (
 #     default => 0,
 # );
 
-option 'log_json' => (
-      traits  => ['Bool'],
-    is      => 'rw',
-    isa     => 'Bool',
-    default => 1,
-    documentation => 'Log your project to a tar archive as json files.',
-    handles => {
-      no_log_json => 'unset',
-    },
+option 'no_log_json' => (
+    traits        => ['Bool'],
+    is            => 'rw',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => 'Opt out of writing the tar archive of JSON stats. '
+      . 'This may be desirable for especially large workflows.',
 );
-
 
 has 'submission_uuid' => (
     is        => 'rw',
