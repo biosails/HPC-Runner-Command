@@ -61,6 +61,7 @@ sub create_json_task {
         start_time => $self->table_data->{start_time},
         jobname    => $job_meta->{jobname},
         task_id    => $self->counter,
+
         # submission_uuid => $self->submission_uuid,
         # task_uuid       => $uuid,
         # job_meta        => $job_meta,
@@ -72,16 +73,17 @@ sub create_json_task {
     my $basename = $self->data_tar->basename('.tar.gz');
     my $data_dir = File::Spec->catdir( $basename, $job_meta->{jobname} );
 
-    $self->check_lock;
-    $self->write_lock;
+    if ( !$self->no_log_json ) {
+        $self->check_lock;
+        $self->write_lock;
 
-    $self->add_to_running( $data_dir, $task_obj );
+        $self->add_to_running( $data_dir, $task_obj );
 
-    $self->lock_file->remove;
+        $self->lock_file->remove;
+    }
 
     return $task_obj;
 }
-
 
 ## keep this or no?
 ##TODO Create Mem profile file
@@ -165,13 +167,16 @@ sub update_json_task {
           $self->task_mem_data->{count}->{$stat};
     }
 
-    $self->check_lock($basename);
-    $self->write_lock($basename);
+    if ( !$self->no_log_json ) {
+        $self->check_lock;
+        $self->write_lock;
 
-    $self->remove_from_running($data_dir);
-    ##TODO Add in mem for job
-    $self->add_to_complete( $data_dir, $task_obj );
-    $self->lock_file->remove;
+        $self->remove_from_running($data_dir);
+        ##TODO Add in mem for job
+        $self->add_to_complete( $data_dir, $task_obj );
+        $self->lock_file->remove;
+    }
+
     return $task_obj;
 }
 
@@ -196,7 +201,7 @@ sub read_json {
 
     my $json_obj;
     my $text;
-    $self->archive->read($self->data_tar);
+    $self->archive->read( $self->data_tar );
     if ( $self->archive->contains_file($file) ) {
         $text = $self->archive->get_content($file);
         $json_obj = decode_json($text) if $text;
@@ -216,7 +221,7 @@ sub write_json {
     return unless $json_obj;
 
     my $json_text = encode_json($json_obj);
-    $self->archive->read($self->data_tar);
+    $self->archive->read( $self->data_tar );
     if ( $self->archive->contains_file($file) ) {
         $self->archive->replace_content( $file, $json_text );
     }

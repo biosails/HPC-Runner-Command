@@ -32,11 +32,10 @@ Have a max retry count to avoid infinite loops
 
 sub check_lock {
     my $self     = shift;
-    my $data_dir = shift;
 
     my $max_retries = 1000;
     my $x           = 0;
-    
+
     while ( $self->lock_file->exists ) {
         $self->command_log->info('Lock exists!');
         Time::HiRes::sleep(0.5);
@@ -45,7 +44,7 @@ sub check_lock {
     }
     if ( $x >= $max_retries ) {
         $self->command_log->warn(
-            'Logger::JSON Error: We exited the lock!' . $data_dir );
+            'Logger::JSON Error: We exited the lock!'  );
     }
 }
 
