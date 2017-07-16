@@ -1,0 +1,4 @@
+#!/home/jillian/.eb/eb-modules/software/perl-hpc-runner-command/3.2.0/bin/perl
+
+use Module::Build::Tiny;
+Build();

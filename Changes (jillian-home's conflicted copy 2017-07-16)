@@ -1,0 +1,63 @@
+Revision history for HPC-Runner-Command
+
+{{$NEXT}}
+
+3.2.6  2017-07-05 11:46:45 GST
+	- Enhancements to the logging interface
+	- New JSON logging interface
+	- hpcrunner.pl stats command - works from tar archive and is meant to be a starting point for additional loggers
+	- Fixed file paths so tests should run platform independent
+
+3.2.5  2017-06-11 15:53:59 GST
+	- Minor cleanup to config files - reload to get any options that may be in plugins
+
+3.2.4  2017-06-07 18:29:58 GST
+	- Refactored Scheduler.pm into several more modules
+	- Bug fix for use_arrays and commands_per_node
+	- Better test coverage for execute_job
+
+3.2.3  2017-05-31 16:45:39 GST
+	- When a job fails - only jobs that depend upon that job will not be submitted, but the rest of the workflow is fine
+
+3.2.2  2017-05-29 14:50:37 GST
+	- Bug fix for array task dependencies
+
+3.2.1  2017-05-28 15:37:39 GST
+	- Bug fix with counting 0th command and single-node mode
+
+3.2.0  2017-05-24 10:26:38 GST
+	- Upgrading to minor version
+
+3.1.8  2017-05-24 09:30:51 GST
+	- Major API changes for execute_job and execute_array
+
+3.1.7  2017-05-18 10:27:10 GST
+	- Hot fix - updated SLURM for new dep array
+
+3.1.6  2017-05-17 15:22:15 GST
+	- Made some changes for speed
+
+3.1.5  2017-05-01 09:01:42 GST
+	- More logging info
+
+3.1.4  2017-04-30 11:33:17 GST
+	- Minor bug fix for plugins
+
+3.1.3  2017-04-30 11:08:50 GST
+	- Additional logging info on jobs - hostname, job scheduler id, array id
+
+3.1.2  2017-04-01 11:22:06 GST
+	- Made some fixes to environmental variables for slurm
+	- Changed duration from %year %month ... to just %day %hours %minutes
+
+3.1.1  2017-03-12 14:44:10 GST
+	- Bug fix for ManyConfigs
+
+3.1.0  2017-03-12 11:16:13 GST
+	- Official stable release
+
+3.0.1  2017-01-11 10:54:34 GST
+	- Bug fixes for cpan tests
+
+3.0.0  2017-01-05 12:26:17 GST
+        - This is the beta release of HPC::Runner::Command 

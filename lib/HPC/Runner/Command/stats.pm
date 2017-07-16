@@ -140,6 +140,9 @@ sub iter_submissions {
               if $self->summary;
             $self->iter_jobs_long( $submission, $jobref ) if $self->long;
         }
+        else{
+          $self->app_log->info('Data Tar '.$self->data_tar.' does not contain any submission info!');
+        }
     }
 
 }
