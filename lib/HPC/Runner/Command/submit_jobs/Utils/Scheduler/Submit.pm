@@ -53,6 +53,8 @@ sub process_submit_command {
       . $self->jobs->{ $self->current_job }->procs . " \\\n"
       . "\t--logname "
       . $logname . " \\\n"
+      . "\t--log_json "
+      . $self->log_json . " \\\n"
       . "\t--data_tar "
       . $self->data_tar . " \\\n"
       . "\t--process_table "
