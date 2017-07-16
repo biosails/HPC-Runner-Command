@@ -25,10 +25,21 @@ option 'project' => (
     cmd_aliases => ['p'],
 );
 
-option 'verbose' => (
+# option 'verbose' => (
+#     is      => 'rw',
+#     isa     => 'Bool',
+#     default => 0,
+# );
+
+option 'log_json' => (
+      traits  => ['Bool'],
     is      => 'rw',
     isa     => 'Bool',
-    default => 0,
+    default => 1,
+    documentation => 'Log your project to a tar archive as json files.',
+    handles => {
+      no_log_json => 'unset',
+    },
 );
 
 
