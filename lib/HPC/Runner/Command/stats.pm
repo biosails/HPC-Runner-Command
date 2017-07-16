@@ -100,7 +100,7 @@ has 'task_data' => (
 parameter 'stats_type' => (
     is      => 'rw',
     isa     => 'Str',
-    default => 'json',
+    default => 'JSON',
     documentation =>
       'hpcrunner.pl stats json/sqlite/elasticsearch --other_opts',
 );
@@ -110,19 +110,19 @@ sub BUILD {
 
     if ( $self->json && $self->summary ) {
         apply_all_roles( $self,
-            'HPC::Runner::Command::stats::Logger::JSON::Summary::JSONOutput' );
+            'HPC::Runner::Command::stats::Logger::'.$self->stats_type.'::Summary::JSONOutput' );
     }
     elsif ( !$self->json && $self->summary ) {
         apply_all_roles( $self,
-            'HPC::Runner::Command::stats::Logger::JSON::Summary::TableOutput' );
+            'HPC::Runner::Command::stats::Logger::'.$self->stats_type.'::Summary::TableOutput' );
     }
     elsif ( $self->json && $self->long ) {
         apply_all_roles( $self,
-            'HPC::Runner::Command::stats::Logger::JSON::Long::JSONOutput' );
+            'HPC::Runner::Command::stats::Logger::'.$self->stats_type.'::Long::JSONOutput' );
     }
     elsif ( !$self->json && $self->long ) {
         apply_all_roles( $self,
-            'HPC::Runner::Command::stats::Logger::JSON::Long::TableOutput' );
+            'HPC::Runner::Command::stats::Logger::'.$self->stats_type.'::Long::TableOutput' );
     }
 }
 
