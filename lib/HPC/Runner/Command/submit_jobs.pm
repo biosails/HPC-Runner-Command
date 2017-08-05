@@ -57,16 +57,16 @@ sub BUILD {
             'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays' );
     }
 
-    my $tar = $self->set_archive;
-    $self->archive($tar);
+    # my $tar = $self->set_archive;
+    # $self->archive($tar);
 }
 
 sub execute {
     my $self = shift;
 
     $self->app_log->info('Parsing input file');
-    $self->create_json_submission;
     $self->parse_file_slurm;
+    $self->create_json_submission;
     $self->app_log->info('Submitting jobs');
     $self->iterate_schedule;
     $self->update_json_submission;

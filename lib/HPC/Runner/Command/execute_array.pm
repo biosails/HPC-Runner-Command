@@ -62,8 +62,8 @@ after 'BUILD' => sub {
     $self->gen_load_plugins;
     $self->job_load_plugins;
 
-    my $tar = $self->set_archive;
-    $self->archive($tar);
+    # my $tar = $self->set_archive;
+    # $self->archive($tar);
 };
 
 sub execute {

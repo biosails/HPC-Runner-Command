@@ -154,7 +154,7 @@ has 'app_log' => (
         my $file_name = File::Spec->catdir( $self->logdir, 'main.log' );
         $self->_make_the_dirs( $self->logdir );
         my $log_conf = q(
-log4perl.category = DEBUG, FILELOG, Screen
+log4perl.category = INFO, FILELOG, Screen
 log4perl.appender.Screen = \
     Log::Log4perl::Appender::ScreenColoredLevels
 log4perl.appender.Screen.layout = \

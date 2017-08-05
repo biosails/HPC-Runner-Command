@@ -61,6 +61,8 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::stats::Logger::JSON::Summary');
     require_ok('HPC::Runner::Command::stats::Logger::JSON::Long');
     require_ok('HPC::Runner::Command::archive');
+    require_ok('HPC::Runner::Command::Logger::JSON::Archive');
+
     ok(1);
 }
 

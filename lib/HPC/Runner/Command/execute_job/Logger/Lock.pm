@@ -16,8 +16,7 @@ has 'lock_file' => (
     required => 1,
     default  => sub {
         my $self = shift;
-        my $file =
-            File::Spec->catdir($self->data_dir,  '.lock' );
+        my $file = File::Spec->catdir( $self->data_dir, '.lock' );
         return $file;
     },
 );
@@ -31,7 +30,7 @@ Have a max retry count to avoid infinite loops
 =cut
 
 sub check_lock {
-    my $self     = shift;
+    my $self = shift;
 
     my $max_retries = 1000;
     my $x           = 0;
@@ -43,20 +42,20 @@ sub check_lock {
         last if $x >= $max_retries;
     }
     if ( $x >= $max_retries ) {
-        $self->command_log->warn(
-            'Logger::JSON Error: We exited the lock!'  );
+        $self->command_log->warn('Logger::JSON Error: We exited the lock!');
     }
 }
 
 sub write_lock {
-    my $self     = shift;
+    my $self = shift;
 
     try {
         $self->lock_file->touchpath;
     }
     catch {
         $self->command_log->warn(
-            'Logger::JSON Error: We were not able to write ' . $self->lock_file->stringify );
+            'Logger::JSON Error: We were not able to write '
+              . $self->lock_file->stringify );
     };
 }
 

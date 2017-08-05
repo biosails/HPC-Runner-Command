@@ -15,6 +15,7 @@ use File::Slurp;
 use Cwd;
 use Data::Dumper;
 use Time::HiRes;
+use Capture::Tiny ':all';
 
 has 'task_json' => (
     is       => 'rw',
@@ -50,9 +51,9 @@ sub create_json_task {
     my $self   = shift;
     my $cmdpid = shift;
 
-    my $ug   = Data::UUID->new;
-    my $uuid = $ug->create();
-    $uuid = $ug->to_string($uuid);
+    # my $ug   = Data::UUID->new;
+    # my $uuid = $ug->create();
+    # $uuid = $ug->to_string($uuid);
 
     my $job_meta = $self->parse_meta_str;
 
@@ -201,7 +202,11 @@ sub read_json {
 
     my $json_obj;
     my $text;
+
+    # capture {
     $self->archive->read( $self->data_tar );
+
+    # };
     if ( $self->archive->contains_file($file) ) {
         $text = $self->archive->get_content($file);
         $json_obj = decode_json($text) if $text;
@@ -221,7 +226,9 @@ sub write_json {
     return unless $json_obj;
 
     my $json_text = encode_json($json_obj);
-    $self->archive->read( $self->data_tar );
+    capture {
+        $self->archive->read( $self->data_tar );
+    };
     if ( $self->archive->contains_file($file) ) {
         $self->archive->replace_content( $file, $json_text );
     }
@@ -231,9 +238,11 @@ sub write_json {
             'We were not able to add ' . $file . ' to the archive' );
     }
 
-    $self->archive->write( $self->data_tar )
-      || $self->command_log->warn(
-        'We were not able to write ' . $file . ' to the archive' );
+    capture {
+        $self->archive->write( $self->data_tar, 1 )
+          || $self->command_log->warn(
+            'We were not able to write ' . $file . ' to the archive' );
+    };
 }
 
 1;
