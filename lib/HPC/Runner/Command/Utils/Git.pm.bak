@@ -81,8 +81,6 @@ has 'remote' => (
     predicate => 'has_remote',
 );
 
-#TODO Create option for adding archive
-
 =head2 Subroutines
 
 =cut
@@ -137,12 +135,12 @@ sub dirty_run {
         );
     }
     elsif ( $dirty_flag && $self->autocommit ) {
-        $self->app_log->warn(
-"There are uncommited files in your repo!\n\tWe will try to commit these files before running."
-        );
+        $self->app_log->warn( "There are uncommited files in your repo!\n\t"
+              . "We will try to commit these files before running.\n" );
         try {
             $self->git->add(qw/ -A /);
-            $self->git->commit( qw/ --message "stuff" /, { all => 1 } );
+            $self->git->commit( qw/ --message "HPCRunner Commit" /,
+                { all => 1 } );
             $self->app_log->info("Files were commited to git");
         }
         catch {
@@ -243,24 +241,6 @@ sub git_push_tags {
     foreach my $remote (@remote) {
         $self->git->push( { tags => 1 }, $remote );
     }
-}
-
-##Create Release git
-sub create_release {
-    my ($self) = @_;
-
-    return unless $self->has_git;
-    my @filelist = $self->git->ls_files();
-
-    return unless @filelist;
-
-    my $archive =
-      File::Spec->catdir( $self->git_dir, 'hpc-runner', 'archive',
-        'archive-' . $self->version . '.tar.gz' );
-
-    #make git_dir/archive if it doesn't exist
-    make_path( File::Spec->catdir( $self->git_dir, 'hpc-runner', 'archive' ) );
-    Archive::Tar->create_archive( $archive, @filelist );
 }
 
 1;

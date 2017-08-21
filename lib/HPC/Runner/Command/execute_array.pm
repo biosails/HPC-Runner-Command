@@ -51,7 +51,6 @@ after 'BUILD' => sub {
         exit 1;
     }
 
-    $self->git_things;
 
     # $self->get_infile;
     ##The Task ID is the initial value for the job array that is caught by an environmental variable
@@ -69,6 +68,7 @@ after 'BUILD' => sub {
 sub execute {
     my $self = shift;
 
+    $self->git_things;
     $self->run_mce;
 }
 

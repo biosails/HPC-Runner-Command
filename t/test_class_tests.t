@@ -10,7 +10,7 @@ if ( $ENV{'TRAVIS'} || $ENV{'DEV'} ) {
             'TestsFor::HPC::Runner::Command::Test001',
             # 'TestsFor::HPC::Runner::Command::Test002',
             # 'TestsFor::HPC::Runner::Command::Test003',
-            'TestsFor::HPC::Runner::Command::Test005',
+            # 'TestsFor::HPC::Runner::Command::Test005',
             # 'TestsFor::HPC::Runner::Command::Test006',
             # 'TestsFor::HPC::Runner::Command::Test007',
             # 'TestsFor::HPC::Runner::Command::Test008',
@@ -22,6 +22,7 @@ if ( $ENV{'TRAVIS'} || $ENV{'DEV'} ) {
             # 'TestsFor::HPC::Runner::Command::Test014',
             # 'TestsFor::HPC::Runner::Command::Test015',
             # 'TestsFor::HPC::Runner::Command::Test016',
+            'TestsFor::HPC::Runner::Command::Test017',
         ],
     )->runtests;
 }
