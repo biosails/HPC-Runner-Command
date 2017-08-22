@@ -24,9 +24,6 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command');
     require_ok('HPC::Runner::Command::Utils::Base');
     require_ok('HPC::Runner::Command::Utils::Log');
-    # require_ok('HPC::Runner::Command::Utils::Git');
-    # require_ok('HPC::Runner::Command::Utils::Plugin');
-    # require_ok('HPC::Runner::Command::Utils::Traits');
     require_ok('HPC::Runner::Command::Logger::JSON');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Log');
     require_ok('HPC::Runner::Command::submit_jobs::Utils::Scheduler');
@@ -62,8 +59,6 @@ sub test_000 : Tags(require) {
     require_ok('HPC::Runner::Command::stats::Logger::JSON::Long');
     require_ok('HPC::Runner::Command::archive');
     require_ok('HPC::Runner::Command::Logger::JSON::Archive');
-
-    ok(1);
 }
 
 sub write_test_file {

@@ -1,9 +1,9 @@
-use strict;
-use warnings;
-
 package HPC::Runner::Command::submit_jobs::Logger::JSON;
 
 use Moose::Role;
+use namespace::autoclean;
+
+with 'HPC::Runner::Command::execute_job::Logger::Lock';
 
 use JSON;
 use File::Spec;
@@ -22,6 +22,7 @@ Create the data for the json submission
 sub create_json_submission {
     my $self = shift;
 
+    $self->logger('app_log');
     my $hpc_meta = $self->gen_hpc_meta;
 
     my $json_text = encode_json $hpc_meta;
@@ -29,10 +30,15 @@ sub create_json_submission {
     my $basename = $self->data_tar->basename('.tar.gz');
     my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
 
+    $self->check_lock;
+    $self->write_lock;
+
     $self->archive->add_data( $submission_file, $json_text );
     capture {
         $self->archive->write( $self->data_tar, 1 );
     };
+
+    $self->lock_file->remove;
 
     return $hpc_meta;
 }
@@ -55,10 +61,16 @@ sub update_json_submission {
     my $basename = $self->data_tar->basename('.tar.gz');
     my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
 
+    ##TODO Change this to around?
+    $self->check_lock;
+    $self->write_lock;
+
     $self->archive->add_data( $submission_file, $json_text );
     capture {
         $self->archive->write( $self->data_tar, 1 );
     };
+
+    $self->lock_file->remove;
 
     return $hpc_meta;
 

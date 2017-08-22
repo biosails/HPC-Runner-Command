@@ -73,6 +73,9 @@ sub execute {
     $self->create_json_submission;
     $self->app_log->info('Submitting jobs');
     $self->iterate_schedule;
+
+    $self->app_log->debug('We are updating the json submissions!');
+
     $self->update_json_submission;
     $self->app_log->info('Your jobs have been submitted.');
     $self->app_log->info('Experimental! For status updates please run:');

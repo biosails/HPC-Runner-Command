@@ -113,6 +113,7 @@ sub construct {
 
     my $test = HPC::Runner::Command->new_with_command();
     $test->logname('slurm_logs');
+    $test->logger('app_log');
     $test->log( $test->init_log );
     return $test;
 }
