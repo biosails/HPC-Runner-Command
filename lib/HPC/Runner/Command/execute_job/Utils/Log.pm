@@ -331,7 +331,7 @@ sub start_command_log {
           . "\nJobID:\t"
           . $self->job_scheduler_id
           . " \nCmdPID:\t"
-          . $cmdpid . "\n"
+          . $cmdpid 
           . "\nHostname:\t"
           . $self->hostname
           . "\nJob Scheduler ID:\t"

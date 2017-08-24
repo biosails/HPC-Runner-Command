@@ -98,7 +98,7 @@ sub construct {
     my $test_dir     = $test_methods->make_test_dir();
     write_test_file($test_dir);
 
-    write_file('.gitignore', ".hpcrunner-data\nhpc-runner");
+    write_file('.gitignore', ".biosails/.hpcrunner-data\nhpc-runner");
     diag `git add -A`;
     diag `git commit -m "commit"`;
     diag `git tag -a hpcrunner-0.01 -m "hello"`;
