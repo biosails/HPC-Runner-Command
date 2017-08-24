@@ -190,6 +190,9 @@ sub test_005 : Tags(use_batches) {
     ok( $test->archive->contains_file($complete_file) );
     ok( $test->archive->contains_file($running_file) );
 
+    $test->lock_file->touchpath;
+    my $ret = $test->check_lock;
+    is($ret, 0, 'Lock file exists and should not be removed');
     # diag($test->archive->get_content($complete_file));
     ok(1);
 
