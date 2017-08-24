@@ -13,3 +13,4 @@ hpcrunner*.db
 inotify-hookable.sh
 .tags
 .atomenv.cson
+set_env.sh
