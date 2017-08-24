@@ -96,21 +96,6 @@ option 'process_table' => (
     },
 );
 
-=head3 tags
-
-Submission tags
-
-=cut
-
-option 'tags' => (
-    is            => 'rw',
-    isa           => 'ArrayRef',
-    documentation => 'Tags for the whole submission',
-    default       => sub { return [] },
-    cmd_split     => qr/,/,
-    required      => 0,
-);
-
 =head3 metastr
 
 JSON string passed from HPC::Runner::App::Scheduler. It describes the total number of jobs, processes, and job batches.
@@ -154,7 +139,7 @@ has 'app_log' => (
         my $file_name = File::Spec->catdir( $self->logdir, 'main.log' );
         $self->_make_the_dirs( $self->logdir );
         my $log_conf = q(
-log4perl.category = DEBUG, FILELOG, Screen
+log4perl.category = INFO, FILELOG, Screen
 log4perl.appender.Screen = \
     Log::Log4perl::Appender::ScreenColoredLevels
 log4perl.appender.Screen.layout = \
