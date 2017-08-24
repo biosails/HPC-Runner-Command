@@ -38,17 +38,23 @@ Have a max retry count to avoid infinite loops
 sub check_lock {
     my $self = shift;
 
-    my $max_retries = 1000;
+    my $max_retries = 100;
     my $x           = 0;
 
+    my $ret = 1;
     while ( $self->lock_file->exists ) {
         Time::HiRes::sleep(0.5);
         $x++;
-        last if $x >= $max_retries;
+        if($x >= $max_retries){
+          $ret = 0;
+          last;
+        }
     }
     if ( $x >= $max_retries ) {
         $self->{$self->logger}->warn('Logger::JSON Error: We exited the lock!');
     }
+
+    return $ret;
 }
 
 sub write_lock {
