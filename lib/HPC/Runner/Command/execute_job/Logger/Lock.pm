@@ -1,11 +1,11 @@
 package HPC::Runner::Command::execute_job::Logger::Lock;
 
 use Moose::Role;
-
 use namespace::autoclean;
+
 use Try::Tiny;
-use Path::Tiny;
-use File::Slurp;
+use Time::HiRes;
+use File::Spec;
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
 has 'lock_file' => (
@@ -19,6 +19,12 @@ has 'lock_file' => (
         my $file = File::Spec->catdir( $self->data_dir, '.lock' );
         return $file;
     },
+);
+
+has 'logger' => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => 'command_log',
 );
 
 =head3 check_lock
@@ -36,13 +42,12 @@ sub check_lock {
     my $x           = 0;
 
     while ( $self->lock_file->exists ) {
-        $self->command_log->info('Lock exists!');
         Time::HiRes::sleep(0.5);
         $x++;
         last if $x >= $max_retries;
     }
     if ( $x >= $max_retries ) {
-        $self->command_log->warn('Logger::JSON Error: We exited the lock!');
+        $self->{$self->logger}->warn('Logger::JSON Error: We exited the lock!');
     }
 }
 
@@ -53,7 +58,7 @@ sub write_lock {
         $self->lock_file->touchpath;
     }
     catch {
-        $self->command_log->warn(
+        $self->{$self->logger}->warn(
             'Logger::JSON Error: We were not able to write '
               . $self->lock_file->stringify );
     };

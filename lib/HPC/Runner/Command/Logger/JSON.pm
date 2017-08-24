@@ -8,6 +8,8 @@ use DateTime;
 use File::Path qw(make_path remove_tree);
 use HPC::Runner::Command::Logger::JSON::Archive;
 
+with 'BioSAILs::Utils::Files::CacheDir';
+
 has 'data_dir' => (
     is            => 'rw',
     isa           => AbsPath,
@@ -16,7 +18,10 @@ has 'data_dir' => (
     required      => 1,
     documentation => q{Data directory for hpcrunner},
     predicate     => 'has_data_dir',
-    default       => '.hpcrunner-data',
+    default       => sub {
+        my $self = shift;
+        return File::Spec->catdir( $self->cache_dir, '.hpcrunner-data' );
+    }
 );
 
 option 'data_tar' => (

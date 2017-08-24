@@ -28,7 +28,6 @@ option 'batch_index_start' => (
 sub BUILD {
     my $self = shift;
 
-    $self->git_things;
     $self->gen_load_plugins;
     $self->job_load_plugins;
 
@@ -49,6 +48,7 @@ sub BUILD {
 sub execute {
     my $self = shift;
 
+    $self->git_things;
     $self->run_mce;
 }
 

@@ -30,6 +30,7 @@ has 'task_jobname' => (
     required => 0,
 );
 
+
 sub parse_meta_str {
     my $self = shift;
 
@@ -203,10 +204,9 @@ sub read_json {
     my $json_obj;
     my $text;
 
-    # capture {
+    capture {
     $self->archive->read( $self->data_tar );
-
-    # };
+    };
     if ( $self->archive->contains_file($file) ) {
         $text = $self->archive->get_content($file);
         $json_obj = decode_json($text) if $text;
