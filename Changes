@@ -1,8 +1,6 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
-
-3.2.9  2017-08-25 05:16:44 GST
 	- Additional fixes for JSON logger
 	- Replaced Archive::Tar with Archive::Tar::Wrapper
 
