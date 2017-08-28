@@ -652,8 +652,8 @@ sub iterate_schedule {
 
     $self->summarize_jobs;
 
-    $self->write_job_project_table;
-    $self->write_task_project_table;
+    # $self->write_job_project_table;
+    # $self->write_task_project_table;
 }
 
 =head3 iterate_job_deps

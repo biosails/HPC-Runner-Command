@@ -1,12 +1,13 @@
 package HPC::Runner::Command::submit_jobs::Plugin::Slurm;
 
-use Data::Dumper;
-# use Log::Log4perl;
+use Moose::Role;
+use namespace::autoclean;
+
 use File::Temp qw/ tempfile /;
 use File::Slurp;
 use File::Spec;
 
-use Moose::Role;
+with 'HPC::Runner::Command::submit_jobs::Plugin::Role::Log';
 
 =head1 HPC::Runner::Command::Plugin::Scheduler::Slurm;
 
@@ -96,6 +97,8 @@ EOF
       q{Path to Slurm template file if you do not wish to use the default}
 );
 
+
+
 =head2 Subroutines
 
 =cut
@@ -121,9 +124,9 @@ sub submit_jobs {
     sleep(3);
 
     if ( ! defined $exitcode || $exitcode != 0 ) {
-        $self->app_log->fatal("Job was not submitted successfully");
-        $self->app_log->warn( "STDERR: " . $stderr ) if $stderr;
-        $self->app_log->warn( "STDOUT: " . $stdout ) if $stdout;
+        $self->log->warn("Job was not submitted successfully");
+        $self->log->warn( "STDERR: " . $stderr ) if $stderr;
+        $self->log->warn( "STDOUT: " . $stdout ) if $stdout;
     }
 
     my ($jobid) = $stdout =~ m/(\d.*)$/ if $stdout;

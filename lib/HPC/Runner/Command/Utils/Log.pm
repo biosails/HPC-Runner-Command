@@ -158,7 +158,6 @@ log4perl.appender.FILELOG.layout.ConversionPattern = %d %p %m %n
     }
 );
 
-
 ##Submit Log
 has 'log' => (
     is      => 'rw',
@@ -216,6 +215,13 @@ sub set_logdir {
     }
 
     $logdir =~ s/\.log$//;
+
+    # my $dt = DateTime->now( time_zone => 'local' );
+    # $dt = "$dt";
+    # $dt =~ s/:/-/g;
+    #
+    # $logdir = File::Spec->catdir( $logdir, $dt );
+
     $self->_make_the_dirs($logdir);
 
     return $logdir;

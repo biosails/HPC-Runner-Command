@@ -38,7 +38,7 @@ Have a max retry count to avoid infinite loops
 sub check_lock {
     my $self = shift;
 
-    my $max_retries = 100;
+    my $max_retries = 200;
     my $x           = 0;
 
     my $ret = 1;

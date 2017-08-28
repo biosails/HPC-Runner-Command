@@ -27,18 +27,18 @@ sub create_json_submission {
 
     my $json_text = encode_json $hpc_meta;
 
-    my $basename = $self->data_tar->basename('.tar.gz');
-    my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
-
-    $self->check_lock;
-    $self->write_lock;
-
-    $self->archive->add_data( $submission_file, $json_text );
-    capture {
-        $self->archive->write( $self->data_tar, 1 );
-    };
-
-    $self->lock_file->remove;
+    # We are rolling back this functionality for a future release
+    # my $basename = $self->data_tar->basename('.tar.gz');
+    # my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
+    #
+    # $self->check_lock;
+    # $self->write_lock;
+    #
+    # $self->archive->add_data( $submission_file, $json_text );
+    # capture {
+    #     $self->archive->write( $self->data_tar, 1 );
+    # };
+    # $self->lock_file->remove;
 
     return $hpc_meta;
 }
@@ -55,22 +55,26 @@ sub update_json_submission {
     my $self = shift;
 
     my $hpc_meta = $self->gen_hpc_meta;
-
     my $json_text = encode_json $hpc_meta;
 
-    my $basename = $self->data_tar->basename('.tar.gz');
-    my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
-
-    ##TODO Change this to around?
-    $self->check_lock;
-    $self->write_lock;
-
-    $self->archive->add_data( $submission_file, $json_text );
-    capture {
-        $self->archive->write( $self->data_tar, 1 );
-    };
-
-    $self->lock_file->remove;
+    # We are rolling back this functionality for a future release
+    #
+    # my $basename = $self->data_tar->basename('.tar.gz');
+    # my $submission_file = File::Spec->catdir( $basename, 'submission.json' );
+    #
+    # ##TODO Change this to around?
+    # $self->check_lock;
+    # $self->write_lock;
+    #
+    # $self->archive->add_data( $submission_file, $json_text );
+    # capture {
+    #     $self->archive->write( $self->data_tar, 1 );
+    # };
+    #
+    # $self->lock_file->remove;
+    my $file_name = File::Spec->catdir( $self->logdir, 'submission.json' );
+    $self->_make_the_dirs( $self->logdir );
+    write_file($file_name, $json_text);
 
     return $hpc_meta;
 
