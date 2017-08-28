@@ -1,6 +1,8 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Rolling back JSON::Logger features for now - problematic on some filesystems
+	- Rolling back memory profiling - requires JSON::Logger
 
 3.2.9  2017-08-25 05:16:44 GST
 	- Additional fixes for JSON logger

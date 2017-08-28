@@ -225,14 +225,13 @@ sub log_job {
     my $self = shift;
 
     #Start running job
-    my ( $infh, $outfh, $errfh, $exitcode );
+    my ( $infh, $outfh, $errfh, $exitcode, $stderr );
     $errfh = gensym();    # if you uncomment this line, $errfh will
     my $cmdpid;
 
-    try {
-        $cmdpid = open3( $infh, $outfh, $errfh, $self->cmd );
-    }
-    catch {
+    eval { $cmdpid = open3( $infh, $outfh, $errfh, $self->cmd ); };
+    if ($@) {
+        $stderr   = $@;
         $exitcode = $?;
         $self->app_log->fatal( "Error running job "
               . $self->counter
@@ -240,8 +239,7 @@ sub log_job {
 
         $self->app_log->warn("There was an error running the command $@\n");
         $cmdpid = 0;
-        # return ( $cmdpid, $exitcode );
-    };
+    }
 
     $infh->autoflush();
 
@@ -252,14 +250,16 @@ sub log_job {
     ##IF we have an exitcode the job failed with a command not found
     return ( $cmdpid, $exitcode ) if $exitcode;
 
-    $self->get_cmd_stats($cmdpid);
+    ## Rolling back cmd_stats for now
+    # $self->get_cmd_stats($cmdpid);
 
     my $sel = new IO::Select;    # create a select object
     $sel->add( $outfh, $errfh ); # and add the fhs
 
-    while (1) {
-        last unless $sel->can_read;
-        my @ready = $sel->can_read;
+    # while (1) {
+    #     last unless $sel->can_read;
+    while ( my @ready = $sel->can_read ) {
+
         foreach my $fh (@ready) {    # loop through them
             my $line;
             my $len = sysread $fh, $line, 4096;
@@ -280,9 +280,12 @@ sub log_job {
                 }
             }
         }
-        $self->get_cmd_stats($cmdpid);
-        sleep( $self->poll_time );
+
     }
+
+    # $self->get_cmd_stats($cmdpid);
+    # sleep( $self->poll_time );
+    # }
 
     waitpid( $cmdpid, 1 );
     $exitcode = $? unless $exitcode;
@@ -331,7 +334,7 @@ sub start_command_log {
           . "\nJobID:\t"
           . $self->job_scheduler_id
           . " \nCmdPID:\t"
-          . $cmdpid 
+          . $cmdpid
           . "\nHostname:\t"
           . $self->hostname
           . "\nJob Scheduler ID:\t"

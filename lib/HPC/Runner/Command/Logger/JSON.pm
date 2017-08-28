@@ -52,7 +52,7 @@ has 'archive' => (
     clearer   => 'clear_archive',
     default   => sub {
         my $self = shift;
-        return $self->set_archive;
+        # return $self->set_archive;
     },
 );
 

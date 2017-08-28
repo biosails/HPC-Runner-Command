@@ -77,11 +77,13 @@ sub execute {
     $self->iterate_schedule;
     $self->update_json_submission;
     $self->app_log->info('Your jobs have been submitted.');
-    $self->app_log->info('Experimental! For status updates please run:');
-    $self->app_log->info('hpcrunner.pl stats');
-    $self->app_log->info(
-        'To get status updates for only this submission please run:');
-    $self->app_log->info( 'hpcrunner.pl stats --data_tar ' . $self->data_tar );
+
+    ##Rolling this back until a future release
+    # $self->app_log->info('Experimental! For status updates please run:');
+    # $self->app_log->info('hpcrunner.pl stats');
+    # $self->app_log->info(
+    #     'To get status updates for only this submission please run:');
+    # $self->app_log->info( 'hpcrunner.pl stats --data_tar ' . $self->data_tar );
 }
 
 ##TODO Combine this with the BioX cache file functions
