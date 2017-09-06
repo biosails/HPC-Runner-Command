@@ -84,8 +84,10 @@ sub schedule_jobs {
         $self->schedule( $dep->schedule_all );
     }
     catch {
+	$DB::single=2;
         $self->app_log->fatal(
             'There was a problem creating your schedule. Aborting mission!');
+        $self->app_log->fatal($@);
         exit 1;
     }
 
