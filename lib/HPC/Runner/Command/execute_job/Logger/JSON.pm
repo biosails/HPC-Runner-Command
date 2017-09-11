@@ -13,6 +13,7 @@ use File::Path qw(make_path remove_tree);
 use File::Slurp;
 use Cwd;
 use Time::HiRes;
+use IO::All;
 
 has 'task_json' => (
     is       => 'rw',
@@ -64,55 +65,15 @@ sub create_json_task {
     make_path($data_dir);
 
     if ( !$self->no_log_json ) {
+        $self->check_lock;
+        $self->write_lock;
         $self->add_to_running( $data_dir, $task_obj );
+        try {
+          $self->lock_file->remove;
+        };
     }
 
     return $task_obj;
-}
-
-## keep this or no?
-##TODO Create Mem profile file
-sub create_task_file {
-    my $self     = shift;
-    my $data_dir = shift;
-    my $json_obj = shift;
-
-    my $t_file = File::Spec->catfile( $data_dir, $self->counter . '.json' );
-    $self->write_json( $t_file, $json_obj );
-}
-
-sub add_to_running {
-    my $self      = shift;
-    my $data_dir  = shift;
-    my $task_data = shift;
-
-    my $r_file = File::Spec->catfile( $data_dir, 'running.json' );
-
-    my $json_obj = $self->read_json($r_file);
-    $json_obj->{ $self->counter } = $task_data;
-
-    $self->write_json( $r_file, $json_obj );
-}
-
-sub remove_from_running {
-    my $self     = shift;
-    my $data_dir = shift;
-
-    my $r_file = File::Spec->catfile( $data_dir, 'running.json' );
-    my $json_obj = $self->read_json($r_file);
-
-    delete $json_obj->{ $self->table_data->{task_id} };
-    $self->write_json( $r_file, $json_obj );
-}
-
-sub get_from_running {
-    my $self     = shift;
-    my $data_dir = shift;
-
-    my $r_file = File::Spec->catfile( $data_dir, 'running.json' );
-    my $json_obj = $self->read_json($r_file);
-
-    return $json_obj->{ $self->table_data->{task_id} };
 }
 
 ##TODO Once we add to the complete
@@ -162,9 +123,15 @@ sub update_json_task {
     # }
 
     if ( !$self->no_log_json ) {
+        $self->check_lock;
+        $self->write_lock;
+
         $self->remove_from_running($data_dir);
         ##TODO Add in mem for job
         $self->add_to_complete( $data_dir, $task_obj );
+        try {
+          $self->lock_file->remove;
+        };
     }
 
     $task_obj->{pid}           = $self->table_data->{cmdpid};
@@ -187,7 +154,52 @@ sub add_to_complete {
     return $json_obj;
 }
 
-##Going to have to update these for creating the archive
+## keep this or no?
+##TODO Create Mem profile file
+sub create_task_file {
+    my $self     = shift;
+    my $data_dir = shift;
+    my $json_obj = shift;
+
+    my $t_file = File::Spec->catfile( $data_dir, $self->counter . '.json' );
+    $self->write_json( $t_file, $json_obj,  );
+}
+
+sub add_to_running {
+    my $self      = shift;
+    my $data_dir  = shift;
+    my $task_data = shift;
+
+    my $r_file = File::Spec->catfile( $data_dir, 'running.json' );
+
+    my $json_obj = $self->read_json( $r_file,  );
+    $json_obj->{ $self->counter } = $task_data;
+
+    $self->write_json( $r_file, $json_obj, );
+}
+
+sub remove_from_running {
+    my $self     = shift;
+    my $data_dir = shift;
+
+    my $r_file = File::Spec->catfile( $data_dir, 'running.json' );
+
+    my $json_obj = $self->read_json( $r_file,  );
+
+    delete $json_obj->{ $self->table_data->{task_id} };
+    $self->write_json( $r_file, $json_obj, );
+}
+
+sub get_from_running {
+    my $self     = shift;
+    my $data_dir = shift;
+
+    my $r_file   = File::Spec->catfile( $data_dir, 'running.json' );
+    my $json_obj = $self->read_json( $r_file,  );
+
+    return $json_obj->{ $self->table_data->{task_id} };
+}
+
 sub read_json {
     my $self = shift;
     my $file = shift;
@@ -220,7 +232,7 @@ sub write_json {
         $json_text = '';
     };
 
-    write_file( $file, { append => 0 }, $json_text );
+    write_file($file, $json_text);
 }
 
 1;
