@@ -54,7 +54,7 @@ sub BUILD { }
 =begin HTML
 
 <p><img
-src="http://github.com/jerowe/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg"
+src="http://github.com/biosails/HPC-Runner-Command/blob/master/_docs/images/rabbit.jpeg"
 width="500" height="250" alt="HPC::Runner::Command" /></p>
 
 =end HTML
@@ -85,7 +85,7 @@ Get help by heading on over to github and raising an issue. L<GitHub |
 https://github.com/biosails/HPC-Runner-Command/issues>.
 
 Please see the complete documentation at L<HPC::Runner::Command GitBooks |
-https://jerowe.gitbooks.io/hpc-runner-command-docs/content/>.
+https://biosails.gitbooks.io/hpc-runner-command-docs/content/>.
 
 =head1 Quick Start - Create a New Project
 
@@ -193,11 +193,11 @@ Within a job type we can declare dependencies on particular tasks.
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
 generalized variables for declaring types across templates. For more information
 please see L<Job Scheduler
-Comparison|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html>
+Comparison|https://biosails.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html>
 
 Additionally, for workflows with a large number of tasks, please see
 L<Considerations for Workflows with a Large Number of
-Tasks|https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks>
+Tasks|https://biosails.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks>
 for information on how to group tasks together.
 
 =head3 Workflow file
