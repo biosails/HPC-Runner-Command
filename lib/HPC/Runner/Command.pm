@@ -22,7 +22,7 @@ option 'project' => (
       . '#HPC jobname=gzip will be submitted as 001_project_gzip',
     required    => 0,
     predicate   => 'has_project',
-    cmd_aliases => ['p'],
+    cmd_aliases => ['pr'],
 );
 
 option 'no_log_json' => (
