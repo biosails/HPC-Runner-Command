@@ -1,11 +1,51 @@
 matrix:
   include:
-    - os: linux
+    - os:       linux
       language: c
-      sudo: required
-      services:
-        - docker
-      script: ci-tests/slurm/travis-setup.sh; ci-tests/slurm/travis-run.sh # slurm testing
-    - os: osx
+      perl:
+        - "5.22"
+        - "5.20"
+        - "5.18"
+      install:
+         - cpanm -nq --installdeps .
+         - cpanm -nq Module::Build::Tiny
+         - cpanm -nq IO::Interactive
+         - perl Build.PL
+         - perl ./Build
+         - perl ./Build test
+         - perl ./Build install
+         - hpcrunner.pl submit_jobs -h
+         - hpcrunner.pl execute_job -h
+         - hpcrunner.pl execute_array -h
+         - hpcrunner.pl stats -h
+         - hpcrunner new -h
+      #script:  ci-tests/slurm/travis-setup.sh; ci-tests/slurm/travis-run.sh # slurm testing
+    - os:       osx
       language: c
-      script: ci-tests/run-travis-perl-osx.sh #osx testing 
+      install:
+        - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+            wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+          else
+            wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+          fi
+        - bash miniconda.sh -b -p $HOME/miniconda
+        - export PATH="$HOME/miniconda/bin:$PATH"
+        - hash -r
+        - conda config --set always_yes yes --set changeps1 no
+        - conda config --add channels conda-forge
+        - conda config --add channels bioconda
+        - conda update -q conda
+        - conda info -a
+        - conda create -q -n test-environment perl perl-app-cpanminus
+        - cpanm -nq --installdeps .
+        - cpanm -nq Module::Build::Tiny
+        - cpanm --notest IO::Interactive
+        - perl Build.PL
+        - perl ./Build
+        - perl ./Build test
+        - perl ./Build install
+        - hpcrunner.pl submit_jobs -h
+        - hpcrunner.pl execute_job -h
+        - hpcrunner.pl execute_array -h
+        - hpcrunner.pl stats -h
+        - hpcrunner new -h
