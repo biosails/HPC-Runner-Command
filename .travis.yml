@@ -1,13 +1,13 @@
 matrix:
   include:
     - os:       linux
-      language: c
+      language: perl
       perl:
         - "5.22"
         - "5.20"
         - "5.18"
       install:
-         - which cpanm 
+         - which cpanm
          - cpanm -nq --installdeps .
          - cpanm -nq Module::Build::Tiny
          - cpanm -nq IO::Interactive
