@@ -6,7 +6,6 @@ matrix:
       install:
          - which cpanm
          - cpanm -nq --installdeps .
-         - cpanm -nq Test::Exception
          - perl Build.PL
          - perl ./Build
          - perl ./Build test
@@ -33,7 +32,6 @@ matrix:
         - conda create -q -n build perl perl-app-cpanminus
         - source activate build
         - cpanm -nq --installdeps .
-        - cpanm -nq Test::Exception
         - perl Build.PL
         - perl ./Build
         - perl ./Build test
