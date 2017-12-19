@@ -17,6 +17,7 @@ app_exclude(
     'HPC::Runner::Command::stats::Logger',
     'HPC::Runner::Command::execute_job::Utils',
     'HPC::Runner::Command::execute_job::Logger',
+    'HPC::Runner::Command::execute_job::Base',
 );
 
 option '+config_base' => ( default => '.hpcrunner', );

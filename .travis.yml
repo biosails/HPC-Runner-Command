@@ -15,7 +15,7 @@ matrix:
          - hpcrunner.pl execute_job -h
          - hpcrunner.pl execute_array -h
          - hpcrunner.pl stats -h
-         - hpcrunner new -h
+         - hpcrunner.pl new -h
       #script:  ci-tests/slurm/travis-setup.sh; ci-tests/slurm/travis-run.sh # slurm testing
     - os:       osx
       language: c
@@ -41,4 +41,4 @@ matrix:
          - hpcrunner.pl execute_job -h
          - hpcrunner.pl execute_array -h
          - hpcrunner.pl stats -h
-         - hpcrunner new -h
+         - hpcrunner.pl new -h
