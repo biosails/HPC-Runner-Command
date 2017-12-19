@@ -2,7 +2,7 @@ matrix:
   include:
     - os:       linux
       language: perl
-      perl: "5.22"
+      perl:     "5.22"
       install:
          - which cpanm
          - cpanm -nq --installdeps .
@@ -12,6 +12,7 @@ matrix:
          - perl ./Build
          - perl ./Build test
          - perl ./Build install
+      script:
          - hpcrunner.pl submit_jobs -h
          - hpcrunner.pl execute_job -h
          - hpcrunner.pl execute_array -h
@@ -30,16 +31,18 @@ matrix:
         - conda config --add channels bioconda
         - conda update -q conda
         - conda info -a
-        - conda create -q -n test-environment perl perl-app-cpanminus
+        - conda create -q -n build perl perl-app-cpanminus
+        - source activate build
         - cpanm -nq --installdeps .
-        - cpanm -nq Module::Build::Tiny
+        - cpanm -v Module::Build::Tiny
         - cpanm --notest IO::Interactive
         - perl Build.PL
         - perl ./Build
         - perl ./Build test
         - perl ./Build install
-        - hpcrunner.pl submit_jobs -h
-        - hpcrunner.pl execute_job -h
-        - hpcrunner.pl execute_array -h
-        - hpcrunner.pl stats -h
-        - hpcrunner new -h
+      script:
+         - hpcrunner.pl submit_jobs -h
+         - hpcrunner.pl execute_job -h
+         - hpcrunner.pl execute_array -h
+         - hpcrunner.pl stats -h
+         - hpcrunner new -h
