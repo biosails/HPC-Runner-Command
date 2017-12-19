@@ -6,8 +6,6 @@ matrix:
       install:
          - which cpanm
          - cpanm -nq --installdeps .
-         - cpanm -nq Module::Build::Tiny
-         - cpanm -nq IO::Interactive
          - perl Build.PL
          - perl ./Build
          - perl ./Build test
@@ -34,8 +32,6 @@ matrix:
         - conda create -q -n build perl perl-app-cpanminus
         - source activate build
         - cpanm -nq --installdeps .
-        - cpanm -v Module::Build::Tiny
-        - cpanm --notest IO::Interactive
         - perl Build.PL
         - perl ./Build
         - perl ./Build test
