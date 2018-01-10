@@ -30,7 +30,7 @@ Get help by heading on over to github and raising an issue. [GitHub ](https://me
 https:#github.com-biosails-HPC-Runner-Command-issues).
 
 Please see the complete documentation at [HPC::Runner::Command GitBooks ](https://metacpan.org/pod/
-https:#jerowe.gitbooks.io-hpc-runner-command-docs-content).
+https:#biosails.gitbooks.io-hpc-runner-command-docs-content).
 
 # Quick Start - Create a New Project
 
@@ -136,11 +136,11 @@ Within a job type we can declare dependencies on particular tasks.
 Each scheduler has its own set of variables. HPC::Runner::Command has a set of
 generalized variables for declaring types across templates. For more information
 please see [Job Scheduler
-Comparison](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html)
+Comparison](https://biosails.gitbooks.io/hpc-runner-command-docs/content/job_submission/comparison.html)
 
 Additionally, for workflows with a large number of tasks, please see
 [Considerations for Workflows with a Large Number of
-Tasks](https://jerowe.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks)
+Tasks](https://biosails.gitbooks.io/hpc-runner-command-docs/content/design_workflow.html#considerations-for-workflows-with-a-large-number-of-tasks)
 for information on how to group tasks together.
 
 ### Workflow file

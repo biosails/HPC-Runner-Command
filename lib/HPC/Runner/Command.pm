@@ -7,6 +7,19 @@ with 'BioSAILs::Utils::LoadConfigs';
 
 use MooseX::Types::Path::Tiny qw/Path Paths AbsPath AbsFile/;
 
+app_strict 0;
+app_exclude(
+    'HPC::Runner::Command::Utils',
+    'HPC::Runner::Command::Logger',
+    'HPC::Runner::Command::submit_jobs::Utils',
+    'HPC::Runner::Command::submit_jobs::Plugin',
+    'HPC::Runner::Command::submit_jobs::Logger',
+    'HPC::Runner::Command::stats::Logger',
+    'HPC::Runner::Command::execute_job::Utils',
+    'HPC::Runner::Command::execute_job::Logger',
+    'HPC::Runner::Command::execute_job::Base',
+);
+
 option '+config_base' => ( default => '.hpcrunner', );
 
 =head3 project
@@ -22,7 +35,7 @@ option 'project' => (
       . '#HPC jobname=gzip will be submitted as 001_project_gzip',
     required    => 0,
     predicate   => 'has_project',
-    cmd_aliases => ['p'],
+    cmd_aliases => ['pr'],
 );
 
 option 'no_log_json' => (
