@@ -1,6 +1,7 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+	- Cleaned up dependencies
 
 3.2.12  2018-01-10 14:18:45 GST
 	- added back in stats command
