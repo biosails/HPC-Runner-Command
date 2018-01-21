@@ -64,7 +64,6 @@
             "File::Spec" : "0",
             "File::Temp" : "0",
             "File::stat" : "0",
-            "HPC::Runner::Command::Utils::Git" : "0",
             "IO::Dir" : "0",
             "IO::File" : "0",
             "IO::Interactive" : "0",
