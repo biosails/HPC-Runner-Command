@@ -1,6 +1,8 @@
 Revision history for HPC-Runner-Command
 
 {{$NEXT}}
+
+3.2.14  2018-01-22 10:51:11 GST
 	- Pinned List::MoreUtils 0.428
 	- Pinned MooseX::App 1.39
 
