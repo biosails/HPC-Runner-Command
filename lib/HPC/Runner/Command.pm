@@ -1,6 +1,6 @@
 package HPC::Runner::Command;
 
-use MooseX::App qw(Color);
+use MooseX::App 1.39 qw(Color);
 
 with 'BioSAILs::Utils::Plugin';
 with 'BioSAILs::Utils::LoadConfigs';
