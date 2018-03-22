@@ -1,6 +1,0 @@
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Pod/Eventual.pm
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Pod/Eventual/Simple.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Pod/Eventual.pm relocate_as=../../../../Pod/Eventual.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Pod/Eventual/Simple.pm relocate_as=../../../../Pod/Eventual/Simple.pm
-/Users/jillian/software/biosails/man/man3/Pod::Eventual.3 relocate_as=../../../../../../../../man/man3/Pod::Eventual.3
-/Users/jillian/software/biosails/man/man3/Pod::Eventual::Simple.3 relocate_as=../../../../../../../../man/man3/Pod::Eventual::Simple.3

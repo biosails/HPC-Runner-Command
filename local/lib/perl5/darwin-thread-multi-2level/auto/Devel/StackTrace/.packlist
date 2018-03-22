@@ -1,6 +1,0 @@
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Devel/StackTrace.pm
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Devel/StackTrace/Frame.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Devel/StackTrace.pm relocate_as=../../../../Devel/StackTrace.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Devel/StackTrace/Frame.pm relocate_as=../../../../Devel/StackTrace/Frame.pm
-/Users/jillian/software/biosails/man/man3/Devel::StackTrace.3 relocate_as=../../../../../../../../man/man3/Devel::StackTrace.3
-/Users/jillian/software/biosails/man/man3/Devel::StackTrace::Frame.3 relocate_as=../../../../../../../../man/man3/Devel::StackTrace::Frame.3

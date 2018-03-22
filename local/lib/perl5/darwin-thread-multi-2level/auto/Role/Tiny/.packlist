@@ -1,6 +1,0 @@
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Role/Tiny.pm
-/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Role/Tiny/With.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Role/Tiny.pm relocate_as=../../../../Role/Tiny.pm
-/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Role/Tiny/With.pm relocate_as=../../../../Role/Tiny/With.pm
-/Users/jillian/software/biosails/man/man3/Role::Tiny.3 relocate_as=../../../../../../../../man/man3/Role::Tiny.3
-/Users/jillian/software/biosails/man/man3/Role::Tiny::With.3 relocate_as=../../../../../../../../man/man3/Role::Tiny::With.3
