@@ -14,3 +14,4 @@ inotify-hookable.sh
 .tags
 .atomenv.cson
 set_env.sh
+.idea

@@ -1,0 +1,3 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Module/Runtime/Conflicts.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Module/Runtime/Conflicts.pm relocate_as=../../../../../Module/Runtime/Conflicts.pm
+/Users/jillian/software/biosails/man/man3/Module::Runtime::Conflicts.3 relocate_as=../../../../../../../../../man/man3/Module::Runtime::Conflicts.3

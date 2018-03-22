@@ -1,6 +1,9 @@
-#!perl
+#!/usr/bin/env perl
 
+use strict;
+use warnings FATAL => 'all';
 use utf8;
+
 package Main;
 
 use HPC::Runner::Command;

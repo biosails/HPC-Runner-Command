@@ -1,0 +1,14 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/Diff.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/DiffOld.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/cdiff.pl
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/diff.pl
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/diffnew.pl
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Algorithm/htmldiff.pl
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/Diff.pm relocate_as=../../../../Algorithm/Diff.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/DiffOld.pm relocate_as=../../../../Algorithm/DiffOld.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/cdiff.pl relocate_as=../../../../Algorithm/cdiff.pl
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/diff.pl relocate_as=../../../../Algorithm/diff.pl
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/diffnew.pl relocate_as=../../../../Algorithm/diffnew.pl
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Algorithm/htmldiff.pl relocate_as=../../../../Algorithm/htmldiff.pl
+/Users/jillian/software/biosails/man/man3/Algorithm::Diff.3 relocate_as=../../../../../../../../man/man3/Algorithm::Diff.3
+/Users/jillian/software/biosails/man/man3/Algorithm::DiffOld.3 relocate_as=../../../../../../../../man/man3/Algorithm::DiffOld.3

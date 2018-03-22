@@ -1,0 +1,120 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Coercion.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/AnyCan.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/AnyDoes.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/AnyIsa.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Enum.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Intersection.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/ObjectCan.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/ObjectDoes.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/ObjectIsa.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Parameterizable.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Parameterized.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Role/CanType.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Role/DoesType.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Role/Interface.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Role/IsaType.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Simple.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Structurable.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Structured.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Constraint/Union.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Declare.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/DeclaredAt.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Exception.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Exporter.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Helpers.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Builtins.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Numeric.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Perl.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/String.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Structured.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Structured/Dict.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Structured/Map.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Library/Structured/Tuple.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/OO.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/PartialDump.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Registry.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Role/Inlinable.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/Subs.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Specio/TypeChecks.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Test/Specio.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio.pm relocate_as=../../../Specio.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Coercion.pm relocate_as=../../../Specio/Coercion.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/AnyCan.pm relocate_as=../../../Specio/Constraint/AnyCan.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/AnyDoes.pm relocate_as=../../../Specio/Constraint/AnyDoes.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/AnyIsa.pm relocate_as=../../../Specio/Constraint/AnyIsa.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Enum.pm relocate_as=../../../Specio/Constraint/Enum.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Intersection.pm relocate_as=../../../Specio/Constraint/Intersection.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/ObjectCan.pm relocate_as=../../../Specio/Constraint/ObjectCan.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/ObjectDoes.pm relocate_as=../../../Specio/Constraint/ObjectDoes.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/ObjectIsa.pm relocate_as=../../../Specio/Constraint/ObjectIsa.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Parameterizable.pm relocate_as=../../../Specio/Constraint/Parameterizable.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Parameterized.pm relocate_as=../../../Specio/Constraint/Parameterized.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Role/CanType.pm relocate_as=../../../Specio/Constraint/Role/CanType.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Role/DoesType.pm relocate_as=../../../Specio/Constraint/Role/DoesType.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Role/Interface.pm relocate_as=../../../Specio/Constraint/Role/Interface.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Role/IsaType.pm relocate_as=../../../Specio/Constraint/Role/IsaType.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Simple.pm relocate_as=../../../Specio/Constraint/Simple.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Structurable.pm relocate_as=../../../Specio/Constraint/Structurable.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Structured.pm relocate_as=../../../Specio/Constraint/Structured.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Constraint/Union.pm relocate_as=../../../Specio/Constraint/Union.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Declare.pm relocate_as=../../../Specio/Declare.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/DeclaredAt.pm relocate_as=../../../Specio/DeclaredAt.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Exception.pm relocate_as=../../../Specio/Exception.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Exporter.pm relocate_as=../../../Specio/Exporter.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Helpers.pm relocate_as=../../../Specio/Helpers.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Builtins.pm relocate_as=../../../Specio/Library/Builtins.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Numeric.pm relocate_as=../../../Specio/Library/Numeric.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Perl.pm relocate_as=../../../Specio/Library/Perl.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/String.pm relocate_as=../../../Specio/Library/String.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Structured.pm relocate_as=../../../Specio/Library/Structured.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Structured/Dict.pm relocate_as=../../../Specio/Library/Structured/Dict.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Structured/Map.pm relocate_as=../../../Specio/Library/Structured/Map.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Library/Structured/Tuple.pm relocate_as=../../../Specio/Library/Structured/Tuple.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/OO.pm relocate_as=../../../Specio/OO.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/PartialDump.pm relocate_as=../../../Specio/PartialDump.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Registry.pm relocate_as=../../../Specio/Registry.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Role/Inlinable.pm relocate_as=../../../Specio/Role/Inlinable.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/Subs.pm relocate_as=../../../Specio/Subs.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Specio/TypeChecks.pm relocate_as=../../../Specio/TypeChecks.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Test/Specio.pm relocate_as=../../../Test/Specio.pm
+/Users/jillian/software/biosails/man/man3/Specio.3 relocate_as=../../../../../../../man/man3/Specio.3
+/Users/jillian/software/biosails/man/man3/Specio::Coercion.3 relocate_as=../../../../../../../man/man3/Specio::Coercion.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::AnyCan.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::AnyCan.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::AnyDoes.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::AnyDoes.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::AnyIsa.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::AnyIsa.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Enum.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Enum.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Intersection.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Intersection.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::ObjectCan.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::ObjectCan.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::ObjectDoes.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::ObjectDoes.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::ObjectIsa.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::ObjectIsa.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Parameterizable.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Parameterizable.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Parameterized.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Parameterized.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Role::CanType.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Role::CanType.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Role::DoesType.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Role::DoesType.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Role::Interface.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Role::Interface.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Role::IsaType.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Role::IsaType.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Simple.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Simple.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Structurable.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Structurable.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Structured.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Structured.3
+/Users/jillian/software/biosails/man/man3/Specio::Constraint::Union.3 relocate_as=../../../../../../../man/man3/Specio::Constraint::Union.3
+/Users/jillian/software/biosails/man/man3/Specio::Declare.3 relocate_as=../../../../../../../man/man3/Specio::Declare.3
+/Users/jillian/software/biosails/man/man3/Specio::DeclaredAt.3 relocate_as=../../../../../../../man/man3/Specio::DeclaredAt.3
+/Users/jillian/software/biosails/man/man3/Specio::Exception.3 relocate_as=../../../../../../../man/man3/Specio::Exception.3
+/Users/jillian/software/biosails/man/man3/Specio::Exporter.3 relocate_as=../../../../../../../man/man3/Specio::Exporter.3
+/Users/jillian/software/biosails/man/man3/Specio::Helpers.3 relocate_as=../../../../../../../man/man3/Specio::Helpers.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Builtins.3 relocate_as=../../../../../../../man/man3/Specio::Library::Builtins.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Numeric.3 relocate_as=../../../../../../../man/man3/Specio::Library::Numeric.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Perl.3 relocate_as=../../../../../../../man/man3/Specio::Library::Perl.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::String.3 relocate_as=../../../../../../../man/man3/Specio::Library::String.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Structured.3 relocate_as=../../../../../../../man/man3/Specio::Library::Structured.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Structured::Dict.3 relocate_as=../../../../../../../man/man3/Specio::Library::Structured::Dict.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Structured::Map.3 relocate_as=../../../../../../../man/man3/Specio::Library::Structured::Map.3
+/Users/jillian/software/biosails/man/man3/Specio::Library::Structured::Tuple.3 relocate_as=../../../../../../../man/man3/Specio::Library::Structured::Tuple.3
+/Users/jillian/software/biosails/man/man3/Specio::OO.3 relocate_as=../../../../../../../man/man3/Specio::OO.3
+/Users/jillian/software/biosails/man/man3/Specio::PartialDump.3 relocate_as=../../../../../../../man/man3/Specio::PartialDump.3
+/Users/jillian/software/biosails/man/man3/Specio::Registry.3 relocate_as=../../../../../../../man/man3/Specio::Registry.3
+/Users/jillian/software/biosails/man/man3/Specio::Role::Inlinable.3 relocate_as=../../../../../../../man/man3/Specio::Role::Inlinable.3
+/Users/jillian/software/biosails/man/man3/Specio::Subs.3 relocate_as=../../../../../../../man/man3/Specio::Subs.3
+/Users/jillian/software/biosails/man/man3/Specio::TypeChecks.3 relocate_as=../../../../../../../man/man3/Specio::TypeChecks.3
+/Users/jillian/software/biosails/man/man3/Test::Specio.3 relocate_as=../../../../../../../man/man3/Test::Specio.3

@@ -1,0 +1,9 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Mixin/Linewise.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Mixin/Linewise/Readers.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Mixin/Linewise/Writers.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Mixin/Linewise.pm relocate_as=../../../../Mixin/Linewise.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Mixin/Linewise/Readers.pm relocate_as=../../../../Mixin/Linewise/Readers.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Mixin/Linewise/Writers.pm relocate_as=../../../../Mixin/Linewise/Writers.pm
+/Users/jillian/software/biosails/man/man3/Mixin::Linewise.3 relocate_as=../../../../../../../../man/man3/Mixin::Linewise.3
+/Users/jillian/software/biosails/man/man3/Mixin::Linewise::Readers.3 relocate_as=../../../../../../../../man/man3/Mixin::Linewise::Readers.3
+/Users/jillian/software/biosails/man/man3/Mixin::Linewise::Writers.3 relocate_as=../../../../../../../../man/man3/Mixin::Linewise::Writers.3

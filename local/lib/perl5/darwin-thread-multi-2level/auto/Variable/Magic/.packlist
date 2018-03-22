@@ -1,0 +1,5 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/darwin-thread-multi-2level/Variable/Magic.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/darwin-thread-multi-2level/auto/Variable/Magic/Magic.bundle
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/darwin-thread-multi-2level/Variable/Magic.pm relocate_as=../../../Variable/Magic.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/darwin-thread-multi-2level/auto/Variable/Magic/Magic.bundle relocate_as=Magic.bundle
+/Users/jillian/software/biosails/man/man3/Variable::Magic.3 relocate_as=../../../../../../../../man/man3/Variable::Magic.3

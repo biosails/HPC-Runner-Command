@@ -1,0 +1,9 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Devel/InnerPackage.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Module/Pluggable.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Module/Pluggable/Object.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Devel/InnerPackage.pm relocate_as=../../../../Devel/InnerPackage.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Module/Pluggable.pm relocate_as=../../../../Module/Pluggable.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Module/Pluggable/Object.pm relocate_as=../../../../Module/Pluggable/Object.pm
+/Users/jillian/software/biosails/man/man3/Devel::InnerPackage.3 relocate_as=../../../../../../../../man/man3/Devel::InnerPackage.3
+/Users/jillian/software/biosails/man/man3/Module::Pluggable.3 relocate_as=../../../../../../../../man/man3/Module::Pluggable.3
+/Users/jillian/software/biosails/man/man3/Module::Pluggable::Object.3 relocate_as=../../../../../../../../man/man3/Module::Pluggable::Object.3

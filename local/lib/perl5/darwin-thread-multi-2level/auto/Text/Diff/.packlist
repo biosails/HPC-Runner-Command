@@ -1,0 +1,9 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Text/Diff.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Text/Diff/Config.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/Text/Diff/Table.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Text/Diff.pm relocate_as=../../../../Text/Diff.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Text/Diff/Config.pm relocate_as=../../../../Text/Diff/Config.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/Text/Diff/Table.pm relocate_as=../../../../Text/Diff/Table.pm
+/Users/jillian/software/biosails/man/man3/Text::Diff.3 relocate_as=../../../../../../../../man/man3/Text::Diff.3
+/Users/jillian/software/biosails/man/man3/Text::Diff::Config.3 relocate_as=../../../../../../../../man/man3/Text::Diff::Config.3
+/Users/jillian/software/biosails/man/man3/Text::Diff::Table.3 relocate_as=../../../../../../../../man/man3/Text::Diff::Table.3

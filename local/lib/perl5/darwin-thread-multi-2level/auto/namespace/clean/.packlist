@@ -1,0 +1,5 @@
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/namespace/clean.pm
+/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/local/lib/perl5/namespace/clean/_Util.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/namespace/clean.pm relocate_as=../../../../namespace/clean.pm
+/Users/jillian/software/biosails/lib/perl5/site_perl/5.22.0/namespace/clean/_Util.pm relocate_as=../../../../namespace/clean/_Util.pm
+/Users/jillian/software/biosails/man/man3/namespace::clean.3 relocate_as=../../../../../../../../man/man3/namespace::clean.3

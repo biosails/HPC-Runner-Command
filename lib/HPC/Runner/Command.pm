@@ -1,5 +1,6 @@
 package HPC::Runner::Command;
 
+use warnings FATAL => 'all';
 use MooseX::App 1.39 qw(Color);
 
 with 'BioSAILs::Utils::Plugin';
