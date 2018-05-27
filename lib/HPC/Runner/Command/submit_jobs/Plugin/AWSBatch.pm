@@ -508,7 +508,7 @@ sub update_job_deps {
 sub update_job_scheduler_deps_by_task {
     my $self = shift;
 
-    $self->array_deps({});
+#    $self->array_deps({});
     $self->app_log->info(
         'Calculating task dependencies for AWS. This may take some time.');
 
@@ -520,7 +520,8 @@ sub update_job_scheduler_deps_by_task {
 
 before 'execute' => sub {
     my $self = shift;
-    $self->max_array_size(1000);
+    $self->use_batches(1);
+#    $self->max_array_size(1000);
 };
 
 1;

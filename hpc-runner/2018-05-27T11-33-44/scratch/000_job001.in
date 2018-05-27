@@ -1,0 +1,6 @@
+#TASK tags=task1
+echo "hello from job001 task1"
+echo "hello from job001 task2"
+echo "hello from job001 task3"
+echo "hello from job001 task4"
+echo "hello from job001 task5"
