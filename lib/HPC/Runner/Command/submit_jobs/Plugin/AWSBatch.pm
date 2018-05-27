@@ -67,10 +67,10 @@ Then in the job submission submit as:
 
 =cut
 
-has 'array_size' => (
-    is      => 'rw',
-    default => 1,
-);
+#has 'array_size' => (
+#    is      => 'rw',
+#    default => 1,
+#);
 
 =head3 s3_hpcrunner
 HPCRunner needs an s3 bucket to upload its data files to
@@ -324,11 +324,18 @@ before 'process_template' => sub {
     my $jobname = $self->resolve_project($counter);
     my $command_array = \@aws_sync;
 
+    my $array_size = $self->current_batch->{cmd_count};
+    ##This is a hack, because AWS will only allow for arrays to be >=2
+    if($array_size == 1){
+        $array_size == 2;
+    }
+
     $self->submit_job_obj->{containerOverrides}->{command} = $command_array;
     $self->submit_job_obj->{containerOverrides}->{memory} = int($self->jobs->{$self->current_job}->{mem});
     $self->submit_job_obj->{containerOverrides}->{vcpus} = int($self->jobs->{$self->current_job}->{cpus_per_task});
     $self->submit_job_obj->{jobName} = $jobname;
     $self->submit_job_obj->{jobDefinition} = 'sleep30';
+    $self->submit_job_obj->{arrayProperties}->{size} = $array_size;
 
     #TODO Write check to ensure that the environmental keys exist
     #TODO Or that they can be read in from the ~/.aws.config files

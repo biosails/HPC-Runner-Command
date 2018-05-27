@@ -3,3 +3,28 @@
 2018/05/27 10:10:05 WARN There are uncommited files in your repo!
 	We will try to commit these files before running.
  
+2018/05/27 10:10:05 INFO Successfully commited files to git. 
+2018/05/27 10:10:05 FATAL We have noticed a dirty commit while trying to generate tags...
+ 
+2018/05/27 10:10:05 INFO Parsing input file 
+2018/05/27 10:10:06 INFO Here is your tabular dependency list in submission order 
+2018/05/27 10:10:06 INFO 
+
+.---------------------------------------------------------.
+| JobName | Deps   | Task Count | Mem  | Cpu | Num Arrays |
++---------+--------+------------+------+-----+------------+
+| job001  |        |          5 | 10GB |   4 |          1 |
+| job002  | job001 |          5 | 10GB |   4 |          1 |
+| job003  | job002 |          5 | 10GB |   4 |          1 |
+'---------+--------+------------+------+-----+------------'
+ 
+2018/05/27 10:10:07 INFO Submitting jobs 
+2018/05/27 10:10:07 INFO Beginning to submit jobs to the scheduler 
+2018/05/27 10:10:07 INFO Schedule is job001, job002, job003
+ 
+2018/05/27 10:10:07 INFO Submitting all job001 job types 
+2018/05/27 10:10:07 INFO There are 5 tasks for job type job001 
+2018/05/27 10:10:07 INFO Submitted in 1 job arrays.
+ 
+2018/05/27 10:10:08 INFO Writing aws cli 
+2018/05/27 10:10:08 INFO /Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/hpc-runner/2018-05-27T10-10-05/scratch/001_job001.json 
