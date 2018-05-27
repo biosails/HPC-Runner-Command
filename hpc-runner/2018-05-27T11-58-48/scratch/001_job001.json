@@ -1,0 +1,28 @@
+{
+   "arrayProperties" : {
+      "size" : 5
+   },
+   "jobDefinition" : "sleep30",
+   "jobQueue" : "LowPriority",
+   "parameters" : {},
+   "containerOverrides" : {
+      "environment" : [
+         {
+            "name" : "AWS_ACCESS_KEY_ID",
+            "value" : null
+         },
+         {
+            "name" : "AWS_SECRET_ACCESS_KEY",
+            "value" : null
+         }
+      ],
+      "command" : [
+         "fetch_and_run.sh",
+         "s3://hpcrunner-bucket/2018-05-27T11-58-48",
+         "hpc-runner/2018-05-27T11-58-48/scratch/001_job001.sh"
+      ],
+      "vcpus" : 4,
+      "memory" : 10
+   },
+   "jobName" : "001_job001"
+}
