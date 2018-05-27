@@ -2,3 +2,59 @@
 2018/05/27 11:55:45 WARN There are uncommited files in your repo!
 	We will try to commit these files before running.
  
+2018/05/27 11:55:45 INFO Successfully commited files to git. 
+2018/05/27 11:55:45 FATAL We have noticed a dirty commit while trying to generate tags...
+ 
+2018/05/27 11:55:45 INFO Parsing input file 
+2018/05/27 11:55:46 INFO Here is your tabular dependency list in submission order 
+2018/05/27 11:55:46 INFO 
+
+.---------------------------------------------------------.
+| JobName | Deps   | Task Count | Mem  | Cpu | Num Arrays |
++---------+--------+------------+------+-----+------------+
+| job001  |        |          5 | 10GB |   4 |          1 |
+| job002  | job001 |          5 | 10GB |   4 |          1 |
+| job003  | job002 |          5 | 10GB |   4 |          1 |
+'---------+--------+------------+------+-----+------------'
+ 
+2018/05/27 11:55:47 INFO Submitting jobs 
+2018/05/27 11:55:47 INFO Beginning to submit jobs to the scheduler 
+2018/05/27 11:55:47 INFO Schedule is job001, job002, job003
+ 
+2018/05/27 11:55:47 INFO Submitting all job001 job types 
+2018/05/27 11:55:47 INFO There are 5 tasks for job type job001 
+2018/05/27 11:55:47 INFO Submitted in 1 job arrays.
+ 
+2018/05/27 11:55:47 INFO Calculating task dependencies for AWS. This may take some time. 
+2018/05/27 11:55:55 INFO Writing aws cli 
+2018/05/27 11:55:55 INFO /Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/hpc-runner/2018-05-27T11-55-44/scratch/001_job001.json 
+2018/05/27 11:55:59 INFO Uploading files... 
+2018/05/27 11:55:59 INFO hpc-runner/2018-05-27T11-55-44 
+2018/05/27 11:55:59 INFO 2018-05-27T11-55-44 
+2018/05/27 11:55:59 INFO Completed 1.5 KiB/3.1 KiB (3.6 KiB/s) with 5 file(s) remainingupload: hpc-runner/2018-05-27T11-55-44/logs/000_hpcrunner_logs/main.log to s3://hpcrunner-bucket/2018-05-27T11-55-44/logs/000_hpcrunner_logs/main.log
+Completed 1.5 KiB/3.1 KiB (3.6 KiB/s) with 4 file(s) remainingCompleted 2.2 KiB/3.1 KiB (2.1 KiB/s) with 4 file(s) remainingupload: hpc-runner/2018-05-27T11-55-44/scratch/001_job001.sh to s3://hpcrunner-bucket/2018-05-27T11-55-44/scratch/001_job001.sh
+Completed 2.2 KiB/3.1 KiB (2.1 KiB/s) with 3 file(s) remainingCompleted 2.8 KiB/3.1 KiB (2.1 KiB/s) with 3 file(s) remainingupload: hpc-runner/2018-05-27T11-55-44/scratch/001_job001.json to s3://hpcrunner-bucket/2018-05-27T11-55-44/scratch/001_job001.json
+Completed 2.8 KiB/3.1 KiB (2.1 KiB/s) with 2 file(s) remainingCompleted 3.0 KiB/3.1 KiB (2.2 KiB/s) with 2 file(s) remainingupload: hpc-runner/2018-05-27T11-55-44/scratch/000_job001.in to s3://hpcrunner-bucket/2018-05-27T11-55-44/scratch/000_job001.in
+Completed 3.0 KiB/3.1 KiB (2.2 KiB/s) with 1 file(s) remainingCompleted 3.1 KiB/3.1 KiB (1.9 KiB/s) with 1 file(s) remainingupload: hpc-runner/2018-05-27T11-55-44/logs/000_hpcrunner_logs/001-task_table.md to s3://hpcrunner-bucket/2018-05-27T11-55-44/logs/000_hpcrunner_logs/001-task_table.md
+ 
+2018/05/27 11:55:59 FATAL Submitting with command: 
+2018/05/27 11:55:59 FATAL aws batch submit-job --cli-input-json file:///Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/hpc-runner/2018-05-27T11-55-44/scratch/001_job001.json 
+2018/05/27 11:56:04 FATAL Exit code -1 
+2018/05/27 11:56:04 WARN STDERR: 
+Parameter validation failed:
+Invalid type for parameter containerOverrides.environment[0].value, value: None, type: <class 'NoneType'>, valid types: <class 'str'>
+Invalid type for parameter containerOverrides.environment[1].value, value: None, type: <class 'NoneType'>, valid types: <class 'str'>
+ 
+2018/05/27 11:56:04 WARN Submit scripts will be written, but will not be submitted to the queue. 
+2018/05/27 11:56:04 WARN Any pending jobs that depend upon this job will NOT be submitted to the queue. 
+2018/05/27 11:56:04 WARN Please look at your submission scripts in /Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/hpc-runner/2018-05-27T11-55-44/scratch 
+2018/05/27 11:56:04 WARN And your logs in /Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/HPC-Runner-Command/hpc-runner/2018-05-27T11-55-44/logs/000_hpcrunner_logs
+for more information 
+2018/05/27 11:56:04 WARN Task dependencies are not calculated until the end of submission ... please to do not exit unless you are sure! 
+2018/05/27 11:56:04 INFO Submitting all job002 job types 
+2018/05/27 11:56:04 WARN Trying to submit job job002 which depends upon job001 
+2018/05/27 11:56:04 WARN Job job001 failed, so we are skipping this submission 
+2018/05/27 11:56:04 INFO Submitting all job003 job types 
+2018/05/27 11:56:04 WARN Trying to submit job job003 which depends upon job002 
+2018/05/27 11:56:04 WARN Job job002 failed, so we are skipping this submission 
+2018/05/27 11:56:04 INFO Calculating task dependencies for AWS. This may take some time. 

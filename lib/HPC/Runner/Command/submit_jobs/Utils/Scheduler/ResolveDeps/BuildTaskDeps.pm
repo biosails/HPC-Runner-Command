@@ -31,6 +31,7 @@ sub process_all_batch_deps {
         next unless $self->jobs->{$dep}->submit_by_tags;
         my $dep_tags = $self->batch_tags->{$dep};
 
+        #TODO Fix this
         ##If they are the same AND UNIQ - and they probably are -
         ## each element of the array depends upon the same index in the dep array
         # if ( check_equal_batch_tags( $batch_tags, $dep_tags ) ) {
