@@ -15,6 +15,7 @@ use File::Slurp;
 use Try::Tiny;
 use Path::Tiny;
 
+with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays';
 with 'HPC::Runner::Command::submit_jobs::Plugin::Role::Log';
 
 =head1 HPC::Runner::Command::submit_jobs::Plugin::AWSBatch
@@ -66,11 +67,6 @@ Then in the job submission submit as:
     "parameters" : {"codec" : "mp4"}
 
 =cut
-
-#has 'array_size' => (
-#    is      => 'rw',
-#    default => 1,
-#);
 
 =head3 s3_hpcrunner
 HPCRunner needs an s3 bucket to upload its data files to
@@ -325,17 +321,33 @@ before 'process_template' => sub {
     my $command_array = \@aws_sync;
 
     my $array_size = $self->current_batch->{cmd_count};
+    $array_size = int($array_size);
     ##This is a hack, because AWS will only allow for arrays to be >=2
-    if($array_size == 1){
-        $array_size == 2;
+    try {
+        #I don't know why this gets stored as a string
+        if (int($array_size) == 1) {
+            $array_size = 2;
+        }
+        if ($array_size eq '1') {
+            $array_size = 2;
+        }
     }
+    catch {
+        if ($array_size eq '1') {
+            $array_size = 2;
+        }
+    };
+
+    $self->update_job_scheduler_deps_by_task;
 
     $self->submit_job_obj->{containerOverrides}->{command} = $command_array;
     $self->submit_job_obj->{containerOverrides}->{memory} = int($self->jobs->{$self->current_job}->{mem});
     $self->submit_job_obj->{containerOverrides}->{vcpus} = int($self->jobs->{$self->current_job}->{cpus_per_task});
     $self->submit_job_obj->{jobName} = $jobname;
     $self->submit_job_obj->{jobDefinition} = 'sleep30';
-    $self->submit_job_obj->{arrayProperties}->{size} = $array_size;
+    $self->submit_job_obj->{arrayProperties}->{size} = int($array_size);
+    #TODO Add Deps in here
+    #If batch_tags are equal they can be N_N deps
 
     #TODO Write check to ensure that the environmental keys exist
     #TODO Or that they can be read in from the ~/.aws.config files
@@ -483,7 +495,7 @@ sub process_template {
 
 =head3 update_job_deps
 
-For AWS we submit the array_size as 1 (for now), so this is not needed
+This is not used here - instead the deps are calculated per dep
 For AWS array size has to be at least 2
 
 =cut
@@ -493,11 +505,22 @@ sub update_job_deps {
     return;
 }
 
+sub update_job_scheduler_deps_by_task {
+    my $self = shift;
+
+    $self->array_deps({});
+    $self->app_log->info(
+        'Calculating task dependencies for AWS. This may take some time.');
+
+    $self->batch_scheduler_ids_by_task;
+
+    print Dumper($self->array_deps);
+    $self->update_job_deps;
+}
 
 before 'execute' => sub {
     my $self = shift;
-    $self->log->info('IN BEFORE EXECUTE!!!!');
-    $self->max_array_size(10000);
+    $self->max_array_size(1000);
 };
 
 1;

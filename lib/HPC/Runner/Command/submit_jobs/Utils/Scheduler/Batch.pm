@@ -4,10 +4,10 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 has batch_tags => (
-    traits  => ['Array'],
+    traits  => [ 'Array' ],
     is      => 'rw',
     isa     => 'ArrayRef',
-    default => sub { [] },
+    default => sub {[]},
     handles => {
         all_batch_tags   => 'elements',
         add_batch_tags   => 'push',
@@ -19,11 +19,13 @@ has batch_tags => (
 
 has 'cmd_count' => (
     is       => 'rw',
+    isa      => 'Int',
     required => 1,
 );
 
 has 'cmd_start' => (
-    is => 'rw',
+    is       => 'rw',
+    isa      => 'Int',
     required => 1,
 );
 
@@ -40,11 +42,11 @@ has 'scheduler_id' => (
 );
 
 has 'scheduler_index' => (
-    isa     => 'HashRef',
-    is      => 'rw',
-    default => sub { return {} },
+    isa           => 'HashRef',
+    is            => 'rw',
+    default       => sub {return {}},
     documentation =>
-q(Get the job dependency, and the index of the job scheduler id that corresponds to that batch),
+        q(Get the job dependency, and the index of the job scheduler id that corresponds to that batch),
 );
 
 1;
