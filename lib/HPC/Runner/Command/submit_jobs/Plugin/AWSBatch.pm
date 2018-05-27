@@ -508,11 +508,12 @@ sub update_job_deps {
 sub update_job_scheduler_deps_by_task {
     my $self = shift;
 
-#    $self->array_deps({});
     $self->app_log->info(
         'Calculating task dependencies for AWS. This may take some time.');
 
+    $self->jobs->{ $self->current_job }->add_scheduler_ids('NOT_SUBMITTED_YET');
     $self->batch_scheduler_ids_by_task;
+    pop @{$self->jobs->{$self->current_job}->scheduler_ids};
 
     print Dumper($self->array_deps);
     $self->update_job_deps;
@@ -520,8 +521,8 @@ sub update_job_scheduler_deps_by_task {
 
 before 'execute' => sub {
     my $self = shift;
-    $self->use_batches(1);
-#    $self->max_array_size(1000);
+#    $self->use_batches(1);
+    $self->max_array_size(1000);
 };
 
 1;

@@ -454,6 +454,7 @@ sub assign_batches {
 
 Parse the #TASK lines to get batch_tags
 #TODO We should do this while are reading in the file
+#TODO if a cmd does not have a task task, should add a NULL/NONE task tag to it
 
 =cut
 
