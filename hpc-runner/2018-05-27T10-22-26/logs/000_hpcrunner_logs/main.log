@@ -1,0 +1,5 @@
+2018/05/27 10:22:26 INFO Loaded plugin AWSBatch 
+2018/05/27 10:22:27 INFO IN BEFORE EXECUTE!!!! 
+2018/05/27 10:22:27 WARN There are uncommited files in your repo!
+	We will try to commit these files before running.
+ 
