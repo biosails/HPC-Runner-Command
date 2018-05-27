@@ -7,8 +7,13 @@ use namespace::autoclean;
 
 use Data::Dumper;
 use IPC::Cmd qw[can_run];
+use Cwd;
 use Log::Log4perl;
 use File::Temp qw/tempfile/;
+use JSON;
+use File::Slurp;
+use Try::Tiny;
+use Path::Tiny;
 
 with 'HPC::Runner::Command::submit_jobs::Plugin::Role::Log';
 
@@ -70,15 +75,60 @@ has 'array_size' => (
 =head3 s3_hpcrunner
 HPCRunner needs an s3 bucket to upload its data files to
 =cut
+
 has 's3_hpcrunner' => (
     is      => 'rw',
     isa     => 'Str',
     default => 'hpcrunner-bucket'
 );
 
+has 'submit_command' => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => 'aws batch submit-job --cli-input-json',
+);
+
+has 'template_file' => (
+    is            => 'rw',
+    isa           => 'Str',
+    lazy          => 1,
+    default       => sub {
+        my $self = shift;
+
+        my ($fh, $filename) = tempfile();
+
+        my $tt = <<EOF;
+#!/usr/bin/env bash
+
+set -x -e
+
+echo "HELLO FROM HPCRUNNER"
+
+[% IF MODULES %]
+module load [% MODULES %]
+[% END %]
+
+[% IF job.has_conda_env %]
+source activate [% job.conda_env %]
+[% END %]
+
+[% COMMAND %]
+
+EOF
+
+        print $fh $tt;
+        return $filename;
+    },
+    predicate     => 'has_template_file',
+    clearer       => 'clear_template_file',
+    documentation =>
+        q{Path to Scheduler template file if you do not wish to use the default.}
+);
+
 =head3 compute_env
 AWS requires a configured compute_env. This can be setup through the command line or console, but since it has to do with billing it is not set by default
 =cut
+
 has 'compute_env' => (
     is => 'rw',
 );
@@ -88,10 +138,11 @@ Docker container to run commands against
 For simple unix commands just use the busybox container
 For anything more complex use BioStacks or user supplied definition
 =cut
+
 has 'container' => (
     is      => 'rw',
     isa     => 'Str',
-    default => 'busybox'
+    default => 'biocontainers/perl-hpc-runner-command'
 );
 
 =head3 mounts
@@ -103,36 +154,11 @@ has 'mounts' => (
     isa => 'ArrayRef'
 );
 
-=head2 hpcrunner_job_def
+=head3 job_def_object
 
-hpcrunner.pl execute_job has the following parameters;
+TODO add in a job def!!
 
-infile
-basedir
-commands
-batch_index_start
-procs
-logname
-data_dir
-process_table
-metastr
-
-    cd /home/jillian/Dropbox/projects/HPC-Runner-Libs/New/test
-    hpcrunner.pl execute_job \
-            --infile /home/jillian/Dropbox/projects/HPC-Runner-Libs/New/test/hpc-runner/2017-11-29T13-21-26/scratch/000_job001.in \
-            --basedir /home/jillian/Dropbox/projects/HPC-Runner-Libs/New/test/hpc-runner/2017-11-29T13-21-26 \
-            --commands 1 \
-            --batch_index_start 1 \
-            --procs 1 \
-            --logname 001_job001 \
-            --data_dir /home/jillian/Dropbox/projects/HPC-Runner-Libs/New/test/hpc-runner/2017-11-29T13-21-26/logs/000_hpcrunner_logs/stats \
-            --process_table /home/jillian/Dropbox/projects/HPC-Runner-Libs/New/test/hpc-runner/2017-11-29T13-21-26/logs/000_hpcrunner_logs/001-task_table.md \
-            --metastr '{"job_cmd_start":"0","jobname":"job001","total_batches":9,"task_index_end":4,"total_jobs":3,"job_counter":"001","batch":"001","commands":1,"task_index_start":"0","array_end":"5","job_tasks":"5","array_start":"1","total_processes":16}'
 =cut
-
-has 'hpcrunner_job_def' => (
-    is => 'rw',
-);
 
 has 'job_def_object' => (
     is      => 'rw',
@@ -153,7 +179,7 @@ has 'job_def_object' => (
                 metastr           => '',
             },
             containerProperties      => {
-                image   => 'busybox',
+                image   => 'biocontainers/perl-hpc-runner-command',
                 vcpus   => 1,
                 memory  => 0,
                 command => [
@@ -171,7 +197,7 @@ has 'job_def_object' => (
                 ]
             },
             mountPoints              => {
-                containerPath => '`pwd`',
+                containerPath => '/',
                 readOnly      => 'false',
                 sourceVolume  => '/'
             },
@@ -187,52 +213,82 @@ has 'submit_job_obj' => (
         return
             {
                 "jobName"            => "",
-                "jobQueue"           => "",
-                "arrayProperties"    => {
-                    "size" => 0
-                },
-                "dependsOn"          => [
-                    {
-                        "jobId" => "",
-                        "type"  => "N_TO_N"
-                    }
-                ],
+                "jobQueue"           => "LowPriority",
                 "jobDefinition"      => "",
                 "parameters"         => {
-                    "KeyName" => ""
                 },
                 "containerOverrides" => {
-                    "vcpus"   => 0,
-                    "memory"  => 0,
+                    "vcpus"   => 1,
+                    "memory"  => 128,
                     "command" => [
                         ""
                     ],
                 },
-                "retryStrategy"      => {
-                    "attempts" => 0
-                },
-                "timeout"            => {
-                    "attemptDurationSeconds" => 0
-                }
             }
+    }
+);
+
+has 'aws_access_key_id' => (
+    is       => 'rw',
+    required => 1,
+    default  => sub {
+        return $ENV{'AWS_ACCESS_KEY_ID'}
+    }
+);
+
+has 'aws_secret_access_key' => (
+    is       => 'rw',
+    required => 1,
+    default  => sub {
+        return $ENV{'AWS_SECRET_ACCESS_KEY'}
     }
 );
 
 sub submit_jobs {
     my $self = shift;
 
+    my $relative = $self->outdir->parent->relative;
+    my $dirname = $self->outdir->relative->parent->basename;
+
+    my $file = $self->slurmfile;
+    $file =~ s/\.sh$/\.json/;
+
     my ($exitcode, $stdout, $stderr) =
         $self->submit_to_scheduler(
-            $self->submit_command . " " . $self->slurmfile);
+            'aws s3 sync  ' . $relative . ' s3://' . $self->s3_hpcrunner . '/' . $dirname);
+
+    $self->app_log->info('Uploading files...');
+    $self->app_log->info($relative);
+    $self->app_log->info($dirname);
+    $self->app_log->info($stdout) if $stdout;
+    $self->app_log->info($stderr) if $stderr;
+
+    $self->app_log->fatal('Submitting with command:');
+    $self->app_log->fatal($self->submit_command . " file://" . $file);
+    ($exitcode, $stdout, $stderr) =
+        $self->submit_to_scheduler(
+            $self->submit_command . " file://" . $file);
     sleep(5);
 
-    if ($exitcode != 0) {
-        $self->log->fatal("Job was not submitted successfully");
-        $self->log->warn("STDERR: " . $stderr) if $stderr;
-        $self->log->warn("STDOUT: " . $stdout) if $stdout;
+    my $job_response;
+    my $jobid;
+    if ($exitcode == -1 || $exitcode == 0) {
+        try {
+            $job_response = decode_json $stdout;
+            $jobid = $job_response->{jobId};
+        }
+        catch {
+            $self->app_log->fatal("Exit code $exitcode");
+            $self->app_log->warn("STDERR: " . $stderr) if $stderr;
+            $self->app_log->warn("STDOUT: " . $stdout) if $stdout;
+        };
     }
-
-    my $jobid = $stdout;
+    else {
+        $self->app_log->fatal("Job was not submitted successfully");
+        $self->app_log->fatal("Exit code $exitcode");
+        $self->app_log->warn("STDERR: " . $stderr) if $stderr;
+        $self->app_log->warn("STDOUT: " . $stdout) if $stdout;
+    }
 
     #When submitting job arrays the array will be 1234[].hpc.nyu.edu
 
@@ -240,17 +296,72 @@ sub submit_jobs {
         $self->job_failure;
     }
     else {
-        $self->log->debug(
-            "Submited job " . $self->slurmfile . "\n\tWith PBS jobid $jobid");
+        $self->app_log->debug(
+            "Submited job " . $self->slurmfile . "\n\tWith AWS jobid $jobid");
     }
 
     return $jobid;
 }
 
-=head3 process_submit_command
+=head3 before process_template
 
-Overrides the process_subbmit_command from the
-HPC::Runner::Command::submit_jobs::Utils::Scheduler::Submit package
+Before writing out the template write out the AWS cli configuration
+
+=cut
+
+before 'process_template' => sub {
+    my $self = shift;
+    my $counter = shift;
+
+    my $relative = $self->outdir->parent->relative;
+    my $dirname = $self->outdir->relative->parent->basename;
+    ##TODO Put this into hpcrunner
+    my $aws_sync = 'fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
+    my @aws_sync = split(' ', $aws_sync);
+    use Data::Dumper;
+    print Dumper \@aws_sync;
+
+    my $jobname = $self->resolve_project($counter);
+    my $command_array = \@aws_sync;
+
+    $self->submit_job_obj->{containerOverrides}->{command} = $command_array;
+    $self->submit_job_obj->{containerOverrides}->{memory} = int($self->jobs->{$self->current_job}->{mem});
+    $self->submit_job_obj->{containerOverrides}->{vcpus} = int($self->jobs->{$self->current_job}->{cpus_per_task});
+    $self->submit_job_obj->{jobName} = $jobname;
+    $self->submit_job_obj->{jobDefinition} = 'sleep30';
+
+    #TODO Write check to ensure that the environmental keys exist
+    #TODO Or that they can be read in from the ~/.aws.config files
+    my $keys_list = [
+        {
+            name  => 'AWS_ACCESS_KEY_ID',
+            value => $self->aws_access_key_id,
+        },
+        {
+            name  => 'AWS_SECRET_ACCESS_KEY',
+            value => $self->aws_secret_access_key,
+        }
+    ];
+    if (exists $self->submit_job_obj->{containerOverrides}->{environment}) {
+        foreach my $env_key (@{$keys_list}) {
+            push(@{$self->submit_job_obj->{containerOverrides}->{environment}}, $env_key);
+        }
+    }
+    else {
+        $self->submit_job_obj->{containerOverrides}->{environment} = $keys_list;
+    }
+
+    my $json = JSON->new->allow_nonref->allow_blessed->convert_blessed;
+    my $json_string = $json->pretty->encode($self->submit_job_obj);
+
+    my $file = $self->slurmfile;
+    $file =~ s/\.sh$/\.json/;
+    $self->log->info('Writing aws cli');
+    $self->log->info($file);
+    write_file($file, $json_string);
+};
+
+=head3 process_submit_command
 
 =cut
 
@@ -259,29 +370,33 @@ sub process_submit_command {
     my $counter = shift;
 
     my $command = "";
-    my $command_array = [];
 
+    ##TODO Discuss changing the log name to just the jobname
     my $logname = $self->create_log_name($counter);
     $self->jobs->{ $self->current_job }->add_lognames($logname);
 
-    $command .= "hpcrunner.pl " . $self->subcommand . " \\\n";
-    $command_array = [ "hpcrunner.pl", $self->subcommand ];
+    $command = "sleep 20\n";
+    if ($self->has_custom_command) {
+        $command .= $self->custom_command . " \\\n";
+    }
+    else {
+        $command .= "hpcrunner.pl " . $self->subcommand . " \\\n";
+    }
 
     $command .= "\t--project " . $self->project . " \\\n" if $self->has_project;
-    push(@{$command_array}, '--project') if $self->has_project;
-    push(@{$command_array}, $self->project) if $self->has_project;
+
+    my $batch_index_start = $self->gen_batch_index_str;
 
     my $log = "";
     if ($self->no_log_json) {
         $log = "\t--no_log_json \\\n";
-        push(@{$command_array}, '--no_log_json');
     }
 
     $command .=
         "\t--infile "
-            . $self->cmdfile . " \\\n"
+            . path($self->cmdfile)->relative . " \\\n"
             . "\t--basedir "
-            . $self->basedir . " \\\n"
+            . path($self->basedir)->relative . " \\\n"
             . "\t--commands "
             . $self->jobs->{ $self->current_job }->commands_per_node . " \\\n"
             . "\t--batch_index_start "
@@ -292,19 +407,9 @@ sub process_submit_command {
             . $logname . " \\\n"
             . $log
             . "\t--data_dir "
-            . $self->data_dir . " \\\n"
+            . path($self->data_dir)->relative . " \\\n"
             . "\t--process_table "
-            . $self->process_table;
-    push(@{$command_array},
-        ('--infile', $self->cmdfile,
-            '--basedir', $self->basedir,
-            '--commands', $self->jobs->{$self->current_job}->commands_per_node,
-            '--batch_index_start', $self->gen_batch_index_str,
-            '--procs', $self->jobs->{$self->current_job}->procs,
-            '--logname', $logname,
-            '--data_dir', $self->data_dir,
-            '--process_table', $self->process_table,
-        ));
+            . path($self->process_table)->relative;
 
     #TODO Update metastring to give array index
     my $metastr =
@@ -314,25 +419,65 @@ sub process_submit_command {
 
     $command .= " \\\n\t" if $metastr;
     $command .= $metastr if $metastr;
-    push(@{$command_array}, $metastr) if $metastr;
 
-    ##TODO Add in plugin str
     my $pluginstr = $self->create_plugin_str;
     $command .= $pluginstr if $pluginstr;
-    push(@{$command_array}, $pluginstr) if $pluginstr;
 
     my $version_str = $self->create_version_str;
     $command .= $version_str if $version_str;
-    push(@{$command_array}, $version_str) if $version_str;
-
-    $self->submit_job_obj->{containerOverrides}->{commands} = $command_array;
     $command .= "\n\n";
     return $command;
+}
+
+=head3 process_template
+
+=cut
+
+sub process_template {
+    my $self = shift;
+    my $counter = shift;
+    my $command = shift;
+    my $ok = shift;
+    my $array_str = shift;
+
+    my $jobname = $self->resolve_project($counter);
+
+    $self->template->process(
+        $self->jobs->{$self->current_job}->template_file,
+        {
+            JOBNAME   => $jobname,
+            USER      => $self->user,
+            COMMAND   => $command,
+            ARRAY_STR => $array_str,
+            AFTEROK   => $ok,
+            MODULES   => $self->jobs->{ $self->current_job }->join_modules(' '),
+            OUT       => $self->logdir
+                . "/$counter" . "_"
+                . $self->current_job . ".log",
+            job       => $self->jobs->{ $self->current_job },
+        },
+        $self->slurmfile
+    ) || die $self->template->error;
+
+    chmod 0777, $self->slurmfile;
+
+    my $scheduler_id;
+    try {
+        $scheduler_id = $self->submit_jobs;
+    };
+
+    if (defined $scheduler_id) {
+        $self->jobs->{ $self->current_job }->add_scheduler_ids($scheduler_id);
+    }
+    else {
+        $self->jobs->{ $self->current_job }->add_scheduler_ids('000xxx');
+    }
 }
 
 =head3 update_job_deps
 
 For AWS we submit the array_size as 1 (for now), so this is not needed
+For AWS array size has to be at least 2
 
 =cut
 
@@ -341,5 +486,11 @@ sub update_job_deps {
     return;
 }
 
+
+before 'execute' => sub {
+    my $self = shift;
+    $self->log->info('IN BEFORE EXECUTE!!!!');
+    $self->max_array_size(10000);
+};
 
 1;

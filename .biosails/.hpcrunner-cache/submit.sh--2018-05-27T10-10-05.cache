@@ -1,0 +1,41 @@
+#
+# Generated at: 2018-05-27T06:10:05
+# This file was generated with the following options
+#	submit_jobs
+#	--hpc_plugins	\
+#	AWSBatch	\
+#	--infile	\
+#	/Users/jillian/Dropbox/projects/HPC-Runner-Libs/New/test/submit.sh
+#
+
+#!/usr/bin/env bash
+
+#HPC jobname=job001
+
+#TASK tags=task1
+echo "hello from job001 task1"
+echo "hello from job001 task2"
+echo "hello from job001 task3"
+echo "hello from job001 task4"
+echo "hello from job001 task5"
+
+#HPC jobname=job002
+#HPC deps=job001
+#HPC commands_per_node=2
+
+#TASK tags=task1
+echo "hello from job002 task1"
+echo "hello from job002 task2"
+echo "hello from job002 task3"
+echo "hello from job002 task4"
+echo "hello from job002 task5"
+
+#HPC jobname=job003
+#HPC deps=job002
+#HPC commands_per_node=5
+#TASK tags=task1
+echo "hello from job003 task1"
+echo "hello from job003 task2"
+echo "hello from job003 task3"
+echo "hello from job003 task4"
+echo "hello from job003 task5"

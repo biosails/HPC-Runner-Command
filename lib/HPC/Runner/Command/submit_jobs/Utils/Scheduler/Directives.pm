@@ -5,7 +5,7 @@ use namespace::autoclean;
 
 use BioSAILs::Utils::Traits qw(ArrayRefOfStrs);
 
-use File::Temp qw/ tempfile /;
+use File::Temp qw/tempfile/;
 use File::Slurp;
 use File::Spec;
 
@@ -29,13 +29,13 @@ Example. R2 becomes 'module load R2'
 =cut
 
 option 'module' => (
-    traits        => ['Array'],
+    traits        => [ 'Array' ],
     is            => 'rw',
     isa           => ArrayRefOfStrs,
     coerce        => 1,
     required      => 0,
     documentation => q{List of modules to load ex. R2, samtools, etc},
-    default       => sub { [] },
+    default       => sub {[]},
     cmd_split     => qr/,/,
     handles       => {
         has_modules  => 'count',
@@ -59,7 +59,7 @@ option 'conda_env' => (
     isa           => 'Str',
     required      => 0,
     documentation => q{Conda env to activate.},
-    predicate => 'has_conda_env',
+    predicate     => 'has_conda_env',
 );
 
 =head3 cpus_per_task
@@ -85,14 +85,14 @@ slurm item --ntasks defaults to 1
 =cut
 
 option 'ntasks' => (
-    is        => 'rw',
-    isa       => 'Int',
-    required  => 0,
-    default   => 1,
-    predicate => 'has_ntasks',
-    clearer   => 'clear_ntasks',
+    is            => 'rw',
+    isa           => 'Int',
+    required      => 0,
+    default       => 1,
+    predicate     => 'has_ntasks',
+    clearer       => 'clear_ntasks',
     documentation =>
-'--ntasks switch in slurm. This is equal to the number of concurrent tasks on each node * the number of nodes, not the total number of tasks'
+        '--ntasks switch in slurm. This is equal to the number of concurrent tasks on each node * the number of nodes, not the total number of tasks'
 );
 
 =head3 account
@@ -117,19 +117,19 @@ slurm item --ntasks-per-node defaults to 28
 =cut
 
 option 'ntasks_per_node' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
-    trigger  => sub {
-        my $self   = shift;
+    is            => 'rw',
+    isa           => 'Int',
+    required      => 0,
+    default       => 1,
+    trigger       => sub {
+        my $self = shift;
         my $ntasks = $self->ntasks_per_node * $self->nodes_count;
         $self->ntasks($ntasks);
     },
-    predicate => 'has_ntasks_per_node',
-    clearer   => 'clear_ntasks_per_node',
+    predicate     => 'has_ntasks_per_node',
+    clearer       => 'clear_ntasks_per_node',
     documentation =>
-      '--ntasks-per-node switch in slurm. total concurrent tasks on a node.'
+        '--ntasks-per-node switch in slurm. total concurrent tasks on a node.'
 );
 
 =head3 commands_per_node
@@ -141,14 +141,14 @@ commands to run per node
 #TODO Update this for job arrays
 
 option 'commands_per_node' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
+    is            => 'rw',
+    isa           => 'Int',
+    required      => 0,
+    default       => 1,
     documentation =>
-q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
-    predicate => 'has_commands_per_node',
-    clearer   => 'clear_commands_per_node'
+        q{Commands to run on each node. If you have a low number of jobs you can submit at a time you want this number much higher. },
+    predicate     => 'has_commands_per_node',
+    clearer       => 'clear_commands_per_node'
 );
 
 =head3 nodes_count
@@ -164,14 +164,14 @@ Slurm:
 =cut
 
 option 'nodes_count' => (
-    is       => 'rw',
-    isa      => 'Int',
-    required => 0,
-    default  => 1,
+    is            => 'rw',
+    isa           => 'Int',
+    required      => 0,
+    default       => 1,
     documentation =>
-q{Number of nodes requested. You should only use this if submitting parallel jobs.},
-    predicate => 'has_nodes_count',
-    clearer   => 'clear_nodes_count'
+        q{Number of nodes requested. You should only use this if submitting parallel jobs.},
+    predicate     => 'has_nodes_count',
+    clearer       => 'clear_nodes_count'
 );
 
 =head3 partition
@@ -227,12 +227,12 @@ user running the script. Passed to slurm for mail information
 =cut
 
 option 'user' => (
-    is       => 'rw',
-    isa      => 'Str',
-    default  => sub { return $ENV{USER} || $ENV{LOGNAME} || getpwuid($<); },
-    required => 1,
+    is            => 'rw',
+    isa           => 'Str',
+    default       => sub {return $ENV{USER} || $ENV{LOGNAME} || getpwuid($<);},
+    required      => 1,
     documentation =>
-q{This defaults to your current user ID. This can only be changed if running as an admin user}
+        q{This defaults to your current user ID. This can only be changed if running as an admin user}
 );
 
 =head3 procs
@@ -244,15 +244,15 @@ Analagous to parallel --jobs i
 =cut
 
 option 'procs' => (
-    is       => 'rw',
-    isa      => 'Int',
-    default  => 1,
-    required => 0,
+    is            => 'rw',
+    isa           => 'Int',
+    default       => 1,
+    required      => 0,
     documentation =>
-      q{Total number of concurrently running jobs allowed at any time.},
-    trigger => sub {
+        q{Total number of concurrently running jobs allowed at any time.},
+    trigger       => sub {
         my $self = shift;
-        $self->ntasks_per_node( $self->procs );
+        $self->ntasks_per_node($self->procs);
     }
 );
 
@@ -268,12 +268,12 @@ Default is for SLURM
 =cut
 
 has 'template_file' => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => sub {
+    is            => 'rw',
+    isa           => 'Str',
+    default       => sub {
         my $self = shift;
 
-        my ( $fh, $filename ) = tempfile();
+        my ($fh, $filename) = tempfile();
 
         my $tt = <<EOF;
 #!/usr/bin/env bash
@@ -327,12 +327,11 @@ EOF
         print $fh $tt;
         return $filename;
     },
-    predicate => 'has_template_file',
-    clearer   => 'clear_template_file',
+    predicate     => 'has_template_file',
+    clearer       => 'clear_template_file',
+    lazy          => 1,
     documentation =>
-      q{Path to Scheduler template file if you do not wish to use the default.}
+        q{Path to Scheduler template file if you do not wish to use the default.}
 );
-
-
 
 1;
