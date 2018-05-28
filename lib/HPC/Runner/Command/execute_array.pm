@@ -33,7 +33,7 @@ has 'task_id' => (
         return
             $ENV{'SLURM_ARRAY_TASK_ID'}
                 || $ENV{'SBATCH_ARRAY_TASK_ID'}
-                || $ENV{'AWS_BATCH_JOB_ARRAY_INDEX'} + 1
+                || $ENV{'AWS_BATCH_JOB_ARRAY_INDEX'}
                 || $ENV{'PBS_ARRAYID'}
                 || $ENV{'SGE_TASK_ID'}
                 || 0;

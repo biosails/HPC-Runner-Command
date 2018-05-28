@@ -244,6 +244,7 @@ sub parse_file_mce {
         my $cmds = $self->parse_cmd_file($fh);
 
         use Data::Dumper;
+        print "Read Command ".$self->read_command."\n";
         print Dumper($cmds);
         foreach my $cmd (@$cmds) {
             map { $self->process_lines( $_ . "\n" ) } split( "\n", $cmd );

@@ -308,6 +308,9 @@ Before writing out the template write out the AWS cli configuration
 before 'process_template' => sub {
     my $self = shift;
     my $counter = shift;
+    my $command = shift;
+    my $ok = shift;
+    my $array_str = shift;
 
     my $relative = $self->outdir->parent->relative;
     my $dirname = $self->outdir->relative->parent->basename;
@@ -408,7 +411,7 @@ sub process_submit_command {
     my $logname = $self->create_log_name($counter);
     $self->jobs->{ $self->current_job }->add_lognames($logname);
 
-    $command = "sleep 20\n";
+#    $command = "sleep 20\n";
     if ($self->has_custom_command) {
         $command .= $self->custom_command . " \\\n";
     }
@@ -418,6 +421,13 @@ sub process_submit_command {
 
     $command .= "\t--project " . $self->project . " \\\n" if $self->has_project;
 
+    use Data::Dumper;
+    print Dumper($self->batch_counter);
+    print Dumper($self->current_batch);
+    print Dumper($self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter-1]);
+    my $batch_indexes = $self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter-1];
+    my $batch_index_start = $batch_indexes->{batch_index_start};
+
     my $log = "";
     if ($self->no_log_json) {
         $log = "\t--no_log_json \\\n";
@@ -426,6 +436,9 @@ sub process_submit_command {
     ## Batch_index_start is a change from other schedulers
     ## With SLURM and co
     ## job001 tasks=1-10 would be array elements 1-10
+    ## If it was submitted into two batches
+    ## job001 tasks=1-5 would have array elements 1-5
+    ## job001 tasks=6-10 would have array elements 6-10
     ## With AWS each batch starts as 0
     $command .=
         "\t--infile "
@@ -435,7 +448,7 @@ sub process_submit_command {
             . "\t--commands "
             . $self->jobs->{ $self->current_job }->commands_per_node . " \\\n"
             . "\t--batch_index_start "
-            . 1 . " \\\n"
+            . $batch_index_start. " \\\n"
             . "\t--procs "
             . $self->jobs->{ $self->current_job }->procs . " \\\n"
             . "\t--logname "
@@ -524,7 +537,8 @@ sub update_job_deps {
 before 'execute' => sub {
     my $self = shift;
     #    $self->use_batches(1);
-    $self->max_array_size(1000);
+    push(@{$self->job_plugins}, 'AWSBatch');
+    $self->max_array_size(2);
 };
 
 1;
