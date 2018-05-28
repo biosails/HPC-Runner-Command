@@ -314,8 +314,6 @@ before 'process_template' => sub {
     ##TODO Put this into hpcrunner
     my $aws_sync = 'fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
     my @aws_sync = split(' ', $aws_sync);
-    use Data::Dumper;
-    print Dumper \@aws_sync;
 
     my $jobname = $self->resolve_project($counter);
     my $command_array = \@aws_sync;
@@ -338,16 +336,18 @@ before 'process_template' => sub {
         }
     };
 
-    $self->update_job_scheduler_deps_by_task;
-
+    ##For references of array job def please see
+    ## https://docs.aws.amazon.com/batch/latest/userguide/array_jobs.html
     $self->submit_job_obj->{containerOverrides}->{command} = $command_array;
     $self->submit_job_obj->{containerOverrides}->{memory} = int($self->jobs->{$self->current_job}->{mem});
     $self->submit_job_obj->{containerOverrides}->{vcpus} = int($self->jobs->{$self->current_job}->{cpus_per_task});
     $self->submit_job_obj->{jobName} = $jobname;
     $self->submit_job_obj->{jobDefinition} = 'sleep30';
     $self->submit_job_obj->{arrayProperties}->{size} = int($array_size);
-    #TODO Add Deps in here
+
+    #TODO Add Deps in here, batching algorithm needs to be reworked
     #If batch_tags are equal they can be N_N deps
+    $self->check_for_N_N;
 
     #TODO Write check to ensure that the environmental keys exist
     #TODO Or that they can be read in from the ~/.aws.config files
@@ -379,6 +379,21 @@ before 'process_template' => sub {
     $self->log->info($file);
     write_file($file, $json_string);
 };
+
+=head3 check_for_N_N
+
+=cut
+##TODO Update this for N_N jobs
+sub check_for_N_N {
+    my $self = shift;
+
+    if ($self->has_scheduler_ids) {
+        $self->submit_job_obj->{dependsOn} = [];
+        foreach my $id (@{$self->scheduler_ids}) {
+            push(@{$self->submit_job_obj->{dependsOn}}, { 'jobId' => $id });
+        }
+    }
+}
 
 =head3 process_submit_command
 
@@ -505,23 +520,23 @@ sub update_job_deps {
     return;
 }
 
-sub update_job_scheduler_deps_by_task {
-    my $self = shift;
-
-    $self->app_log->info(
-        'Calculating task dependencies for AWS. This may take some time.');
-
-    $self->jobs->{ $self->current_job }->add_scheduler_ids('NOT_SUBMITTED_YET');
-    $self->batch_scheduler_ids_by_task;
-    pop @{$self->jobs->{$self->current_job}->scheduler_ids};
-
-    print Dumper($self->array_deps);
-    $self->update_job_deps;
-}
+#sub update_job_scheduler_deps_by_task {
+#    my $self = shift;
+#
+#    $self->app_log->info(
+#        'Calculating task dependencies for AWS. This may take some time.');
+#
+#    $self->jobs->{ $self->current_job }->add_scheduler_ids('NOT_SUBMITTED_YET');
+#    $self->batch_scheduler_ids_by_task;
+#    pop @{$self->jobs->{$self->current_job}->scheduler_ids};
+#
+#    print Dumper($self->array_deps);
+#    $self->update_job_deps;
+#}
 
 before 'execute' => sub {
     my $self = shift;
-#    $self->use_batches(1);
+    #    $self->use_batches(1);
     $self->max_array_size(1000);
 };
 

@@ -12,6 +12,7 @@ hpc-runner*.db
 hpcrunner*.db
 inotify-hookable.sh
 .tags
-.atomenv.cson
 set_env.sh
+hpc-runner
+.biosails
 .idea
