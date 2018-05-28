@@ -179,6 +179,8 @@ sub run_mce {
     $self->append_logfile(".log");
     $self->log( $self->init_log );
 
+    print "Beginning execution\n";
+    $self->app_log->info('Beginning execution');
     if($self->single_node){
       print "Logging to ".$self->logfile."\n";
     }
@@ -241,6 +243,8 @@ sub parse_file_mce {
             'Executing Command # ' . $self->read_command );
         my $cmds = $self->parse_cmd_file($fh);
 
+        use Data::Dumper;
+        print Dumper($cmds);
         foreach my $cmd (@$cmds) {
             map { $self->process_lines( $_ . "\n" ) } split( "\n", $cmd );
             $self->wait(0);

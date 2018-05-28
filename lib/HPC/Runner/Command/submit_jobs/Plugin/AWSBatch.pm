@@ -311,8 +311,7 @@ before 'process_template' => sub {
 
     my $relative = $self->outdir->parent->relative;
     my $dirname = $self->outdir->relative->parent->basename;
-    ##TODO Put this into hpcrunner
-    my $aws_sync = 'fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
+    my $aws_sync = 'hpcrunner_fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
     my @aws_sync = split(' ', $aws_sync);
 
     my $jobname = $self->resolve_project($counter);
@@ -419,13 +418,15 @@ sub process_submit_command {
 
     $command .= "\t--project " . $self->project . " \\\n" if $self->has_project;
 
-    my $batch_index_start = $self->gen_batch_index_str;
-
     my $log = "";
     if ($self->no_log_json) {
         $log = "\t--no_log_json \\\n";
     }
 
+    ## Batch_index_start is a change from other schedulers
+    ## With SLURM and co
+    ## job001 tasks=1-10 would be array elements 1-10
+    ## With AWS each batch starts as 0
     $command .=
         "\t--infile "
             . path($self->cmdfile)->relative . " \\\n"
@@ -434,7 +435,7 @@ sub process_submit_command {
             . "\t--commands "
             . $self->jobs->{ $self->current_job }->commands_per_node . " \\\n"
             . "\t--batch_index_start "
-            . $self->gen_batch_index_str . " \\\n"
+            . 1 . " \\\n"
             . "\t--procs "
             . $self->jobs->{ $self->current_job }->procs . " \\\n"
             . "\t--logname "
@@ -519,20 +520,6 @@ sub update_job_deps {
     my $self = shift;
     return;
 }
-
-#sub update_job_scheduler_deps_by_task {
-#    my $self = shift;
-#
-#    $self->app_log->info(
-#        'Calculating task dependencies for AWS. This may take some time.');
-#
-#    $self->jobs->{ $self->current_job }->add_scheduler_ids('NOT_SUBMITTED_YET');
-#    $self->batch_scheduler_ids_by_task;
-#    pop @{$self->jobs->{$self->current_job}->scheduler_ids};
-#
-#    print Dumper($self->array_deps);
-#    $self->update_job_deps;
-#}
 
 before 'execute' => sub {
     my $self = shift;
