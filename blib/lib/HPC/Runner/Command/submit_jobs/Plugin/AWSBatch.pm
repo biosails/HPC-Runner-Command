@@ -69,50 +69,13 @@ Then in the job submission submit as:
 =cut
 
 =head3 s3_hpcrunner
-
 HPCRunner needs an s3 bucket to upload its data files to
-
 =cut
 
 has 's3_hpcrunner' => (
     is      => 'rw',
     isa     => 'Str',
     default => 'hpcrunner-bucket'
-);
-
-has 'hpcrunner_s3_logs' => (
-    is            => 'rw',
-    isa           => 'Str',
-    lazy          => 1,
-    documentation => 'HPCRunner will sync its job files to and from AWS.'
-        . ' It stores the s3 bucket as the environmental variable.'
-        . ' In the template file the command '
-        . 'aws s3 sync $HPCRUNNER_S3_LOGS $HPCRUNNER_LOCAL_LOGS',
-    default       => sub {
-        my $self = shift;
-        return 's3://' . $self->s3_hpcrunner;
-    },
-);
-
-has 'hpcrunner_local_logs' => (
-    is            => 'rw',
-    isa           => 'Str',
-    lazy          => 1,
-    documentation => 'HPCRunner will sync its job files to and from AWS.'
-        . ' It stores the s3 bucket as the environmental variable.'
-        . ' In the template file the command '
-        . 'aws s3 sync $HPCRUNNER_S3_LOGS $HPCRUNNER_LOCAL_LOGS',
-    default => '',
-);
-
-has 'hpcrunner_s3_job_file' => (
-    is      => 'rw',
-    lazy    => 1,
-    documentation => 'Once the HPCRUNNER_S3_LOGS are synced to HPCRUNNER_LOCAL_LOGS, execute the job file',
-    default => sub {
-        my $self = shift;
-        return path($self->slurmfile)->relative;
-    },
 );
 
 has 'submit_command' => (
@@ -352,11 +315,6 @@ before 'process_template' => sub {
     my $relative = $self->outdir->parent->relative;
     my $dirname = $self->outdir->relative->parent->basename;
     my $aws_sync = 'hpcrunner_fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
-
-    $self->hpcrunner_s3_logs('s3://' . $self->s3_hpcrunner . '/' . $dirname);
-    $self->hpcrunner_local_logs('hpc-runner/' . $dirname);
-    $self->hpcrunner_s3_job_file(path($self->slurmfile)->relative);
-
     my @aws_sync = split(' ', $aws_sync);
 
     my $jobname = $self->resolve_project($counter);
@@ -395,22 +353,7 @@ before 'process_template' => sub {
 
     #TODO Write check to ensure that the environmental keys exist
     #TODO Or that they can be read in from the ~/.aws.config files
-    #    my $relative = $self->outdir->parent->relative;
-    #    my $dirname = $self->outdir->relative->parent->basename;
-    #    my $aws_sync = 'hpcrunner_fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
     my $keys_list = [
-        {
-            name  => 'HPCRUNNER_S3_LOGS',
-            value => $self->hpcrunner_s3_logs,
-        },
-        {
-            name  => 'HPCRUNNER_LOCAL_LOGS',
-            value => $self->hpcrunner_local_logs,
-        },
-        {
-            name  => 'HPCRUNNER_JOB_FILE',
-            value => path($self->slurmfile)->relative,
-        },
         {
             name  => 'AWS_ACCESS_KEY_ID',
             value => $self->aws_access_key_id,
@@ -468,7 +411,7 @@ sub process_submit_command {
     my $logname = $self->create_log_name($counter);
     $self->jobs->{ $self->current_job }->add_lognames($logname);
 
-    #    $command = "sleep 20\n";
+#    $command = "sleep 20\n";
     if ($self->has_custom_command) {
         $command .= $self->custom_command . " \\\n";
     }
@@ -481,8 +424,8 @@ sub process_submit_command {
     use Data::Dumper;
     print Dumper($self->batch_counter);
     print Dumper($self->current_batch);
-    print Dumper($self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter - 1]);
-    my $batch_indexes = $self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter - 1];
+    print Dumper($self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter-1]);
+    my $batch_indexes = $self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter-1];
     my $batch_index_start = $batch_indexes->{batch_index_start};
 
     my $log = "";
@@ -505,7 +448,7 @@ sub process_submit_command {
             . "\t--commands "
             . $self->jobs->{ $self->current_job }->commands_per_node . " \\\n"
             . "\t--batch_index_start "
-            . $batch_index_start . " \\\n"
+            . $batch_index_start. " \\\n"
             . "\t--procs "
             . $self->jobs->{ $self->current_job }->procs . " \\\n"
             . "\t--logname "
