@@ -531,6 +531,7 @@ sub process_submit_command {
     my $version_str = $self->create_version_str;
     $command .= $version_str if $version_str;
     $command .= "\n\n";
+    $command .= "aws s3 sync \$HPCRUNNER_LOCAL_LOGS \$HPCRUNNER_S3_LOGS\n\n";
     return $command;
 }
 

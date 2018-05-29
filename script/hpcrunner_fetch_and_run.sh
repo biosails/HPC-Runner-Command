@@ -4,11 +4,11 @@
 set -x -e
 env
 
-echo "ARGS PASSED"
-echo "$@"
-
-SYNC_DIR=$1
-RUN=$2
+#echo "ARGS PASSED"
+#echo "$@"
+#
+#SYNC_DIR=$1
+#RUN=$2
 
 #         {
 #            "value" : "hpcrunner-bucket/2018-05-29T11-45-16",
