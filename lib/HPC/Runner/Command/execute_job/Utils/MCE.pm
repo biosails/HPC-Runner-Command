@@ -427,8 +427,6 @@ sub run_command_mce {
 
       my $pid = $$;
 
-      #$DB::single = 2;
-
       push( @{ $self->jobref->[-1] }, $pid );
       $self->_log_commands($pid);
 

@@ -29,4 +29,14 @@ before 'parse_file_mce' => sub {
     }
 };
 
+around 'run_command_mce' => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    system("aws s3 sync $ENV{HPCRUNNER_LOCAL_LOGS} $ENV{HPCRUNNER_S3_LOGS}");
+    $self->$orig(@_);
+
+    system("aws s3 sync $ENV{HPCRUNNER_LOCAL_LOGS} $ENV{HPCRUNNER_S3_LOGS}");
+};
+
 1;
