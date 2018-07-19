@@ -334,4 +334,29 @@ EOF
         q{Path to Scheduler template file if you do not wish to use the default.}
 );
 
+=head3 container
+
+Docker container to run commands against
+For simple unix commands just use the busybox container
+For anything more complex use BioStacks or user supplied definition
+
+=cut
+
+has 'container' => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => 'quay.io/nyuad_cgsb/gencore_biosails:latest'
+);
+
+=head3 mounts
+
+Mounts between the host filesystem and the docker container
+Default is just to mount the whole cwd
+
+=cut
+has 'mounts' => (
+    is  => 'rw',
+    isa => 'Str',
+    default => '/:/'
+);
 1;

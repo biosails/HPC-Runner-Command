@@ -14,6 +14,8 @@ use JSON;
 use File::Slurp;
 use Try::Tiny;
 use Path::Tiny;
+use Number::Bytes::Human qw(format_bytes parse_bytes);
+use Memoize;
 
 with 'HPC::Runner::Command::submit_jobs::Utils::Scheduler::UseArrays';
 with 'HPC::Runner::Command::submit_jobs::Plugin::Role::Log';
@@ -102,14 +104,14 @@ has 'hpcrunner_local_logs' => (
         . ' It stores the s3 bucket as the environmental variable.'
         . ' In the template file the command '
         . 'aws s3 sync $HPCRUNNER_S3_LOGS $HPCRUNNER_LOCAL_LOGS',
-    default => '',
+    default       => '',
 );
 
 has 'hpcrunner_s3_job_file' => (
-    is      => 'rw',
-    lazy    => 1,
+    is            => 'rw',
+    lazy          => 1,
     documentation => 'Once the HPCRUNNER_S3_LOGS are synced to HPCRUNNER_LOCAL_LOGS, execute the job file',
-    default => sub {
+    default       => sub {
         my $self = shift;
         return path($self->slurmfile)->relative;
     },
@@ -119,6 +121,18 @@ has 'submit_command' => (
     is      => 'rw',
     isa     => 'Str',
     default => 'aws batch submit-job --cli-input-json',
+);
+
+has 'registered_job_defs' => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub {return {}}
+);
+
+has 'registered_queue_defs' => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub {return {}}
 );
 
 has 'template_file' => (
@@ -159,32 +173,13 @@ EOF
 );
 
 =head3 compute_env
+
 AWS requires a configured compute_env. This can be setup through the command line or console, but since it has to do with billing it is not set by default
+
 =cut
 
 has 'compute_env' => (
     is => 'rw',
-);
-
-=head3 container
-Docker container to run commands against
-For simple unix commands just use the busybox container
-For anything more complex use BioStacks or user supplied definition
-=cut
-
-has 'container' => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => 'biocontainers/perl-hpc-runner-command'
-);
-
-=head3 mounts
-Mounts between the host filesystem and the docker container
-Default is just to mount the whole cwd
-=cut
-has 'mounts' => (
-    is  => 'rw',
-    isa => 'ArrayRef'
 );
 
 =head3 job_def_object
@@ -195,38 +190,19 @@ TODO add in a job def!!
 
 has 'job_def_object' => (
     is      => 'rw',
+    lazy    => 1,
     isa     => 'HashRef',
     default => sub {
+        my $self = shift;
         return {
             jobDefinitionName        => '',
             type                     => 'container',
-            parameters               => {
-                infile            => '',
-                basedir           => '',
-                data_dir          => '',
-                process_table     => '',
-                logname           => '',
-                commands          => 1,
-                batch_index_start => '',
-                procs             => 1,
-                metastr           => '',
-            },
             containerProperties      => {
-                image   => 'biocontainers/perl-hpc-runner-command',
+                image   => $self->container,
                 vcpus   => 1,
-                memory  => 0,
+                memory  => 50,
                 command => [
-                    'hpcrunner.pl', 'execute_job',
-                    '--infile', 'Ref::infile',
-                    '--basedir', 'Ref::basedir',
-                    '--data_dir', 'Ref::data_dir',
-                    '--process_table', 'Ref::process_table',
-                    '--logname', 'Ref::logname',
-                    '--commands', 'Ref::commands',
-                    '--batch_index_start', 'Ref::batch_index_start',
-                    '--procs', 'Ref::procs',
-                    '--metastr', 'Ref::metastr',
-                    '--project', 'Ref::project'
+                    "echo", "hello", "world",
                 ]
             },
             mountPoints              => {
@@ -242,11 +218,13 @@ has 'job_def_object' => (
 has 'submit_job_obj' => (
     is      => 'rw',
     isa     => 'HashRef',
+    lazy    => 1,
     default => sub {
+        my $self = shift;
         return
             {
                 "jobName"            => "",
-                "jobQueue"           => "LowPriority",
+                "jobQueue"           => "",
                 "jobDefinition"      => "",
                 "parameters"         => {
                 },
@@ -330,10 +308,113 @@ sub submit_jobs {
     }
     else {
         $self->app_log->debug(
-            "Submited job " . $self->slurmfile . "\n\tWith AWS jobid $jobid");
+            "Submitted job " . $self->slurmfile . "\n\tWith AWS jobid $jobid");
     }
 
     return $jobid;
+}
+
+=head3 check_memory
+
+AWS expects memory to be in megabytes
+If memory is specified in human readable format, parse to megabytes
+If only numbers are given don't touch
+
+=cut
+
+memoize('check_memory');
+sub check_memory {
+    my $memory = shift;
+    if ($memory !~ m/[a-zA-Z]/) {
+        return $memory;
+    }
+    my $size;
+    try {
+        my $bytes = parse_bytes($memory);
+        my $human = Number::Bytes::Human->new(bs => $bytes, round_style => 'round');
+        $size = $human->format(10240000);
+        $size =~ s/M//g;
+    }
+    catch {
+        ##Return the memory and let AWS catch the error
+        return $memory;
+    }
+    return $size;
+}
+
+
+sub register_job_def {
+    my $self = shift;
+
+    return if $self->check_if_job_def_exists;
+
+    my $job = $self->current_job;
+    $self->job_def_object->{containerProperties}->{image} = $self->container;
+
+    my $json = JSON->new->allow_nonref->allow_blessed->convert_blessed;
+    my $json_string = $json->encode($self->job_def_object->{containerProperties});
+
+    my $register_job_cmd = "aws batch register-job-definition --job-definition-name $job --type container --container-properties \'$json_string\'";
+    $self->app_log->info($register_job_cmd);
+    my ($exitcode, $stdout, $stderr) =
+        $self->submit_to_scheduler($register_job_cmd);
+    if ($exitcode == -1 || $exitcode == 0) {
+        $self->app_log->info('Successfully registered job def ' . $job);
+        $self->registered_job_defs->{$self->current_job} = 1;
+    }
+    else {
+        $self->app_log->fatal("We were not able to register your job with AWS.");
+        $self->app_log->fatal("Exit code $exitcode");
+        $self->app_log->warn("STDERR: " . $stderr) if $stderr;
+        $self->app_log->warn("STDOUT: " . $stdout) if $stdout;
+    }
+}
+
+=head3 check_if_job_def_exists
+
+Ensure the jobdef exists and has the correct container
+
+TODO - This does not ensure whether or not the user can submit these jobs
+
+=cut
+
+sub check_if_job_def_exists {
+    my $self = shift;
+    my $get_job_if_exists = "aws batch describe-job-definitions --max-results 1000 --job-definition-name " . $self->current_job . " --status ACTIVE";
+    my ($job_response, $job_definitions);
+    my ($exitcode, $stdout, $stderr) =
+        $self->submit_to_scheduler($get_job_if_exists);
+    if ($exitcode == -1 || $exitcode == 0) {
+        try {
+            $job_response = decode_json $stdout;
+        }
+        catch {
+            $self->app_log->fatal("Exit code $exitcode");
+            $self->app_log->warn("STDERR: " . $stderr) if $stderr;
+            $self->app_log->warn("STDOUT: " . $stdout) if $stdout;
+        };
+    }
+    else {
+        $self->app_log->fatal("Was not able to check for an existing job. Please ensure you have the correct AWS credentials, and try again.");
+        $self->app_log->fatal("Exit code $exitcode");
+        $self->app_log->warn("STDERR: " . $stderr) if $stderr;
+        $self->app_log->warn("STDOUT: " . $stdout) if $stdout;
+    }
+
+    if (exists $job_response->{jobDefinitions}) {
+        $job_definitions = $job_response->{jobDefinitions};
+        return 0 unless scalar @{$job_definitions};
+        foreach my $job_def (@{$job_definitions}) {
+            if (exists $job_def->{image}) {
+                if ($job_def->{image} eq $self->container) {
+                    $self->registered_job_defs->{$self->current_job} = 1;
+                    return 1;
+                }
+            }
+        }
+    }
+    $self->registered_job_defs->{$self->current_job} = 0;
+    return 0;
 }
 
 =head3 before process_template
@@ -349,6 +430,11 @@ before 'process_template' => sub {
     my $ok = shift;
     my $array_str = shift;
 
+    if(! exists $self->registered_job_defs->{$self->current_job} ){
+        $self->app_log->info("Checking to see if ".$self->current_job." exists");
+        $self->register_job_def;
+    }
+
     my $relative = $self->outdir->parent->relative;
     my $dirname = $self->outdir->relative->parent->basename;
     my $aws_sync = 'hpcrunner_fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
@@ -362,8 +448,11 @@ before 'process_template' => sub {
     my $jobname = $self->resolve_project($counter);
     my $command_array = \@aws_sync;
 
-    my $array_size = $self->current_batch->{cmd_count};
-    $array_size = int($array_size);
+    my $batch_indexes = $self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter - 1];
+    my $batch_index_start = $batch_indexes->{batch_index_start};
+    my $batch_index_end = $batch_indexes->{batch_index_end};
+    my $array_size = $batch_index_end - $batch_index_start + 1;
+    $self->app_log->info("ArraySize: ".$array_size);
     ##This is a hack, because AWS will only allow for arrays to be >=2
     try {
         #I don't know why this gets stored as a string
@@ -382,19 +471,23 @@ before 'process_template' => sub {
 
     ##For references of array job def please see
     ## https://docs.aws.amazon.com/batch/latest/userguide/array_jobs.html
+    ## Memory definition should be in MB, but I like human readable formats
+    ## So convert it here
+    my $mem = check_memory($self->jobs->{$self->current_job}->{mem});
     $self->submit_job_obj->{containerOverrides}->{command} = $command_array;
-    $self->submit_job_obj->{containerOverrides}->{memory} = int($self->jobs->{$self->current_job}->{mem});
+    $self->submit_job_obj->{containerOverrides}->{memory} = int($mem);
     $self->submit_job_obj->{containerOverrides}->{vcpus} = int($self->jobs->{$self->current_job}->{cpus_per_task});
     $self->submit_job_obj->{jobName} = $jobname;
-    $self->submit_job_obj->{jobDefinition} = 'sleep30';
+    $self->submit_job_obj->{jobDefinition} = $self->current_job;
+    $self->submit_job_obj->{jobQueue} = $self->jobs->{$self->current_job}->partition;
     $self->submit_job_obj->{arrayProperties}->{size} = int($array_size);
 
-    #TODO Add Deps in here, batching algorithm needs to be reworked
+    ## TODO Add Deps in here, batching algorithm needs to be reworked
     #If batch_tags are equal they can be N_N deps
     $self->check_for_N_N;
 
-    #TODO Write check to ensure that the environmental keys exist
-    #TODO Or that they can be read in from the ~/.aws.config files
+    ## TODO Write check to ensure that the environmental keys exist
+    ##  TODO Or that they can be read in from the ~/.aws.config files
     #    my $relative = $self->outdir->parent->relative;
     #    my $dirname = $self->outdir->relative->parent->basename;
     #    my $aws_sync = 'hpcrunner_fetch_and_run.sh s3://' . $self->s3_hpcrunner . '/' . $dirname . ' ' . path($self->slurmfile)->relative;
@@ -441,8 +534,9 @@ before 'process_template' => sub {
 
 =head3 check_for_N_N
 
+WIP - Check if array job has N_N task dependencies
+
 =cut
-##TODO Update this for N_N jobs
 sub check_for_N_N {
     my $self = shift;
 
@@ -478,10 +572,6 @@ sub process_submit_command {
 
     $command .= "\t--project " . $self->project . " \\\n" if $self->has_project;
 
-    use Data::Dumper;
-    print Dumper($self->batch_counter);
-    print Dumper($self->current_batch);
-    print Dumper($self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter - 1]);
     my $batch_indexes = $self->jobs->{$self->current_job}->batch_indexes->[$self->batch_counter - 1];
     my $batch_index_start = $batch_indexes->{batch_index_start};
 
@@ -596,7 +686,7 @@ before 'execute' => sub {
     my $self = shift;
     #    $self->use_batches(1);
     push(@{$self->job_plugins}, 'AWSBatch');
-    $self->max_array_size(2);
+    #    $self->max_array_size(2);
 };
 
 1;

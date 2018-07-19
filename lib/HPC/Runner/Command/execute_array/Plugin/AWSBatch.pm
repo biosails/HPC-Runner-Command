@@ -34,6 +34,7 @@ around 'run_command_mce' => sub {
     my $self = shift;
 
     system("aws s3 sync $ENV{HPCRUNNER_LOCAL_LOGS} $ENV{HPCRUNNER_S3_LOGS}");
+
     $self->$orig(@_);
 
     system("aws s3 sync $ENV{HPCRUNNER_LOCAL_LOGS} $ENV{HPCRUNNER_S3_LOGS}");

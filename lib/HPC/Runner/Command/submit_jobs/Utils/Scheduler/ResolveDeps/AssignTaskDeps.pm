@@ -44,6 +44,7 @@ sub batch_scheduler_ids_by_task {
 
     my $scheduler_index = $self->process_all_batch_deps;
 
+    ##TODO Parallize
     while ( my ( $dep_job, $v ) = each %{$scheduler_index} ) {
         my @dep_jobs    = @{$v};
         my $dep_indices = $scheduler_index->{$dep_job};
