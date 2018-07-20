@@ -198,7 +198,7 @@ has 'job_def_object' => (
             jobDefinitionName        => '',
             type                     => 'container',
             containerProperties      => {
-                image   => $self->container,
+                image   => $self->jobs->{$self->current_job}->container || $self->container,
                 vcpus   => 1,
                 memory  => 50,
                 command => [
@@ -349,7 +349,7 @@ sub register_job_def {
     return if $self->check_if_job_def_exists;
 
     my $job = $self->current_job;
-    $self->job_def_object->{containerProperties}->{image} = $self->container;
+    $self->job_def_object->{containerProperties}->{image} = $self->jobs->{$self->current_job}->container || $self->container;
 
     my $json = JSON->new->allow_nonref->allow_blessed->convert_blessed;
     my $json_string = $json->encode($self->job_def_object->{containerProperties});
@@ -406,7 +406,7 @@ sub check_if_job_def_exists {
         return 0 unless scalar @{$job_definitions};
         foreach my $job_def (@{$job_definitions}) {
             if (exists $job_def->{image}) {
-                if ($job_def->{image} eq $self->container) {
+                if ($job_def->{image} eq $self->jobs->{$self->current_job}->container) {
                     $self->registered_job_defs->{$self->current_job} = 1;
                     return 1;
                 }
@@ -684,9 +684,7 @@ sub update_job_deps {
 
 before 'execute' => sub {
     my $self = shift;
-    #    $self->use_batches(1);
     push(@{$self->job_plugins}, 'AWSBatch');
-    #    $self->max_array_size(2);
 };
 
 1;
